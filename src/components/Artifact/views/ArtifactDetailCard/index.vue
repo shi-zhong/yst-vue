@@ -88,7 +88,7 @@ onMounted(() => {
   </BasicDetailCard>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 .artifact-detail-card {
   &-attributes > div {
     color: @fontdarkgray;

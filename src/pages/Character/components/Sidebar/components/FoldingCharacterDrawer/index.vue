@@ -162,7 +162,7 @@ const handleClickDispatch = (e: Event) => {
   </div>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 @import url(../../index.less);
 .box {
   .sidebar();

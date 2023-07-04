@@ -45,4 +45,4 @@ export default {
   <RouterLink to="/test2/blue">blue2</RouterLink>
 </template>
 
-<style scope lang="less"></style>
+<style scoped lang="less"></style>

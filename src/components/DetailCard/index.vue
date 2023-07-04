@@ -69,7 +69,7 @@ const S = ClassNameFactor('common-detail-card');
   </div>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 
 @title-height: 50px;
 @leftindent: @title-height / 2;

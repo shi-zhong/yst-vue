@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { toRefs, ref } from 'vue'
+import { toRefs, ref } from 'vue';
 import { ClassNameFactor } from '@/utils/className';
-import Icon from './Icon.vue'
-import { type ButtonProps, type ButtonEmit } from './interface'
+import Icon from './Icon.vue';
+import { type ButtonProps, type ButtonEmit } from './interface';
 import AttentionDecoration from './AttentionDecoration.vue';
 
 const props = defineProps<ButtonProps>();
 
 const { type, icon, size, disable, attention } = toRefs(props);
 
-const emit = defineEmits<ButtonEmit>()
+const emit = defineEmits<ButtonEmit>();
 
 const S = ClassNameFactor('button-wrap-');
 
@@ -18,28 +18,41 @@ const button = ref('');
 switch (type.value) {
   case 'shrink': {
     if (props.shape && props?.shape === 'round') {
-      button.value = S(['shrink', 'round'])
+      button.value = S(['shrink', 'round']);
     } else {
       button.value = S({
         shrink: true,
-        'shrink-disable': Boolean(props.disable),
-      })
+        'shrink-disable': Boolean(props.disable)
+      });
     }
     break;
-  };
+  }
   case 'spread': {
     button.value = S('spread');
     break;
   }
 }
-
 </script>
 <template>
-  <button :class="[S('button'), button]" @click="emit('click')" :disabled="disable">
+  <button
+    :class="[S('button'), button]"
+    @click="emit('click')"
+    :disabled="disable"
+  >
     <!-- 这里可以用span包裹，但是不知道有啥用 -->
-    <Icon v-if="icon" :icon="icon" :size="size" />
-    <AttentionDecoration v-if="attention" :class="S('attention')" />
-    <span v-if="type === 'shrink' && shape !== 'round'" :class="S({ balance: Boolean(props.icon || balance) })">
+    <Icon
+      v-if="icon"
+      :icon="icon"
+      :size="size"
+    />
+    <AttentionDecoration
+      v-if="attention"
+      :class="S('attention')"
+    />
+    <span
+      v-if="type === 'shrink' && shape !== 'round'"
+      :class="S({ balance: balance === true })"
+    >
       <slot></slot>
     </span>
   </button>

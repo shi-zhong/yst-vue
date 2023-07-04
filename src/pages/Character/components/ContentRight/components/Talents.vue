@@ -114,7 +114,7 @@ const handleClick = (e: Event) => {
   </div>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 .talents {
   &-cell {
     width: 100%;

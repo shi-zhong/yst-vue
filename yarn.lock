@@ -592,7 +592,7 @@
     "@typescript-eslint/scope-manager" "5.60.0"
     "@typescript-eslint/types" "5.60.0"
     "@typescript-eslint/typescript-estree" "5.60.0"
-    eslint-scope "^5.1.1"
+    eslint-scoped "^5.1.1"
     semver "^7.3.7"
 
 "@typescript-eslint/visitor-keys@5.60.0":
@@ -1281,7 +1281,7 @@ eslint@^8.34.0, eslint@^8.39.0:
     debug "^4.3.2"
     doctrine "^3.0.0"
     escape-string-regexp "^4.0.0"
-    eslint-scope "^7.2.0"
+    eslint-scoped "^7.2.0"
     eslint-visitor-keys "^3.4.1"
     espree "^9.5.2"
     esquery "^1.4.2"
@@ -2751,7 +2751,7 @@ vue-eslint-parser@^9.1.1, vue-eslint-parser@^9.3.0:
   integrity sha512-Clr85iD2XFZ3lJ52/ppmUDG/spxQu6+MAeHXjjyI4I1NUYZ9xmenQp4N0oaHJhrA8OOxltCVxMRfANGa70vU0g==
   dependencies:
     debug "^4.3.4"
-    eslint-scope "^7.1.1"
+    eslint-scoped "^7.1.1"
     eslint-visitor-keys "^3.3.0"
     espree "^9.3.1"
     esquery "^1.4.0"

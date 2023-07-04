@@ -50,7 +50,7 @@ const Talent = {
   </div>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 @import '@@/HighLight/index.less';
 
 .skills {

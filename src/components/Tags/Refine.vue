@@ -25,7 +25,7 @@ const props = defineProps<RefineProps>();
   </div>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 
 .refine {
   &-container {

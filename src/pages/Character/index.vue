@@ -2,18 +2,12 @@
 import { ClassNameFactor } from '@/utils/className';
 
 import Headers from './components/Header/index.vue';
-import ContentRight from './components/ContentRight/components/Talents.vue';
+import ContentRight from './components/ContentRight/components/Constellation.vue';
 
 import Sidebar from './components/Sidebar/index.vue';
 
-// import { vtr } from '@/utils/vtr';
-
 const S = ClassNameFactor('character-page-');
 
-// const temp = `
-
-// `;
-// console.log(vtr(temp));
 </script>
 
 <template>

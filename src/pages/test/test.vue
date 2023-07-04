@@ -11,4 +11,4 @@ console.log(useRoute().meta)
   <Index />
 </template>
 
-<style scope lang="less"></style>
+<style scoped lang="less"></style>

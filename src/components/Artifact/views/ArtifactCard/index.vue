@@ -24,4 +24,4 @@ const attr = useAttrs() as unknown as BasicCardProps;
   </BasicCard>
 </template>
 
-<style scope lang="less"></style>
+<style scoped lang="less"></style>

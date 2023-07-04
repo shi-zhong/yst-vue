@@ -97,7 +97,7 @@ const { list, team } = storeToRefs(store);
   </div>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 @import url(../../index.less);
 .expand-character {
   &- {

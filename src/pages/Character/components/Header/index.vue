@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ClassNameFactor } from '@/utils/className';
-import Button from '@/components/Button/index';
+import { Button } from '@/components';
 
 import { sidebarStack } from '../Sidebar/index';
 

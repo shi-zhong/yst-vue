@@ -28,7 +28,7 @@ const S = ClassNameFactor('stars-');
   </div>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 @import '../../assets/styles/index.less';
 
 .stars {

@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { ClassNameFactor } from '@/utils';
 
-import Lock from '@/assets/icons/lock.png';
+import ConstellationIcon from './ConstellaionIcon.vue';
 
 import Life1 from '@/assets/skills/yoimiya/lives/constellation_1.png';
 import Life2 from '@/assets/skills/yoimiya/lives/constellation_2.png';
@@ -49,35 +49,6 @@ const lifes = [
 ];
 
 const nowlife = 2;
-
-const ConstellationIcon = (props: {
-  lock: boolean;
-  icon: string;
-  element: string;
-  index?: number;
-}) => (
-  <div
-    class={S(['icon', props.element])}
-    data-type="active"
-    data-index={props.index || 0}
-  >
-    <img
-      draggable={false}
-      class={S('life')}
-      src={props.icon}
-      alt=""
-    />
-    {props.lock && (
-      <div class={S('lock')}>
-        <img
-          draggable={false}
-          src={Lock}
-          alt=""
-        />
-      </div>
-    )}
-  </div>
-);
 </script>
 
 <template>
@@ -105,7 +76,7 @@ const ConstellationIcon = (props: {
   </div>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 @basic: calc(100vh - 300px);
 @radius: calc(@basic * 1.27);
 @min-height: calc(@basic * 0.025);
@@ -161,22 +132,6 @@ const ConstellationIcon = (props: {
     }
   }
 
-  &-icon {
-    position: relative;
-
-    display: inline-block;
-    height: 100%;
-    aspect-ratio: 1;
-
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.5);
-    border: 3px solid transparent;
-    box-sizing: border-box;
-
-    vertical-align: middle;
-    overflow: hidden;
-  }
-
   &-lock {
     position: absolute;
     top: 0;
@@ -197,71 +152,5 @@ const ConstellationIcon = (props: {
     padding-left: 30px;
   }
 
-  &-life {
-    display: block;
-    height: 100%;
-
-    border-radius: 50%;
-  }
-
-  &-locked &-life {
-    border-color: transparent;
-  }
-
-  &-fire {
-    border-color: rgb(238, 121, 80);
-  }
-
-  &-locked&-fire {
-    border-color: rgb(95, 34, 25);
-  }
-
-  &-water {
-    border-color: rgb(25, 201, 235);
-  }
-
-  &-locked&-water {
-    border-color: rgb(18, 75, 125);
-  }
-
-  &-elec {
-    border-color: rgb(230, 155, 248);
-  }
-
-  &-locked&-elec {
-    border-color: rgb(80, 44, 121);
-  }
-
-  &-ice {
-    border-color: rgb(168, 243, 247);
-  }
-
-  &-locked&-ice {
-    border-color: rgb(52, 103, 121);
-  }
-
-  &-grass {
-    border-color: rgb(188, 241, 26);
-  }
-
-  &-locked > &-grass {
-    border-color: rgb(62, 93, 29);
-  }
-
-  &-wind {
-    border-color: rgb(78, 246, 219);
-  }
-
-  &-locked&-wind {
-    border-color: rgb(28, 90, 75);
-  }
-
-  &-stone {
-    border-color: rgb(254, 247, 64);
-  }
-
-  &-locked&-stone {
-    border-color: rgb(109, 75, 22);
-  }
 }
 </style>

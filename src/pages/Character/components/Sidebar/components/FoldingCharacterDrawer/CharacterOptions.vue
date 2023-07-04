@@ -47,7 +47,7 @@ const options = ['属性', '武器', '圣遗物', '命之座', '天赋', '资料
   </div>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 .options {
   &-list {
     margin: 30px;

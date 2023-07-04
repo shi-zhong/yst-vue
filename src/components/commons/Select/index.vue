@@ -187,7 +187,7 @@ useMockScrollDrag(liRef, {
   </div>
 </template>
 
-<style scope lang="less">
+<style scoped lang="less">
 .select {
   position: relative;
   &-show {

@@ -2,6 +2,7 @@
 import FoldingCharacterDrawer from './components/FoldingCharacterDrawer/index.vue';
 import ExpandCharacterList from './components/ExpandCharacterList/index.vue';
 import Talents from './components/Talents/index.vue';
+import Constellation from './components/Constellation/index.vue';
 
 import { sidebarStack } from './index';
 import { computed } from 'vue';
@@ -11,7 +12,8 @@ const { stack } = sidebarStack;
 const components: Record<string, any> = {
   folding: FoldingCharacterDrawer,
   expand: ExpandCharacterList,
-  talents: Talents
+  talents: Talents,
+  life: Constellation
 };
 
 const current = computed(() => components[stack[stack.length - 1] || '']);
