@@ -82,6 +82,7 @@ const handleClickDispatch = (e: Event) => {
     }
   });
 };
+
 </script>
 
 <template>
@@ -95,52 +96,51 @@ const handleClickDispatch = (e: Event) => {
           alt="element"
         />
       </div>
-      <div style="flex: 1;width:100%">
-        <ScrollView
-          :rootClass="S('list-clip')"
-          :class="S('list')"
-          scrollBehavior="hidden"
-          slide
+
+      <ScrollView
+        :rootClass="S('list-clip')"
+        :class="S('list')"
+        scrollBehavior="hidden"
+        slide
+      >
+        <div
+          :class="S('active-tag')"
+          :style="{ top: `${active * 100}px` }"
         >
-          <div
-            :class="S('active-tag')"
-            :style="{ top: `${active * 100}px` }"
+          <img
+            :class="S('active-star')"
+            :src="RankPicture"
+            alt="/"
+          />
+        </div>
+        <div
+          :class="S('list-true')"
+          data-type="character-list"
+          @click="handleClickDispatch"
+        >
+          <template
+            v-for="(i, index) in list.filter((i) => team.find((j) => i.id === j))"
+            :key="i.avatar + index + i.id"
           >
-            <img
-              :class="S('active-star')"
-              :src="RankPicture"
-              alt="/"
+            <CharacterBox
+              inteam
+              :avatar="i.avatar"
+              :dataKey="i.id"
+              :dataIndex="index"
             />
-          </div>
-          <div
-            :class="S('list-true')"
-            data-type="character-list"
-            @click="handleClickDispatch"
+          </template>
+          <template
+            v-for="(i, index) in list.filter((i) => !team.find((j) => i.id === j))"
+            :key="i.avatar + (index + team.length) + i.id"
           >
-            <template
-              v-for="(i, index) in list.filter((i) => team.find((j) => i.id === j))"
-              :key="i.avatar + index + i.id"
-            >
-              <CharacterBox
-                inteam
-                :avatar="i.avatar"
-                :dataKey="i.id"
-                :dataIndex="index"
-              />
-            </template>
-            <template
-              v-for="(i, index) in list.filter((i) => !team.find((j) => i.id === j))"
-              :key="i.avatar + (index + team.length) + i.id"
-            >
-              <CharacterBox
-                :avatar="i.avatar"
-                :dataKey="i.id"
-                :dataIndex="team.length + index"
-              />
-            </template>
-          </div>
-        </ScrollView>
-      </div>
+            <CharacterBox
+              :avatar="i.avatar"
+              :dataKey="i.id"
+              :dataIndex="team.length + index"
+            />
+          </template>
+        </div>
+      </ScrollView>
 
       <div :class="S('menu-container')">
         <Button
@@ -201,8 +201,8 @@ const handleClickDispatch = (e: Event) => {
     * 用 wrap 作为角色区域，内部list用绝对定位居中
     */
     &-clip {
-      // width: 150px;
-      // overflow: hidden;
+      width: 150px;
+      overflow: hidden;
       flex-grow: 1;
       flex-shrink: 1;
     }
@@ -273,7 +273,6 @@ const handleClickDispatch = (e: Event) => {
   &-menu-container {
     margin: 20px auto;
     width: 64px;
-    flex-shrink: 0;
   }
 }
 
