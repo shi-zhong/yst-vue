@@ -1,19 +1,20 @@
 export interface ButtonProps {
-  type: 'shrink' | 'spread'
-  shape?: 'round'
-  balance?: boolean
-  button?: string
-  icon?: 'round' | 'fork' | undefined | string
-  disable?: boolean
-  size?: number
-  attention?: boolean
+  type: 'shrink' | 'spread';
+  shape?: 'round';
+  balance?: boolean;
+  button?: string;
+  icon?: 'round' | 'fork' | undefined | string;
+  disable?: boolean;
+  size?: number;
+  attention?: boolean;
+  theme?: 'dark' | 'light';
 }
 
 export interface ButtonEmit {
-  (event: 'click'): void
+  (event: 'click'): void;
 }
 
-interface IconProps {
-  icon: 'round' | 'fork' | string
-  size: number | undefined
-}
+// interface IconProps {
+//   icon: 'round' | 'fork' | string
+//   size: number | undefined
+// }

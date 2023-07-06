@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import NotFound from '@/pages/NotFound.vue';
 import Character from '@/pages/Character/index.vue';
 import Test from '@/pages/test/test.vue'
+import Test2 from '@/pages/test/test2.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,18 +14,18 @@ const router = createRouter({
       // component: App,
       children: [
         {
-          path: '/test/:param',
+          path: '/test',
           meta: {
             title: 'test'
           },
           component: Test
         },
         {
-          path: '/test2/:param',
+          path: '/test2',
           meta: {
-            title: 'test'
+            title: 'test2'
           },
-          component: Test
+          component: Test2
         },
         {
           path: '/character',

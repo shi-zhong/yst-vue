@@ -5,7 +5,7 @@ import Icon from './Icon.vue';
 import { type ButtonProps, type ButtonEmit } from './interface';
 import AttentionDecoration from './AttentionDecoration.vue';
 
-const props = defineProps<ButtonProps>();
+const props = withDefaults(defineProps<ButtonProps>(), { theme: 'light' });
 
 const { type, icon, size, disable, attention } = toRefs(props);
 
@@ -35,7 +35,7 @@ switch (type.value) {
 </script>
 <template>
   <button
-    :class="[S('button'), button]"
+    :class="[S(['button', 'theme-' + theme]), button]"
     @click="emit('click')"
     :disabled="disable"
   >
@@ -59,6 +59,67 @@ switch (type.value) {
 </template>
 
 <style scoped lang="less">
+.button-wrap-theme {
+  &-dark {
+    &.button-wrap-button {
+      &::before {
+        background: @blank-white;
+        box-shadow: @box-shadow;
+      }
+
+      &::after {
+        // 按钮背景色
+        background: @fontdarkgray;
+        box-shadow: @box-shadow;
+      }
+    }
+    &.button-wrap-shrink {
+      color: @blank-white;
+      &:active {
+        &::after {
+          background: @blank-white;
+        }
+        color: @fontdarkgray;
+        opacity: 0.5;
+      }
+
+      &-disable {
+        &::after {
+          background: @blank-white;
+          border: 1px solid @blank-white;
+        }
+        color: @fontdarkgray;
+      }
+    }
+  }
+  &-light {
+    &.button-wrap-button {
+      &::before {
+        background: @blank-white;
+        box-shadow: @box-shadow;
+      }
+
+      &::after {
+        background: @blank-white;
+        box-shadow: @box-shadow;
+      }
+    }
+    &.button-wrap-shrink {
+      color: @fontdarkgray;
+      &:active {
+        color: @blank-white;
+      }
+      &-disable {
+        &::after {
+          background-color: transparent;
+          border: 1px solid @blank-white;
+        }
+
+        color: @blank-white;
+      }
+    }
+  }
+}
 .button-wrap {
   &-button {
     position: relative;
@@ -180,7 +241,6 @@ switch (type.value) {
     font-size: 23px;
     min-width: 50px;
     min-height: 50px;
-    color: @fontdarkgray;
 
     &::before {
       content: '';
@@ -197,10 +257,6 @@ switch (type.value) {
   &-shrink&-round {
     aspect-ratio: 1;
     width: auto;
-  }
-
-  &-shrink:active {
-    color: @blank-white;
   }
 
   &-shrink::after {
@@ -230,25 +286,23 @@ switch (type.value) {
   }
 
   &-shrink:active &-special {
-    opacity: 0.8;
+    opacity: 0.7;
   }
 
   &-shrink-disable {
-    &::after {
-      background-color: transparent;
-      border: 1px solid @blank-white;
-    }
-
     &:active::after {
       transform: none;
       opacity: 1;
     }
 
-    color: @blank-white;
     opacity: 0.5;
   }
 
   // 重写 active 激活样式
+  &-shrink-disable:active &-special {
+    opacity: 1;
+  }
+
   &-shrink-disable:active &-special-round {
     opacity: 1;
   }
