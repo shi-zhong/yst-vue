@@ -2,33 +2,35 @@
 import { ClassNameFactor } from '@/utils/className';
 import { Button } from '@/components';
 
-import { sidebarStack } from '../Sidebar/index';
-
 import Back from '@/assets/icons/back.svg';
 import Close from '@/assets/icons/close.svg';
 
+import { useCharacterStateStore } from '@/stores/Character/CharacterState'
+
 const S = ClassNameFactor('character-page-header-');
 
-const { stack } = sidebarStack;
+const store = useCharacterStateStore();
+
 </script>
 
 <template>
   <div :class="S()">
     <div :class="S('back-buttons')">
       <Button
-        v-if="stack.length > 2"
+        v-if="store.sidebar.stack.length >= 2"
         type="spread"
         :icon="Back"
-        @click="() => {}"
-        :size="50"
+        @click="() => {
+          store.sidebar.pop();
+        }"
       ></Button>
       <Button
-        v-if="stack.length === 2"
+        v-if="store.sidebar.stack.length === 1"
         type="spread"
         :icon="Close"
         @click="
           () => {
-            sidebarStack.pop();
+            
           }
         "
       ></Button>

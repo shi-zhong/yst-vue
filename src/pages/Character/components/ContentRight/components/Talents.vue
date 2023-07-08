@@ -6,6 +6,8 @@ import TalentD from '@/assets/skills/yoimiya/talent_4.png';
 import TalentE from '@/assets/skills/yoimiya/talent_5.png';
 import TalentF from '@/assets/skills/yoimiya/talent_6.png';
 
+import { useCharacterStateStore } from '@/stores/Character/CharacterState';
+
 import { ClassNameFactor, EventDispatch } from '@/utils';
 import { ref } from 'vue';
 
@@ -44,27 +46,29 @@ const talents = [
   }
 ];
 
-const select = ref('');
+const select = ref(-1);
+
+const stateStore = useCharacterStateStore();
+
+const clickOutsideToClose = () => {
+  if (stateStore.sidebar.top === 'talents') {
+    stateStore.sidebar.pop();
+  }
+  document.removeEventListener('click', clickOutsideToClose);
+  select.value = -1;
+};
 
 const handleClick = (e: Event) => {
   EventDispatch(e, {
     skill: (dataset) => {
-      if (select.value === '') {
-        // props.dispatch({
-        //   type: 'charactersPageState/setSidebarPush',
-        //   payload: {
-        //     inpage: 'talent',
-        //   },
-        // });
+      if (select.value === -1 && dataset.index) {
+        document.addEventListener('click', clickOutsideToClose);
+        stateStore.sidebar.push('talents');
       }
-      select.value = dataset.index || '';
+      select.value = parseInt(dataset.index || '-1');
+      return false;
     },
-    'talent-right': () => {
-      select.value = '';
-      // props.dispatch({
-      //   type: 'charactersPageState/setSidebarPop',
-      // });
-    }
+    'talent-right': () => clickOutsideToClose()
   });
 };
 </script>
@@ -75,22 +79,20 @@ const handleClick = (e: Event) => {
     data-type="talent-right"
     @click="handleClick"
   >
-    <div>
+    <div :class="S('box')">
       <button
         v-for="(i, index) in talents"
         :key="index"
         :class="
           S({
             cell: true,
-            select: i.name === select
+            select: index === select
           })
         "
+        data-type="skill"
+        :data-index="index"
       >
-        <div
-          :class="S('event-area')"
-          data-type="skill"
-          :data-index="i.name"
-        >
+        <div :class="S('event-area')">
           <div :class="S('text')">
             {{ i.name }}
             <br />
@@ -106,7 +108,7 @@ const handleClick = (e: Event) => {
       </button>
     </div>
     <div
-      v-show="select === ''"
+      v-show="select === -1"
       :class="S('extra')"
     >
       选中战斗天赋以升级
@@ -116,11 +118,14 @@ const handleClick = (e: Event) => {
 
 <style scoped lang="less">
 .talents {
+  &-box {
+    position: absolute;
+    overflow: hidden;
+    padding-right: 100px;
+  }
+
   &-cell {
     width: 100%;
-    padding-right: 100px;
-    // button
-    margin: 0;
     border: none;
     background-color: transparent;
 
@@ -130,6 +135,11 @@ const handleClick = (e: Event) => {
     transition: 0.3s;
 
     opacity: 0.8;
+  }
+
+  &-select {
+    transform: scale(1.15) translateX(-24px);
+    opacity: 1;
   }
 
   &-event-area {
@@ -149,18 +159,9 @@ const handleClick = (e: Event) => {
       transform: scale(1.1);
     }
   }
+
   &-select &-event-area:active {
     transform: none;
-  }
-
-  &-content-right {
-    height: 100%;
-    position: relative;
-  }
-
-  &-select {
-    transform: scale(1.15);
-    opacity: 1;
   }
 
   &-text {

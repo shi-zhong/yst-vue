@@ -1,26 +1,33 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ClassNameFactor, EventDispatch } from '@/utils';
-import { useCharacterStore } from '@/stores/Character';
+import { useCharacterStateStore } from '@/stores/Character';
+import { type ContentRightNames } from '@/pages/Character/interface';
 
 // 用于应用按下但未松开时样式展示
 const press = ref(-1);
 
 const S = ClassNameFactor('options-');
 
-const stores = useCharacterStore();
+const stores = useCharacterStateStore();
 
 const handleClick = (e: Event) => {
   EventDispatch(e, {
     item: (dataset) => {
-      stores.setOption(parseInt(dataset.index || '0'));
+      stores.setContentRight(dataset.url as ContentRightNames);
     }
   });
   press.value = -1;
 };
 
-const options = ['属性', '武器', '圣遗物', '命之座', '天赋', '资料'];
-
+const options = [
+  { txt: '属性', url: 'attr' },
+  { txt: '武器', url: 'weapon' },
+  { txt: '圣遗物', url: 'artifact' },
+  { txt: '命之座', url: 'life' },
+  { txt: '天赋', url: 'talents' },
+  { txt: '资料', url: 'data' }
+];
 </script>
 
 <template>
@@ -34,15 +41,15 @@ const options = ['属性', '武器', '圣遗物', '命之座', '天赋', '资料
       :class="
         S({
           item: true,
-          'item-not-active': index !== stores.crtOption && index !== press,
-          'item-active': index === stores.crtOption
+          'item-not-active': option.url !== stores.cRight && index !== press,
+          'item-active': option.url === stores.cRight
         })
       "
-      :key="option"
+      :key="option.url"
       data-type="item"
-      :data-index="index"
+      :data-url="option.url"
     >
-      {{ option }}
+      {{ option.txt }}
     </div>
   </div>
 </template>
@@ -188,6 +195,23 @@ const options = ['属性', '武器', '圣遗物', '命之座', '天赋', '资料
         border-radius: 1px;
       }
     }
+  }
+}
+
+@keyframes movement {
+  0% {
+    margin-bottom: 0px;
+    margin-left: 0px;
+  }
+
+  50% {
+    margin-bottom: 4px;
+    margin-left: 4px;
+  }
+
+  100% {
+    margin-bottom: 0px;
+    margin-left: 0px;
   }
 }
 </style>

@@ -10,7 +10,7 @@ const visible = ref(0);
 <template>
   <Modal
     :visible="visible"
-    theme="dark"
+    theme="light"
     @close="
       () => {
         visible = 0;

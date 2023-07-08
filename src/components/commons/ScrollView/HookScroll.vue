@@ -171,7 +171,7 @@ defineExpose({
     @scroll="handleScroll"
   >
     <div :style="{ height: `${props.blank.top}px` }"></div>
-    <div style="min-height: 100%"><slot></slot></div>
+    <div style="min-height: 100%;position: relative;"><slot></slot></div>
     <div :style="{ height: `${props.blank.bottom}px` }"></div>
   </div>
 </template>

@@ -52,9 +52,11 @@ const Talent = {
 
 <style scoped lang="less">
 @import '@@/HighLight/index.less';
+@import '../../../../index.less';
 
 .skills {
   &- {
+    .sidebar();
     background: linear-gradient(180deg, @fontdarkgray, rgba(72, 85, 103, 0.7) ;);
     height: 100vh;
     width: 500px;

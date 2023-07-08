@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { useCharacterStore } from '@/stores/Character';
+import { useCharacterDataStore } from '@/stores/Character';
+import { useCharacterStateStore } from '@/stores/Character/CharacterState';
 import { ScrollView, Select, Button, CharacterCard } from '@/components';
 import { ClassNameFactor } from '@/utils';
 
 import Character from '@/assets/icons/characters.webp';
 import Filter from '@/assets/icons/filter.svg';
 import Sort from '@/assets/icons/sort-line.svg';
+
 import { storeToRefs } from 'pinia';
 
 // interface character {
@@ -16,7 +18,8 @@ import { storeToRefs } from 'pinia';
 //   rarity: 1 | 2 | 3 | 4 | 5;
 // }
 
-const store = useCharacterStore();
+const store = useCharacterDataStore();
+const stateStore = useCharacterStateStore();
 
 const options = [
   { text: '等级顺序', value: '1' },
@@ -31,7 +34,8 @@ const options = [
 
 const S = ClassNameFactor('expand-character-');
 
-const { list, team } = storeToRefs(store);
+const { list } = storeToRefs(store);
+const { team } = storeToRefs(stateStore);
 </script>
 
 <template>
@@ -98,7 +102,7 @@ const { list, team } = storeToRefs(store);
 </template>
 
 <style scoped lang="less">
-@import url(../../index.less);
+@import url(../../../../index.less);
 .expand-character {
   &- {
     .sidebar();

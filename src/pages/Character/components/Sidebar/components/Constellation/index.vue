@@ -54,7 +54,7 @@ const Talent = {
 
 <style scoped lang="less">
 @import '@@/HighLight/index.less';
-@import '../../index.less';
+@import '../../../../index.less';
 
 .constellation {
   &- {

@@ -15,6 +15,7 @@ export const EventDispatch = (
 
   if (!topElement) {
     console.error('Unknown top element type.');
+    return false;
   }
 
   let i = 0;

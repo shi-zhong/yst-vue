@@ -1,5 +1,7 @@
 <script setup lang="tsx">
+import { EventDispatch } from '@/utils';
 import { ClassNameFactor } from '@/utils';
+import { useCharacterStateStore } from '@/stores/Character/CharacterState';
 
 import ConstellationIcon from './ConstellaionIcon.vue';
 
@@ -9,8 +11,13 @@ import Life3 from '@/assets/skills/yoimiya/lives/constellation_3.png';
 import Life4 from '@/assets/skills/yoimiya/lives/constellation_4.png';
 import Life5 from '@/assets/skills/yoimiya/lives/constellation_5.png';
 import Life6 from '@/assets/skills/yoimiya/lives/constellation_6.png';
+import { ref } from 'vue';
 
 const S = ClassNameFactor('constellation-');
+
+const stateStore = useCharacterStateStore();
+
+const active = ref(-1);
 
 const lifes = [
   {
@@ -48,15 +55,44 @@ const lifes = [
   }
 ];
 
-const nowlife = 2;
+const clickOutsideToClose = () => {
+  if (stateStore.sidebar.top === 'life') {
+    stateStore.sidebar.pop();
+  }
+  document.removeEventListener('click', clickOutsideToClose);
+  active.value = -1;
+};
+
+const handleConstellationClick = (e: Event) => {
+  EventDispatch(e, {
+    constellation: (dataset) => {
+      if (active.value === -1 && dataset.index) {
+        document.addEventListener('click', clickOutsideToClose);
+        active.value = parseInt(dataset.index || '');
+        stateStore.sidebar.push('life');
+      }
+    },
+    'constellation-top': () => {
+      clickOutsideToClose();
+    }
+  });
+};
+
+const nowlife = 4;
 </script>
 
 <template>
-  <div :class="S('container')">
+  <div
+    :class="S('container')"
+    @click="handleConstellationClick"
+    data-type="constellation-top"
+  >
     <div
       v-for="(i, index) in lifes"
       :key="index"
       :class="S({ box: true, locked: nowlife <= index })"
+      data-type="constellation"
+      :data-index="index"
     >
       <ConstellationIcon
         :index="index + 1"
@@ -77,50 +113,57 @@ const nowlife = 2;
 </template>
 
 <style scoped lang="less">
+// 20r
 @basic: calc(100vh - 300px);
-@radius: calc(@basic * 1.27);
-@min-height: calc(@basic * 0.025);
+// 22.6
+@doubleradius: calc(@basic * 1.13);
+// 2r
+@min-height: calc(@basic * 0.1);
 
 .constellation {
   &-container {
     height: @basic;
     margin-top: 50px;
-    padding: @min-height 0;
-    position: relative;
-    overflow: hidden;
+    position: absolute;
+    width: 100%;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-evenly;
+
     &::before {
       content: '';
       position: absolute;
-      top: -13.5%;
-      left: calc(-1 * @basic * 1.03);
+      //
+      left: calc(-1 * @min-height * 8.3);
 
       display: block;
-      width: @radius;
-      height: @radius;
+      width: @doubleradius;
+      height: @doubleradius;
       border: 2px solid rgba(255, 255, 255, 0.5);
       border-radius: 50%;
     }
 
     & > :nth-child(1),
     & > :nth-child(6) {
-      margin-left: calc(@basic * 0.4 * 0.15);
+      transform: translateX(calc(@min-height * 0.1));
     }
     & > :nth-child(2),
     & > :nth-child(5) {
-      margin-left: calc(@basic * 0.4 * 0.37);
+      transform: translateX(calc(@min-height * 1.2));
     }
     & > :nth-child(3),
     & > :nth-child(4) {
-      margin-left: calc(@basic * 0.4 * 0.47);
+      transform: translateX(calc(@min-height * 1.6));
     }
   }
   &-box {
     position: relative;
     z-index: 1;
 
-    height: calc(@min-height * 4);
-    line-height: calc(@min-height * 4);
-    margin: calc(@min-height * 2) 0;
+    height: @min-height;
+
+    padding-left: 60px;
 
     overflow: hidden;
 
@@ -151,6 +194,5 @@ const nowlife = 2;
     display: inline-block;
     padding-left: 30px;
   }
-
 }
 </style>

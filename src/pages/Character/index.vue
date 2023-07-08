@@ -2,18 +2,16 @@
 import { ClassNameFactor } from '@/utils/className';
 
 import Headers from './components/Header/index.vue';
-import ContentRight from './components/ContentRight/components/Constellation.vue';
+import ContentRight from './components/ContentRight/index.vue';
 
 import Sidebar from './components/Sidebar/index.vue';
 
 const S = ClassNameFactor('character-page-');
-
 </script>
 
 <template>
   <div :class="S()">
     <Sidebar />
-
     <div :class="S('sidecontent')">
       <Headers />
       <div :class="S('content')">
@@ -48,7 +46,7 @@ const S = ClassNameFactor('character-page-');
   &-sidecontent {
     display: inline-block;
     margin-left: 500px;
-    width: 100%
+    width: 100%;
   }
 
   &-content {
@@ -59,9 +57,9 @@ const S = ClassNameFactor('character-page-');
   &-content-left {
     flex-grow: 1;
   }
-
   &-content-right {
-    // background-color: red;
+    position: relative;
+    overflow: hidden;
     width: 500px;
     height: 100%;
   }

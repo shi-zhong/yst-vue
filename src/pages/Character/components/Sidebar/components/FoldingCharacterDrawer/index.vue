@@ -1,13 +1,12 @@
 <script setup lang="tsx">
 import { reactive, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useCharacterStore } from '@/stores/Character';
+import { useCharacterDataStore, useCharacterStateStore } from '@/stores/Character';
 
 import { ClassNameFactor, EventDispatch, GetElementPicture, merge } from '@/utils';
 import { type CharacterInstanceBasicModel } from '@/interface/characters';
 import { Button, ScrollView } from '@/components';
 import CharacterOptions from './CharacterOptions.vue';
-import { sidebarStack } from '../../index';
 
 import Menu from '@/assets/icons/menu.png';
 import RankPicture from './rank_star.png';
@@ -19,8 +18,10 @@ interface CharacterBoxProps {
   inteam?: boolean;
 }
 
-const store = useCharacterStore();
-const { list, team, active } = storeToRefs(store);
+const dataStore = useCharacterDataStore();
+const stateStore = useCharacterStateStore();
+const { list } = storeToRefs(dataStore);
+const { team, active, sidebar } = storeToRefs(stateStore);
 
 const S = ClassNameFactor('folding-character-drawer-');
 
@@ -74,15 +75,13 @@ const handleClickDispatch = (e: Event) => {
             element: c.element,
             name: c.name
           });
-          store.setActive(parseInt(dataset.index || '') + 1);
-
+          stateStore.setActive(parseInt(dataset.index || '') + 1);
           return true;
         }
       });
     }
   });
 };
-
 </script>
 
 <template>
@@ -105,7 +104,7 @@ const handleClickDispatch = (e: Event) => {
       >
         <div
           :class="S('active-tag')"
-          :style="{ top: `${active * 100}px` }"
+          :style="{ top: `${active * 100 - 100}px` }"
         >
           <img
             :class="S('active-star')"
@@ -147,7 +146,8 @@ const handleClickDispatch = (e: Event) => {
           type="spread"
           @click="
             () => {
-              sidebarStack.push('expand');
+              sidebar.push('expand');
+              stateStore.setContentRight('attr');
             }
           "
           :icon="Menu"
@@ -163,7 +163,7 @@ const handleClickDispatch = (e: Event) => {
 </template>
 
 <style scoped lang="less">
-@import url(../../index.less);
+@import url(../../../../index.less);
 .box {
   .sidebar();
 }
@@ -258,15 +258,16 @@ const handleClickDispatch = (e: Event) => {
       background: @shadow;
     }
 
+    &-box :deep(&-image) {
+      // width: 58px;
+      width: 100%;
+      vertical-align: bottom;
+    }
+
     &-inteam {
       background: @selected-bgc;
       border: 3px solid @selected-border;
       box-sizing: content-box;
-    }
-
-    &-image {
-      width: 58px;
-      vertical-align: bottom;
     }
   }
 
@@ -291,23 +292,6 @@ const handleClickDispatch = (e: Event) => {
 
     color: rgb(211, 189, 142);
     font-size: x-large;
-  }
-}
-
-@keyframes movement {
-  0% {
-    margin-bottom: 0px;
-    margin-left: 0px;
-  }
-
-  50% {
-    margin-bottom: 4px;
-    margin-left: 4px;
-  }
-
-  100% {
-    margin-bottom: 0px;
-    margin-left: 0px;
   }
 }
 </style>
