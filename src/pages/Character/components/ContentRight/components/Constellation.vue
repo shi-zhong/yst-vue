@@ -56,8 +56,8 @@ const lifes = [
 ];
 
 const clickOutsideToClose = () => {
-  if (stateStore.sidebar.top === 'life') {
-    stateStore.sidebar.pop();
+  if (stateStore.sidebarCurrent === 'life') {
+    stateStore.sidebar.next('back');
   }
   document.removeEventListener('click', clickOutsideToClose);
   active.value = -1;
@@ -69,7 +69,7 @@ const handleConstellationClick = (e: Event) => {
       if (active.value === -1 && dataset.index) {
         document.addEventListener('click', clickOutsideToClose);
         active.value = parseInt(dataset.index || '');
-        stateStore.sidebar.push('life');
+        stateStore.sidebar.next('life');
       }
     },
     'constellation-top': () => {

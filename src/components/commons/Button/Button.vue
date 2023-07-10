@@ -35,7 +35,7 @@ switch (type.value) {
 </script>
 <template>
   <button
-    :class="[S(['button', 'theme-' + theme]), button]"
+    :class="[S({ button: true, ['theme-' + theme]: type === 'shrink' }), button]"
     @click="emit('click')"
     :disabled="disable"
   >

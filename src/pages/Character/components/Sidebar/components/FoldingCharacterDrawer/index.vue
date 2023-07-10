@@ -97,7 +97,6 @@ const handleClickDispatch = (e: Event) => {
       </div>
 
       <ScrollView
-        :rootClass="S('list-clip')"
         :class="S('list')"
         scrollBehavior="hidden"
         slide
@@ -146,7 +145,7 @@ const handleClickDispatch = (e: Event) => {
           type="spread"
           @click="
             () => {
-              sidebar.push('expand');
+              sidebar.next('expand');
               stateStore.setContentRight('attr');
             }
           "
@@ -196,16 +195,6 @@ const handleClickDispatch = (e: Event) => {
 
     width: 160px;
     height: 100%;
-
-    /*
-    * 用 wrap 作为角色区域，内部list用绝对定位居中
-    */
-    &-clip {
-      width: 150px;
-      overflow: hidden;
-      flex-grow: 1;
-      flex-shrink: 1;
-    }
 
     &-true {
       position: relative;

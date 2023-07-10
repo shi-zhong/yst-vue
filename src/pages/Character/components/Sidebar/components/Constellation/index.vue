@@ -28,7 +28,7 @@ const Talent = {
     />
     <Line />
     <ScrollView
-      :rootClass="S('tab-item')"
+      :class="S('tab-item')"
       slide
     >
       <div :class="S('content')">

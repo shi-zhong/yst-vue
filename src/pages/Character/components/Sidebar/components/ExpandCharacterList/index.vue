@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useCharacterDataStore } from '@/stores/Character';
-import { useCharacterStateStore } from '@/stores/Character/CharacterState';
+import { useCharacterDataStore, useCharacterStateStore } from '@/stores/Character';
 import { ScrollView, Select, Button, CharacterCard } from '@/components';
 import { ClassNameFactor } from '@/utils';
 
@@ -9,14 +8,6 @@ import Filter from '@/assets/icons/filter.svg';
 import Sort from '@/assets/icons/sort-line.svg';
 
 import { storeToRefs } from 'pinia';
-
-// interface character {
-//   id: number;
-//   avatar: string;
-//   element: '风' | '雷' | '水' | '火' | '冰' | '草' | '岩';
-//   lvl: number;
-//   rarity: 1 | 2 | 3 | 4 | 5;
-// }
 
 const store = useCharacterDataStore();
 const stateStore = useCharacterStateStore();
@@ -53,7 +44,7 @@ const { team } = storeToRefs(stateStore);
     </div>
 
     <ScrollView
-      :rootClass="S('list')"
+      :class="S('list')"
       scrollbar
       slide
     >

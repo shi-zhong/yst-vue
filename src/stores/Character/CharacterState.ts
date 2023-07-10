@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { useStack, type useStackReturn } from '@/utils/hooks';
+import { useStateMachine, type StateMachineReturnType } from '@/utils/hooks';
 import { type ContentRightNames, type SidebarNames } from '@/pages/Character/interface';
 
 /**
@@ -10,7 +10,7 @@ interface CharacterState {
   cRight: ContentRightNames;
   team: number[];
   active: number;
-  readonly sidebar: useStackReturn<SidebarNames>;
+  readonly sidebar: StateMachineReturnType<SidebarNames>;
 }
 
 export const useCharacterStateStore = defineStore('character-state', {
@@ -19,8 +19,34 @@ export const useCharacterStateStore = defineStore('character-state', {
       cRight: 'attr',
       team: [10, 12],
       active: 1,
-      sidebar: useStack<SidebarNames>(['folding'])
+      sidebar: useStateMachine<SidebarNames>(
+        {
+          folding: [
+            {
+              to: 'expand'
+            },
+            {
+              to: 'life'
+            },
+            {
+              to: 'story'
+            },
+            {
+              to: 'talents'
+            }
+          ],
+          expand: [{ to: 'filter' }, { condition: 'back', to: 'folding' }],
+          filter: [{ condition: 'back', to: 'expand' }],
+          life: [{ condition: 'back', to: 'folding' }],
+          story: [{ condition: 'back', to: 'folding' }],
+          talents: [{ condition: 'back', to: 'folding' }]
+        },
+        'folding'
+      )
     } as CharacterState),
+  getters: {
+    sidebarCurrent: (state) => state.sidebar.state
+  },
   actions: {
     setContentRight(cRight: ContentRightNames) {
       this.cRight = cRight;

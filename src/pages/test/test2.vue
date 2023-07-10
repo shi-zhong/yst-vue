@@ -1,35 +1,24 @@
 <script setup lang="ts">
-import { Modal } from '@@/commons/Modal/index';
-import { ScrollView } from '@/components';
-import { ref } from 'vue';
-
-const visible = ref(0);
-
+import TFS from '@/components/commons/ScrollView/TransformScroll.vue';
 </script>
 
 <template>
-  <Modal
-    :visible="visible"
-    theme="light"
-    @close="
-      () => {
-        visible = 0;
-      }
-    "
-    :ok="{
-      text: 'ok'
-    }"
-    :cancel="{ text: '', disable:true }"
+  <TFS
+    class="test"
+    slide
+    :border="{ top: 100 }"
   >
-    <ScrollView root-class="root">
-      <div style="height: 500px; width: 800px">456</div>
-    </ScrollView>
-  </Modal>
-  <button @click="visible++">open</button>
+    <div v-for="i in Array(80)">hello</div>
+  </TFS>
 </template>
 
 <style scoped lang="less">
 .root {
   height: 500px;
+}
+
+.test {
+  width: 500px;
+  height: 800px;
 }
 </style>

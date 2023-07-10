@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SidebarComponents, type SidebarNames } from './index';
+import { SidebarComponents } from './index';
 import { computed } from 'vue';
 
 import { useCharacterStateStore } from '@/stores/Character/CharacterState';
@@ -8,7 +8,11 @@ const store = useCharacterStateStore();
 
 const current = computed(
   () =>
-    SidebarComponents[(store.sidebar.stack[store.sidebar.stack.length - 1] as SidebarNames) || '']
+    SidebarComponents[
+      store.sidebarCurrent !== 'filter' && store.sidebarCurrent !== 'story'
+        ? store.sidebarCurrent
+        : 'folding'
+    ]
 );
 </script>
 <template>

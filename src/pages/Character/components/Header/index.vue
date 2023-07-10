@@ -5,34 +5,31 @@ import { Button } from '@/components';
 import Back from '@/assets/icons/back.svg';
 import Close from '@/assets/icons/close.svg';
 
-import { useCharacterStateStore } from '@/stores/Character/CharacterState'
+import { useCharacterStateStore } from '@/stores/Character/CharacterState';
 
 const S = ClassNameFactor('character-page-header-');
 
 const store = useCharacterStateStore();
-
 </script>
 
 <template>
   <div :class="S()">
     <div :class="S('back-buttons')">
       <Button
-        v-if="store.sidebar.stack.length >= 2"
+        v-if="['expand', 'story', 'filter'].includes(store.sidebarCurrent)"
         type="spread"
         :icon="Back"
-        @click="() => {
-          store.sidebar.pop();
-        }"
-      ></Button>
-      <Button
-        v-if="store.sidebar.stack.length === 1"
-        type="spread"
-        :icon="Close"
         @click="
           () => {
-            
+            store.sidebar.next('back');
           }
         "
+      ></Button>
+      <Button
+        v-if="store.sidebarCurrent === 'folding'"
+        type="spread"
+        :icon="Close"
+        @click="() => {}"
       ></Button>
     </div>
   </div>

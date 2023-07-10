@@ -92,7 +92,7 @@ const tab = ref('intro');
       </button>
     </div>
     <ScrollView
-      :rootClass="S('tab-item')"
+      :class="S('tab-item')"
       customScrollbar="custom"
       scrollBehavior="auto"
       slide

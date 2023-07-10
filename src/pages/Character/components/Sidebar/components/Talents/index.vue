@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Button } from '@/components';
+import { Button, Line } from '@/components';
 
 import TalentA from '@/assets/skills/bow_attack.png';
 
 import { ClassNameFactor } from '@/utils/className';
+
 import Tabs from './Tabs.vue';
 
 const S = ClassNameFactor('skills-');
@@ -34,18 +35,22 @@ const Talent = {
       <div :class="S('talent-lvl')">Lv.{{ Talent.lvl }}</div>
     </div>
     <Tabs />
+    <Line :style="{margin: '0 25px'}" />
     <div :class="S('button-con')">
       <Button
         type="shrink"
         icon="fork"
+        balance
         >降级
       </Button>
       <div :class="S('gap')"></div>
       <Button
         type="shrink"
         icon="round"
+        balance
         >升级
       </Button>
+      <!-- 已达到最大等级 -->
     </div>
   </div>
 </template>
@@ -92,7 +97,7 @@ const Talent = {
   }
 
   &-button-con {
-    margin: 20px 0;
+    // margin: 20px 0;
     padding: 20px;
     display: flex;
     flex-shrink: 0;

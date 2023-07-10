@@ -51,8 +51,8 @@ const select = ref(-1);
 const stateStore = useCharacterStateStore();
 
 const clickOutsideToClose = () => {
-  if (stateStore.sidebar.top === 'talents') {
-    stateStore.sidebar.pop();
+  if (stateStore.sidebar.state === 'talents') {
+    stateStore.sidebar.next('back');
   }
   document.removeEventListener('click', clickOutsideToClose);
   select.value = -1;
@@ -63,7 +63,7 @@ const handleClick = (e: Event) => {
     skill: (dataset) => {
       if (select.value === -1 && dataset.index) {
         document.addEventListener('click', clickOutsideToClose);
-        stateStore.sidebar.push('talents');
+        stateStore.sidebar.next('talents');
       }
       select.value = parseInt(dataset.index || '-1');
       return false;
