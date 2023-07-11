@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ScrollView, Button, Line } from '@/components';
-import { ClassNameFactor } from '@/utils';
+import { ScrollView, Button as FButton, Line } from '@/components';
+import { ClassNameFactor, EventDispatch } from '@/utils';
 import { ref } from 'vue';
+
+import Trash from '@/assets/icons/trash.png';
 
 const elements = [
   { txt: '火元素' },
@@ -25,6 +27,31 @@ const S = ClassNameFactor('filter-');
 
 const elementSelect = ref<string[]>([]);
 const weaponSelect = ref<string[]>([]);
+
+const updateModelElement = (e: Event) => {
+  EventDispatch<{ element: string }>(e, {
+    element: (dataset) => {
+      const index = elementSelect.value.indexOf(dataset.element);
+      if (index === -1) {
+        elementSelect.value.push(dataset.element);
+      } else {
+        elementSelect.value.splice(index, 1);
+      }
+    }
+  });
+};
+const updateModelWeapon = (e: Event) => {
+  EventDispatch<{ weapon: string }>(e, {
+    weapon: (dataset) => {
+      const index = weaponSelect.value.indexOf(dataset.weapon);
+      if (index === -1) {
+        weaponSelect.value.push(dataset.weapon);
+      } else {
+        weaponSelect.value.splice(index, 1);
+      }
+    }
+  });
+};
 </script>
 
 <template>
@@ -37,10 +64,18 @@ const weaponSelect = ref<string[]>([]);
         scrollbar
         slide
       >
-        <div :class="S('option-list')">
-          <label
+        <div :class="S('title')">元素</div>
+        <div
+          :class="S('option-list')"
+          data-type="click"
+          @click="updateModelElement"
+        >
+          <!-- 使用 input 和 label 会因为 label 的默认事件导致在列表滚动之后事件仍会执行，阻止默认之后会导致点击失效 -->
+          <div
             v-for="element in elements"
             :key="element.txt"
+            data-type="element"
+            :data-element="element.txt"
             :class="
               S({
                 'muti-option': true,
@@ -48,20 +83,21 @@ const weaponSelect = ref<string[]>([]);
               })
             "
           >
-            <input
-              type="checkbox"
-              :class="S('checkbox')"
-              name="element"
-              :value="element.txt"
-              v-model="elementSelect"
-            />
             {{ element.txt }}
-          </label>
+          </div>
         </div>
-        <div :class="S('option-list')">
+        <div :class="S('title')">武器</div>
+        <div
+          :class="S('option-list')"
+          data-type="click"
+          @click="updateModelWeapon"
+          style="margin-bottom: 50px"
+        >
           <label
             v-for="weapon in weapons"
             :key="weapon.txt"
+            data-type="weapon"
+            :data-weapon="weapon.txt"
             :class="
               S({
                 'muti-option': true,
@@ -69,28 +105,67 @@ const weaponSelect = ref<string[]>([]);
               })
             "
           >
-            <input
-              type="checkbox"
-              :class="S('checkbox')"
-              name="element"
-              :value="weapon.txt"
-              v-model="weaponSelect"
-            />
             {{ weapon.txt }}
           </label>
         </div>
       </ScrollView>
-      <div>
-        
-      </div>
+      <ScrollView
+        v-if="weaponSelect.length + elementSelect.length !== 0"
+        :class="S('selected')"
+        direction="x"
+        :border="{ left: 100, right: 200 }"
+      >
+        <div :class="S('flex')">
+          <template
+            v-for="element in elements"
+            :key="element.txt"
+          >
+            <div
+              :class="S('selected-item')"
+              v-show="elementSelect.includes(element.txt)"
+            >
+              {{ element.txt }}
+            </div>
+          </template>
+          <template
+            v-for="weapon in weapons"
+            :key="weapon.txt"
+          >
+            <div
+              :class="S('selected-item')"
+              v-show="weaponSelect.includes(weapon.txt)"
+            >
+              {{ weapon.txt }}
+            </div>
+          </template>
+          <div class="placeholder"></div>
+        </div>
+        <template #extra>
+          <button
+            :class="S('clear')"
+            @click="
+              () => {
+                elementSelect.splice(0);
+                weaponSelect.splice(0);
+              }
+            "
+          >
+            <img
+              :class="S('trash')"
+              :src="Trash"
+              alt=""
+            />清除
+          </button>
+        </template>
+      </ScrollView>
     </div>
     <div :class="S('options')">
-      <Button
+      <FButton
         type="shrink"
         @click="() => {}"
         icon="round"
         >确认筛选
-      </Button>
+      </FButton>
     </div>
   </div>
 </template>
@@ -124,12 +199,10 @@ const weaponSelect = ref<string[]>([]);
     align-items: center;
   }
 
-  &-option-list {
-    // display: flex;
-  }
-
-  &-checkbox {
-    display: none;
+  &-title {
+    color: @blank-white;
+    font-size: 26px;
+    margin: 15px;
   }
 
   &-muti-option {
@@ -191,7 +264,70 @@ const weaponSelect = ref<string[]>([]);
     }
   }
 
+  &-selected {
+    position: absolute;
+    bottom: 0;
+    background-color: @blank-white;
+    width: 100%;
+    height: 40px;
+    border-radius: 20px;
+
+    &-item {
+      height: 30px;
+      margin: 0 5px;
+      padding: 5px 10px;
+      box-sizing: border-box;
+
+      flex-shrink: 0;
+
+      line-height: 25px;
+      color: @fontdarkgray;
+
+      border-radius: 20px;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+      background-color: white;
+    }
+  }
+
+  &-flex {
+    display: inline-flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    min-width: 100%;
+    height: 40px;
+  }
+
+  &-clear {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    height: 30px;
+    margin: 5px;
+    padding: 5px 10px;
+    box-sizing: border-box;
+
+    line-height: 25px;
+    color: @blank-white;
+
+    border: 0;
+    border-radius: 20px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    background-color: @fontdarkgray;
+    padding-right: 20px;
+
+    outline: none;
+  }
+
+  &-trash {
+    width: 15px;
+    margin: 0 15px 0 0;
+    vertical-align: middle;
+  }
+
   &-list {
+    position: relative;
+
     flex-grow: 1;
     flex-shrink: 1;
     overflow: hidden;
@@ -205,5 +341,9 @@ const weaponSelect = ref<string[]>([]);
     flex-shrink: 0;
     margin: 20px 0;
   }
+}
+
+.placeholder {
+  width: 90px;
 }
 </style>

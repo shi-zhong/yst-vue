@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { merge, useDebounce, useMockScrollDrag, useThrettle } from '@/utils';
+import { useDebounce, useMockScrollDrag, useThrettle } from '@/utils';
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue';
 import ScrollBar from './Scrollbar.vue';
 
@@ -8,6 +8,7 @@ interface ScrollViewProps {
   scrollBehavior?: 'auto' | 'scroll' | 'hidden';
 
   customScrollbar?: string;
+  transformBoxClass?: string;
 
   border?: {
     top?: number;
@@ -160,6 +161,9 @@ const mergeAnimate = reactive<{
   muti: 'cancel'
 });
 
+/**
+ * @todo 优化滚动函数表现效果 
+ */
 const ScrollToAnimate = (
   pos: { top: number; left: number; behavior?: 'smooth' },
   muti: 'merge' | 'cancel' = 'cancel'
@@ -170,7 +174,7 @@ const ScrollToAnimate = (
     let transformTopChange = 0;
     let transformLeftChange = 0;
 
-    const base = 15;
+    const base = 20;
 
     /**
      *      ^
@@ -184,11 +188,12 @@ const ScrollToAnimate = (
      */
 
     const speedFn = (delta: number) => {
-      const max = 800;
+      const max = 500;
       if (Math.abs(delta) > max) {
         return 2 * base;
       } else {
-        return base + Math.abs((base / max) * delta);
+        return base + Math.abs((base / max / max) * delta * delta);
+        // return base + Math.abs((base / max) * delta);
       }
     };
 
@@ -361,12 +366,19 @@ const handleWheel = (e: WheelEvent) => {
   const limitedBorderPosition = LimitborderPosition(
     (mergeAnimate.close && mergeAnimate.muti === 'merge' ? mergeAnimate.y : transform.y) +
       0.5 * e.deltaY * coefficient.y,
-    0
+    (mergeAnimate.close && mergeAnimate.muti === 'merge' ? mergeAnimate.x : transform.x) +
+      0.5 * e.deltaY * coefficient.x
   );
   // 处理滚动上，使用transform
   if (props.direction === 'y' || props.direction === 'both') {
     ScrollToAnimate(
       { top: limitedBorderPosition.top, left: transform.x, behavior: 'smooth' },
+      'merge'
+    );
+  }
+  if (props.direction === 'x') {
+    ScrollToAnimate(
+      { top: transform.y, left: limitedBorderPosition.left, behavior: 'smooth' },
       'merge'
     );
   }
@@ -387,6 +399,7 @@ const cancelMove = ref(false);
 // 阻止移动的点击事件
 const onClickCapture = (e: Event) => {
   if (cancelMove.value) {
+    e.stopImmediatePropagation();
     e.stopPropagation();
   }
 
@@ -486,12 +499,14 @@ const showScroll = computed(
     @wheel="handleWheel"
   >
     <div
+      :class="{ 'horizontal-flow': direction === 'x' }"
       :style="{
         transform: `translate(${-1 * transform.x}px, ${-1 * transform.y}px)`
       }"
     >
       <slot></slot>
     </div>
+    <slot name="extra"></slot>
     <!-- 滚动条位置依赖于外部 -->
     <ScrollBar
       v-show="showScroll"
@@ -509,5 +524,10 @@ const showScroll = computed(
   position: relative;
   margin-right: 5px;
   overflow: hidden;
+}
+.horizontal-flow {
+  display: inline-block;
+  height: 100%;
+  white-space: nowrap;
 }
 </style>
