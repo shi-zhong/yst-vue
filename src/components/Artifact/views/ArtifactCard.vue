@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import { Lock } from '@/components/Tags';
 import { type BasicCardProps } from '@/components/Cards/interface';
-import BasicCard from '@/components/Cards/index.vue';
-import { useAttrs } from 'vue';
+import { BasicCard } from '@/components/Cards';
 
-interface ArtifactCardProps {
+interface ArtifactCardProps extends BasicCardProps {
   locked: boolean;
 }
 
 const props = defineProps<ArtifactCardProps>();
-const attr = useAttrs() as unknown as BasicCardProps;
+
 </script>
 
 <template>
   <BasicCard
     type="artifact"
-    v-bind="attr"
+    v-bind="props"
   >
     <Lock
       v-if="props.locked"

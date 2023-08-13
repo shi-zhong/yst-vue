@@ -1,2 +1,4 @@
-export { ArtifactCard } from './views/ArtifactCard';
-export { ArtifactDetailCard } from './views/ArtifactDetailCard';
+import ArtifactCard from './views/ArtifactCard.vue';
+import ArtifactDetailCard from './views/ArtifactDetailCard.vue';
+
+export { ArtifactCard, ArtifactDetailCard };

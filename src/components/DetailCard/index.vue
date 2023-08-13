@@ -2,27 +2,11 @@
 import { Rarity, RarityToColor } from '@/components/Tags';
 import { ClassNameFactor } from '@/utils/className';
 import { toRefs } from 'vue';
-
-interface BasicDetailCardProps {
-  title: string;
-  type: string;
-  main: {
-    key: string;
-    value: string;
-    [key: string]: any;
-  };
-  sub?: {
-    key: string;
-    value: string;
-    [key: string]: any;
-  };
-  rarity: 1 | 2 | 3 | 4 | 5;
-  imgUrl: string;
-}
+import { type BasicDetailCardProps } from './interface';
 
 const props = defineProps<BasicDetailCardProps>();
 
-const { title, type, sub, main, rarity, imgUrl } = toRefs(props);
+const { title, type, sub, main, rarity, imgurl } = toRefs(props);
 
 const S = ClassNameFactor('common-detail-card');
 
@@ -47,8 +31,10 @@ const S = ClassNameFactor('common-detail-card');
     <div :class="S({ '-attribute': ['', `-${RarityToColor(rarity)}`] })">
       <div :class="S(['-attribute-data'])">
         <div>{{ type }}</div>
+
         <div>{{ sub?.key || '' }}</div>
         <div>{{ sub?.value || '' }}</div>
+
         <div>{{ main.key }}</div>
         <div>{{ main.value }}</div>
         <Rarity
@@ -60,7 +46,7 @@ const S = ClassNameFactor('common-detail-card');
       <div>
         <img
           :draggable="false"
-          :src="imgUrl"
+          :src="imgurl"
           alt="img"
         />
       </div>
@@ -70,10 +56,8 @@ const S = ClassNameFactor('common-detail-card');
 </template>
 
 <style scoped lang="less">
-
 @title-height: 50px;
-@leftindent: @title-height / 2;
-
+@leftindent: (@title-height / 2);
 
 .common-detail-card {
   margin: 10px;
@@ -81,22 +65,26 @@ const S = ClassNameFactor('common-detail-card');
   box-shadow: @box-shadow;
   user-select: none;
 
-  @title-border: @title-height / 17;
+  @title-border: (@title-height / 17);
+  // @title-border: 2px;
 
   &-title {
     position: relative;
     height: @title-height;
-    padding: @title-border;
+    line-height: @title-height;
+    padding: 3px;
+    font-size: 25px;
+
+    display: flex;
+    align-items: center;
 
     & > p {
       width: 100%;
-      height: 100%;
-      line-height: 14 * @title-height / 17;
+      box-sizing: border-box;
       border: @title-border solid rgba(56, 56, 56, 0.2);
       padding-left: @leftindent;
-      margin: 0;
 
-      font-size: @title-height / 2;
+      font-size: (@title-height / 2);
 
       color: @blank-white;
     }
@@ -143,7 +131,7 @@ const S = ClassNameFactor('common-detail-card');
       height: 100%;
       &:first-child {
         padding-top: 5px;
-        width: 5 * @title-height;
+        width: 4 * @title-height;
       }
       &:last-child {
         width: 4 * @title-height;
@@ -153,11 +141,11 @@ const S = ClassNameFactor('common-detail-card');
     &-data {
       padding-left: @leftindent + 4;
       & > div {
-        @attribute-base-height: @title-height / 2;
-        @attribute-base-font-size: @title-height / 4;
+        @attribute-base-height: (@title-height / 2);
+        @attribute-base-font-size: (@title-height / 4);
 
         padding: 2px 0;
-        line-height: @title-height / 1.5;
+        line-height: (@title-height / 1.5);
         box-sizing: border-box;
 
         &:nth-child(1),

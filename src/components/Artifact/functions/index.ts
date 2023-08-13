@@ -42,7 +42,7 @@ const ArtifactEffectSearch = (id: number): ArtifactSuitModel => {
         },
         {
           limit: 4,
-          describe: '装备该圣遗物套装的角色为法器、弓箭角色时,角色重击造成的伤害提高35%。'
+          describe: '装备该圣遗物套装的角色为法器、弓箭角色时，角色重击造成的伤害提高35%。'
         }
       ]
     }

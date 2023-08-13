@@ -49,6 +49,7 @@ const query = ['元素精通', '元素充能效率', '冷却缩减', '护盾强�
 
 const props = defineProps<{
   visible: boolean;
+  prefix?: boolean;
   basicData: { basic: number; extra: number }[];
   moreData: number[];
   elementData: { basic: number; extra: number }[];
@@ -65,7 +66,7 @@ const basicFormat = (p: { basic: number; extra: number }) => {
 
 const moreFormat = (n: number) => `${Number(n).toFixed(1)}%`;
 
-const Line = (props: {
+const Line = (prop: {
   icon: string;
   txt: string;
   data: {
@@ -74,22 +75,26 @@ const Line = (props: {
   };
   tag?: boolean;
 }) => {
+  const { icon, txt, data } = prop;
   return (
     <div
-      class={'d-line ' + (query.includes(props.txt) ? 'd-query' : '')}
+      class={'d-line ' + (query.includes(txt) ? 'd-query' : '')}
       data-type="dataline"
-      data-txt={props.txt}
+      data-txt={txt}
     >
       <Icon
-        src={props.icon}
+        src={icon}
         type="projection"
         style={{ height: '30px', width: '30px', margin: '5px 20px' }}
         size={25}
         color="white"
       />
-      <div>{props.txt}</div>
-      <div>{props.data.basic || ''}</div>
-      <div>&nbsp;{props.data.extra || ''}</div>
+      <div>{txt}</div>
+      <div>
+        {props.prefix && txt !== '体力上限' ? '+' : ''}
+        {data.basic || ''}
+      </div>
+      <div>&nbsp;{data.extra || ''}</div>
     </div>
   );
 };
