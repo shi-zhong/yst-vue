@@ -26,7 +26,7 @@ const options = [
 const S = ClassNameFactor('expand-character-');
 
 const { list } = storeToRefs(store);
-const { team } = storeToRefs(stateStore);
+const { team, sidebar } = storeToRefs(stateStore);
 </script>
 
 <template>
@@ -74,7 +74,7 @@ const { team } = storeToRefs(stateStore);
       <Button
         type="shrink"
         shape="round"
-        @click="() => {}"
+        @click="() => sidebar.next('filter')"
         :icon="Filter"
       ></Button>
       <Select
@@ -97,7 +97,7 @@ const { team } = storeToRefs(stateStore);
 .expand-character {
   &- {
     .sidebar();
-    width: 430px;
+    width: 500px;
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-between;
@@ -148,19 +148,21 @@ const { team } = storeToRefs(stateStore);
   }
 
   &-list {
+    margin:  0 35px;
     flex-grow: 1;
     flex-shrink: 1;
   }
 
   &-select {
-    width: 250px;
+    width: 300px;
   }
 
   &-options {
     display: flex;
     flex-shrink: 0;
     justify-content: space-between;
-    margin: 20px;
+    margin: 20px 30px;
+    z-index: 3;
   }
 }
 </style>

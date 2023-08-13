@@ -2,6 +2,7 @@
 import { ScrollView, Button as FButton, Line } from '@/components';
 import { ClassNameFactor, EventDispatch } from '@/utils';
 import { ref } from 'vue';
+import { useCharacterStateStore, useCharacterDataStore } from '@/stores/Character';
 
 import Trash from '@/assets/icons/trash.png';
 
@@ -28,6 +29,9 @@ const S = ClassNameFactor('filter-');
 const elementSelect = ref<string[]>([]);
 const weaponSelect = ref<string[]>([]);
 
+const store = useCharacterStateStore();
+const dataStore = useCharacterDataStore();
+
 const updateModelElement = (e: Event) => {
   EventDispatch<{ element: string }>(e, {
     element: (dataset) => {
@@ -52,120 +56,153 @@ const updateModelWeapon = (e: Event) => {
     }
   });
 };
+
+const close = () => {
+  elementSelect.value = [...dataStore.filter.element];
+  weaponSelect.value = [...dataStore.filter.weapon];
+
+  store.sidebar.next('back');
+};
+
+const render = document.getElementsByClassName('character-page-')[0];
 </script>
 
 <template>
-  <div :class="S()">
-    <div :class="S('header')">筛选</div>
-    <Line />
-    <div :class="S('list')">
-      <ScrollView
-        :class="S('root')"
-        scrollbar
-        slide
-      >
-        <div :class="S('title')">元素</div>
-        <div
-          :class="S('option-list')"
-          data-type="click"
-          @click="updateModelElement"
+  <div
+    :class="S('mask')"
+    @click="close"
+  >
+    <div
+      :class="S()"
+      @click.stop="() => {}"
+    >
+      <div :class="S('header')">筛选</div>
+      <Line />
+      <div :class="S('list')">
+        <ScrollView
+          :class="S('root')"
+          scrollbar
+          slide
         >
-          <!-- 使用 input 和 label 会因为 label 的默认事件导致在列表滚动之后事件仍会执行，阻止默认之后会导致点击失效 -->
+          <div :class="S('title')">元素</div>
           <div
-            v-for="element in elements"
-            :key="element.txt"
-            data-type="element"
-            :data-element="element.txt"
-            :class="
-              S({
-                'muti-option': true,
-                select: elementSelect.includes(element.txt)
-              })
-            "
+            :class="S('option-list')"
+            data-type="click"
+            @click="updateModelElement"
           >
-            {{ element.txt }}
-          </div>
-        </div>
-        <div :class="S('title')">武器</div>
-        <div
-          :class="S('option-list')"
-          data-type="click"
-          @click="updateModelWeapon"
-          style="margin-bottom: 50px"
-        >
-          <label
-            v-for="weapon in weapons"
-            :key="weapon.txt"
-            data-type="weapon"
-            :data-weapon="weapon.txt"
-            :class="
-              S({
-                'muti-option': true,
-                select: weaponSelect.includes(weapon.txt)
-              })
-            "
-          >
-            {{ weapon.txt }}
-          </label>
-        </div>
-      </ScrollView>
-      <ScrollView
-        v-if="weaponSelect.length + elementSelect.length !== 0"
-        :class="S('selected')"
-        direction="x"
-        :border="{ left: 100, right: 200 }"
-      >
-        <div :class="S('flex')">
-          <template
-            v-for="element in elements"
-            :key="element.txt"
-          >
+            <!-- 使用 input 和 label 会因为 label 的默认事件导致在列表滚动之后事件仍会执行，阻止默认之后会导致点击失效 -->
             <div
-              :class="S('selected-item')"
-              v-show="elementSelect.includes(element.txt)"
+              v-for="element in elements"
+              :key="element.txt"
+              data-type="element"
+              :data-element="element.txt"
+              :class="
+                S({
+                  'muti-option': true,
+                  select: elementSelect.includes(element.txt)
+                })
+              "
             >
               {{ element.txt }}
             </div>
-          </template>
-          <template
-            v-for="weapon in weapons"
-            :key="weapon.txt"
+          </div>
+          <div :class="S('title')">武器</div>
+          <div
+            :class="S('option-list')"
+            data-type="click"
+            @click="updateModelWeapon"
+            style="margin-bottom: 50px"
           >
-            <div
-              :class="S('selected-item')"
-              v-show="weaponSelect.includes(weapon.txt)"
+            <label
+              v-for="weapon in weapons"
+              :key="weapon.txt"
+              data-type="weapon"
+              :data-weapon="weapon.txt"
+              :class="
+                S({
+                  'muti-option': true,
+                  select: weaponSelect.includes(weapon.txt)
+                })
+              "
             >
               {{ weapon.txt }}
+            </label>
+          </div>
+        </ScrollView>
+        <Teleport :to="render">
+          <Transition>
+            <div
+              v-if="weaponSelect.length + elementSelect.length !== 0"
+              class="select-render-container"
+            >
+              <ScrollView
+                :class="S('selected')"
+                direction="x"
+                :border="{ left: 100, right: 200 }"
+              >
+                <div :class="S('flex')">
+                  <template
+                    v-for="element in elements"
+                    :key="element.txt"
+                  >
+                    <div
+                      :class="S('selected-item')"
+                      v-show="elementSelect.includes(element.txt)"
+                    >
+                      {{ element.txt }}
+                    </div>
+                  </template>
+                  <template
+                    v-for="weapon in weapons"
+                    :key="weapon.txt"
+                  >
+                    <div
+                      :class="S('selected-item')"
+                      v-show="weaponSelect.includes(weapon.txt)"
+                    >
+                      {{ weapon.txt }}
+                    </div>
+                  </template>
+                  <div class="placeholder"></div>
+                </div>
+                <template #extra>
+                  <button
+                    :class="S('clear')"
+                    @click="
+                      () => {
+                        elementSelect.splice(0);
+                        weaponSelect.splice(0);
+                      }
+                    "
+                  >
+                    <img
+                      :class="S('trash')"
+                      :src="Trash"
+                      alt=""
+                    />清除
+                  </button>
+                </template>
+              </ScrollView>
             </div>
-          </template>
-          <div class="placeholder"></div>
-        </div>
-        <template #extra>
-          <button
-            :class="S('clear')"
-            @click="
-              () => {
-                elementSelect.splice(0);
-                weaponSelect.splice(0);
-              }
-            "
-          >
-            <img
-              :class="S('trash')"
-              :src="Trash"
-              alt=""
-            />清除
-          </button>
-        </template>
-      </ScrollView>
-    </div>
-    <div :class="S('options')">
-      <FButton
-        type="shrink"
-        @click="() => {}"
-        icon="round"
-        >确认筛选
-      </FButton>
+          </Transition>
+        </Teleport>
+      </div>
+      <div :class="S('options')">
+        <FButton
+          type="shrink"
+          @click="
+            () => {
+              dataStore.setFilter({
+                element: [...elementSelect],
+                weapon: [...weaponSelect]
+              });
+              store.sidebar.next('back');
+            }
+          "
+          icon="round"
+          >确认筛选
+        </FButton>
+      </div>
     </div>
   </div>
 </template>
@@ -184,6 +221,12 @@ const updateModelWeapon = (e: Event) => {
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-between;
+  }
+  &-mask {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
   }
   &-header {
     height: 60px;
@@ -265,8 +308,6 @@ const updateModelWeapon = (e: Event) => {
   }
 
   &-selected {
-    position: absolute;
-    bottom: 0;
     background-color: #ede5d8c0;
     width: calc(100% - 25px);
     box-sizing: border-box;
@@ -346,6 +387,14 @@ const updateModelWeapon = (e: Event) => {
   }
 }
 
+.select-render-container {
+  width: 500px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 2;
+  bottom: 90px;
+}
 .placeholder {
   width: 90px;
 }

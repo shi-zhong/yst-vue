@@ -7,8 +7,15 @@ type c = CharacterCardProps & BasicCardProps & { avatar: string; id: number; nam
 
 export const useCharacterDataStore = defineStore('character', {
   state: () => ({
-    list: list as unknown as c[]
+    list: list as unknown as c[],
+    filter: {
+      element: [] as string[],
+      weapon: [] as string[]
+    }
   }),
-  actions: {}
+  actions: {
+    setFilter(filter: { element: string[]; weapon: string[] }) {
+      this.filter = filter;
+    }
+  }
 });
-

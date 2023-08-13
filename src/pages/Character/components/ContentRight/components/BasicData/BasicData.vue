@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Button, RankBar, Icon } from '@/components';
+import { useCharacterStateStore } from '@/stores/Character';
 import { LongPress } from '@/utils/directive/longPress';
-import { ref } from 'vue';
+import { watch, ref } from 'vue';
 import LifeMax from '@/assets/icons/lifeMax.png';
 import Attack from '@/assets/icons/attack.png';
 import Defence from '@/assets/icons/defence.png';
@@ -15,6 +16,16 @@ const buttonSelect = ref(false);
 const lvl = ref(1);
 const rank = ref<0 | 1 | 2 | 3 | 4 | 5 | 6>(0);
 const detailVisible = ref(false);
+const store = useCharacterStateStore();
+
+watch(
+  () => store.sidebar.state,
+  () => {
+    if (store.sidebar.state !== 'folding') {
+      buttonSelect.value = false;
+    }
+  }
+);
 
 const datas = [
   {
@@ -62,6 +73,7 @@ const decideMin = (rank: 0 | 1 | 2 | 3 | 4 | 5 | 6) => {
   return [1, 20, 40, 50, 60, 70, 80][rank];
 };
 const decideMaxTxt = () => {
+  if (store.sidebar.state !== 'folding') return '培养';
   if (lvl.value === 90) {
     return '满级';
   } else if (decideMax(rank.value) === lvl.value) {
@@ -170,6 +182,7 @@ const data = {
         :class="!buttonSelect ? 'button-round' : 'button-line'"
         @click="
           clickCancel(() => {
+            if (store.sidebar.state !== 'folding') return;
             if (buttonSelect) {
               lvlDec();
             } else {
@@ -199,6 +212,10 @@ const data = {
         :class="buttonSelect ? 'button-round' : 'button-line'"
         @click="
           clickCancel(() => {
+            if (store.sidebar.state !== 'folding') {
+              store.sidebar.next('back');
+              return;
+            }
             if (!buttonSelect) {
               lvlAdd();
             } else {

@@ -7,8 +7,8 @@ import Constellation from './components/Constellation/index.vue';
 
 export const SidebarComponents = {
   folding: FoldingCharacterDrawer,
-  // expand: ExpandCharacterList,
-  expand: Filter,
+  expand: ExpandCharacterList,
+  filter: Filter,
   talents: Talents,
   life: Constellation
 };

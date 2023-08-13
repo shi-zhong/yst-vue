@@ -9,7 +9,7 @@ const store = useCharacterStateStore();
 const current = computed(
   () =>
     SidebarComponents[
-      store.sidebarCurrent !== 'filter' && store.sidebarCurrent !== 'story'
+      store.sidebarCurrent !== 'story'
         ? store.sidebarCurrent
         : 'folding'
     ]
