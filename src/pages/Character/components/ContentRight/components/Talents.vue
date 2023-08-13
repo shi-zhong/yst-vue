@@ -118,8 +118,16 @@ const handleClick = (e: Event) => {
 
 <style scoped lang="less">
 .talents {
+  &-content-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 100%;
+  }
+
   &-box {
-    position: absolute;
+    width: 100%;
     overflow: hidden;
     padding-right: 100px;
   }
@@ -175,16 +183,12 @@ const handleClick = (e: Event) => {
   }
 
   &-extra {
-    margin: 50px 100px;
+    margin: 50px 120px;
 
     color: white;
     font-size: 20px;
     opacity: 0.8;
     user-select: none;
-
-    position: absolute;
-    bottom: 0;
-    right: 0;
   }
 }
 </style>

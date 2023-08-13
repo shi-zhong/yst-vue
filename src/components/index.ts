@@ -8,5 +8,6 @@ import HighLight from './HighLight/index.vue';
 import Button from './commons/Button/Button.vue';
 import ScrollView from './commons/ScrollView/TransformScroll.vue';
 import Select from './commons/Select/index.vue';
+import Icon from './commons/Icon/index.vue';
 
-export { HighLight, Select, ScrollView, Button };
+export { HighLight, Select, ScrollView, Button, Icon };

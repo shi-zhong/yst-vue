@@ -2,13 +2,12 @@
 import RankPicture from '@/assets/icons/rank_star.webp';
 
 interface RankBarProps {
-  rank: 0 | 1 | 2 | 3 | 4 | 6;
+  rank: 0 | 1 | 2 | 3 | 4 | 5 | 6;
   size?: number;
   display?: 'block' | 'inline-block';
 }
 
 const props = defineProps<RankBarProps>();
-
 </script>
 
 <template>

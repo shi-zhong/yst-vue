@@ -57,7 +57,7 @@ export const Modal = defineComponent(
     const instance = Symbol('modal');
 
     const index = ref(0);
-
+ 
     watch(
       () => props.visible,
       (aft, pve) => {

@@ -267,10 +267,13 @@ const updateModelWeapon = (e: Event) => {
   &-selected {
     position: absolute;
     bottom: 0;
-    background-color: @blank-white;
-    width: 100%;
+    background-color: #ede5d8c0;
+    width: calc(100% - 25px);
+    box-sizing: border-box;
+    margin: 0 15px 0 10px;
     height: 40px;
     border-radius: 20px;
+    overflow: hidden;
 
     &-item {
       height: 30px;

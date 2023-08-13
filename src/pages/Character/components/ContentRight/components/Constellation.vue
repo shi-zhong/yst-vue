@@ -171,7 +171,7 @@ const nowlife = 4;
     color: @blank-white;
     user-select: none;
     &:active {
-      background-color: rgba(0, 0, 0, 0.1);
+      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1), transparent);
     }
   }
 

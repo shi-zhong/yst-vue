@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRefs, ref } from 'vue';
+import { toRefs } from 'vue';
 import { ClassNameFactor } from '@/utils/className';
 import Icon from './Icon.vue';
 import { type ButtonProps, type ButtonEmit } from './interface';
@@ -13,29 +13,32 @@ const emit = defineEmits<ButtonEmit>();
 
 const S = ClassNameFactor('button-wrap-');
 
-const button = ref('');
+const decideExtraButtonStyle = () => {
+  let button = '';
 
-switch (type.value) {
-  case 'shrink': {
-    if (props.shape && props?.shape === 'round') {
-      button.value = S(['shrink', 'round']);
-    } else {
-      button.value = S({
-        shrink: true,
-        'shrink-disable': Boolean(props.disable)
-      });
+  switch (type.value) {
+    case 'shrink': {
+      if (props.shape && props?.shape === 'round') {
+        button = S(['shrink', 'round']);
+      } else {
+        button = S({
+          shrink: true,
+          'shrink-disable': Boolean(props.disable)
+        });
+      }
+      break;
     }
-    break;
+    case 'spread': {
+      button = S('spread');
+      break;
+    }
   }
-  case 'spread': {
-    button.value = S('spread');
-    break;
-  }
-}
+  return button;
+};
 </script>
 <template>
   <button
-    :class="[S({ button: true, ['theme-' + theme]: type === 'shrink' }), button]"
+    :class="[S({ button: true, ['theme-' + theme]: type === 'shrink' }), decideExtraButtonStyle()]"
     @click="emit('click')"
     :disabled="disable"
   >
@@ -123,7 +126,7 @@ switch (type.value) {
 .button-wrap {
   &-button {
     position: relative;
-    z-index: 4;
+    z-index: 1;
 
     min-width: 60px;
 
@@ -237,7 +240,7 @@ switch (type.value) {
 .button-wrap {
   &-shrink {
     width: 100%;
-    z-index: 5;
+    z-index: 1;
     font-size: 23px;
     min-width: 50px;
     min-height: 50px;

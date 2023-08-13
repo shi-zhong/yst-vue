@@ -1,4 +1,4 @@
-import BasicAttr from './components/BasicData.vue';
+import BasicAttr from './components/BasicData/BasicData.vue';
 import Constellation from './components/Constellation.vue';
 import Talents from './components/Talents.vue';
 
@@ -9,4 +9,3 @@ export const ContentRightComponents = {
 };
 
 export type ContentRightNames = keyof typeof ContentRightComponents;
-

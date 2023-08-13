@@ -4,7 +4,7 @@
  * 在子元素委托点也要用 data-type 定义， 如果冒泡过程中匹配，会返回该元素的 dataset 集合
  * 回调函数如果返回true，分发器会忽略这次匹配，继续向上匹配
  */
-export const EventDispatch = <T = {}>(
+export const EventDispatch = <T = { [key: string]: string }>(
   e: Event,
   events: {
     [key: string]: (dataset: T) => void | boolean | undefined;

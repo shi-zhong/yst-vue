@@ -493,7 +493,7 @@ const showScroll = computed(
   <div
     class="scroll-container"
     ref="scrollRef"
-    :datatype="dataType"
+    :data-type="dataType"
     @click="(e:Event) => emits('click',e)"
     @click.capture="onClickCapture"
     @wheel="handleWheel"

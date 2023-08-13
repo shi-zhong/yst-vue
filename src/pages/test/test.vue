@@ -11,6 +11,7 @@ const visible2 = ref(0);
 <template>
   <Modal
     :visible="visible"
+    mask
     @close="
       () => {
         visible = 0;
@@ -23,6 +24,7 @@ const visible2 = ref(0);
   </Modal>
   <Modal
     :visible="visible1"
+    mask
     @close="
       () => {
         visible1 = 0;
@@ -32,6 +34,7 @@ const visible2 = ref(0);
   </Modal>
   <Modal
     :visible="visible2"
+    mask
     @close="
       () => {
         visible2 = 0;

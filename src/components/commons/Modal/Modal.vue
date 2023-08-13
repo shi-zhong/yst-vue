@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components';
 import { ClassNameFactor } from '@/utils';
-import CloseSVG from '@/assets/icons/close.svg';
+import CloseSVG from '@/assets/icons/close.png';
 
 /**
  * 支持按钮配置 文字 图标 事件 禁用

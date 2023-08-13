@@ -2,8 +2,8 @@
 import { ClassNameFactor } from '@/utils/className';
 import { Button } from '@/components';
 
-import Back from '@/assets/icons/back.svg';
-import Close from '@/assets/icons/close.svg';
+import Back from '@/assets/icons/back.png';
+import Close from '@/assets/icons/close.png';
 
 import { useCharacterStateStore } from '@/stores/Character/CharacterState';
 
