@@ -53,6 +53,7 @@ watch(
   text-align: justify;
   display: inline-block;
   color: @fontlightgray;
+  line-height: 30px;
 }
 .suit {
   display: flex;

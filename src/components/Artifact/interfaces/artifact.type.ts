@@ -1,4 +1,4 @@
-export enum ArtifactSoltChinese {
+export enum ArtifactSlotChinese {
   FlowerOfLife = '生之花',
   PlumnOfDeath = '死之羽',
   SandsOfEon = '时之沙',
@@ -6,14 +6,14 @@ export enum ArtifactSoltChinese {
   CircletOfLogos = '理之冠',
 }
 
-export type ArtifactSolt = keyof typeof ArtifactSoltChinese;
+export type ArtifactSlot = keyof typeof ArtifactSlotChinese;
 
 export interface ArtifactSuitModel {
   id: number;
   name: string;
-  raity: 1 | 2 | 3 | 4 | 5;
-  solts: {
-    [key in ArtifactSolt]: {
+  rarity: 1 | 2 | 3 | 4 | 5;
+  slots: {
+    [key in ArtifactSlot]: {
       name: string;
       imgUrl: string;
       describe: string;

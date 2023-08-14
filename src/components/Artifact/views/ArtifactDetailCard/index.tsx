@@ -3,18 +3,18 @@ import { BasicDetailCard, BasicDetailCardProps } from '@/components/DetailCard';
 import { ClassNameWithCSSModuleFactor } from '@/utils/className';
 import {
   ArtifactInstanceModel,
-  ArtifactSolt,
+  ArtifactSlot,
   ArtifactSuitModel,
 } from '../../interfaces';
 
 import { useEffect, useState } from 'react';
-import { GetArtifactSolt, GetArtifactTypeChinese } from '../../functions';
+import { GetArtifactSlot, GetArtifactTypeChinese } from '../../functions';
 import ArtifactStyle from './index.less';
 
 interface ArtifactDetailCardProps extends BasicDetailCardProps {
   id: number;
   artifact: ArtifactSuitModel;
-  type: ArtifactSolt;
+  type: ArtifactSlot;
   lock: boolean;
   suitCount: 0 | 1 | 2 | 3 | 4 | 5;
   lvl: number;
@@ -29,7 +29,7 @@ const ArtifactDetailCard = (props: ArtifactDetailCardProps) => {
   const prefix = 'artifact-detail-card-';
   const { id, subs, artifact, type, suitCount } = props;
 
-  const [solt, setSolt] = useState({ name: '', imgUrl: '', describe: '' } as {
+  const [slot, setSlot] = useState({ name: '', imgUrl: '', describe: '' } as {
     name: string;
     imgUrl: string;
     describe: string;
@@ -38,14 +38,14 @@ const ArtifactDetailCard = (props: ArtifactDetailCardProps) => {
   const Style = ClassNameWithCSSModuleFactor(ArtifactStyle, prefix);
 
   useEffect(() => {
-    setSolt(GetArtifactSolt(artifact, type));
+    setSlot(GetArtifactSlot(artifact, type));
   }, []);
 
   return (
     <BasicDetailCard
       {...props}
-      imgUrl={solt.imgUrl}
-      title={solt.name}
+      imgUrl={slot.imgUrl}
+      title={slot.name}
       type={GetArtifactTypeChinese(type)}
     >
       <div className={Style(['describe'])}>
@@ -81,7 +81,7 @@ const ArtifactDetailCard = (props: ArtifactDetailCardProps) => {
             </div>
           ))}
         </div>
-        <div>{solt.describe}</div>
+        <div>{slot.describe}</div>
       </div>
     </BasicDetailCard>
   );

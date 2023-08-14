@@ -6,7 +6,7 @@ import LifeMax from '@/assets/icons/lifeMax.png';
 import Attack from '@/assets/icons/attack.png';
 import Defence from '@/assets/icons/defence.png';
 import EMaster from '@/assets/icons/elementMaster.png';
-
+import { ArtifactDescribe } from '@/components/Artifact';
 
 import DetailData from './BasicData/DetailDate.vue';
 
@@ -80,8 +80,6 @@ const data = {
     { basic: 12, extra: 0 }
   ]
 };
-
-const artifacts = []
 </script>
 
 <template>
@@ -119,7 +117,11 @@ const artifacts = []
         :element-data="data.element"
       />
       <div class="c-intro">
-        <div>套装效果</div>
+        <ArtifactDescribe
+          :id="1638"
+          :active="3"
+          hideDisable
+        />
       </div>
     </div>
 
@@ -201,7 +203,7 @@ const artifacts = []
 .c-intro {
   margin: 20px 0;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 20px;
+  font-size: 22px;
   line-height: 25px;
 }
 </style>

@@ -1,9 +1,9 @@
-import { type ArtifactSolt } from './index';
+import { type ArtifactSlot } from './index';
 
 export interface ArtifactInstanceModel {
   id: number;
   suit_id: number;
-  solt: ArtifactSolt;
+  slot: ArtifactSlot;
   main: {
     tag: string;
     value: number;

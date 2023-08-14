@@ -1,4 +1,4 @@
-import { type ArtifactSolt } from './index';
+import { type ArtifactSlot } from './index';
 
 export interface ArtifactAttributesModel {
   main: {
@@ -10,7 +10,7 @@ export interface ArtifactAttributesModel {
 }
 
 export type ArtifactMainAttributes = {
-  [key in ArtifactSolt]: string[];
+  [key in ArtifactSlot]: string[];
 };
 
 export type ArtifactLvlData = {

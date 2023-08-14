@@ -3,7 +3,7 @@
  */
 
 import {
-  type ArtifactSolt,
+  type ArtifactSlot,
   type ArtifactLvlData,
   type ArtifactAttributesModel,
 } from '../interfaces';
@@ -203,14 +203,14 @@ const getSingleSubAttribute = (
 const verifyAllSubAttributes = (
   attributes: { tag: string; value: number }[],
   maxUpgradeTime: number,
-  raity: number,
+  rarity: number,
 ) => {
   // 计算每条属性的可能值 一条属性可能有多种强化次数的可能,剩余强化次数要减去最小的可能
   let usedUpgradeTime = 0;
   let leftUpgradeTime = maxUpgradeTime;
   let flag = true;
   const artifactAttributeStaticData =
-    ArtifactAttributeShifts[['one', 'two', 'three', 'four', 'five'][raity - 1]]
+    ArtifactAttributeShifts[['one', 'two', 'three', 'four', 'five'][rarity - 1]]
       .sub;
 
   // 负责计算数值是否正确，并给出最接近的数值
@@ -278,24 +278,24 @@ const verifyAllSubAttributes = (
 
 /**
  * 校验主属性是否存在
- * @param solt
+ * @param slot
  * @param tag
  * @returns
  */
-const VerifyMainAttributeWithSoltIsExist = (
-  solt: ArtifactSolt,
+const VerifyMainAttributeWithSlotIsExist = (
+  slot: ArtifactSlot,
   tag: string,
 ): boolean => {
-  return ArtifactMainAttributes[solt].indexOf(tag) !== -1;
+  return ArtifactMainAttributes[slot].indexOf(tag) !== -1;
 };
 
 const GetMainAttributesValue = (
   attribute: { tag: string; value: number },
   lvl: number,
-  raity: number,
+  rarity: number,
 ) => {
   const main = ArtifactAttributeShifts[
-    ['one', 'two', 'three', 'four', 'five'][raity - 1]
+    ['one', 'two', 'three', 'four', 'five'][rarity - 1]
   ] as ArtifactAttributesModel;
 
   const [lvl_0, lvl_grow] = main[attribute.tag] || [0, 0];
@@ -312,4 +312,4 @@ const ArtifactChineseMap = (tag: string): string => {
   return AttributesConvertToChineseMapper[tag];
 };
 
-export { verifyAllSubAttributes, VerifyMainAttributeWithSoltIsExist };
+export { verifyAllSubAttributes, VerifyMainAttributeWithSlotIsExist };

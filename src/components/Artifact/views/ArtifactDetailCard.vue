@@ -2,7 +2,7 @@
 import { Lock } from '@/components/Tags';
 import BasicDetailCard from '@/components/DetailCard/index.vue';
 import { ClassNameFactor } from '@/utils/className';
-import { type ArtifactSolt } from '../interfaces';
+import { type ArtifactSlot } from '../interfaces';
 import Describe from './ArtifactDescribe.vue';
 import { GetArtifactTypeChinese, ArtifactEffectSearch } from '../functions';
 
@@ -11,7 +11,7 @@ import { merge } from '@/utils';
 
 interface ArtifactDetailCardProps {
   id: number;
-  type: ArtifactSolt;
+  type: ArtifactSlot;
   lock: boolean;
   suitCount: 0 | 1 | 2 | 3 | 4 | 5;
   lvl: number;
@@ -50,11 +50,11 @@ watch(
 
 <template>
   <BasicDetailCard
-    :title="data.solts[props.type]!.name"
-    :rarity="data.raity"
+    :title="data.slots[props.type]!.name"
+    :rarity="data.rarity"
     :sub="sub"
     :main="main"
-    :imgurl="data.solts[props.type]!.imgUrl"
+    :imgurl="data.slots[props.type]!.imgUrl"
     :type="GetArtifactTypeChinese(type)"
   >
     <div :class="S('describe')">
@@ -79,7 +79,7 @@ watch(
         :id="props.id"
         :active="suitCount"
       />
-      <div :class="S('txt-describe')">{{ data.solts[props.type]!.describe }}</div>
+      <div :class="S('txt-describe')">{{ data.slots[props.type]!.describe }}</div>
     </div>
   </BasicDetailCard>
 </template>

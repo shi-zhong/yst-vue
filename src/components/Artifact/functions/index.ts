@@ -7,8 +7,8 @@ const ArtifactEffectSearch = (id: number): ArtifactSuitModel => {
     {
       id: 1638,
       name: '流浪大地的乐团',
-      raity: 5,
-      solts: {
+      rarity: 5,
+      slots: {
         FlowerOfLife: {
           imgUrl: '',
           name: '',
@@ -57,8 +57,8 @@ const ArtifactEffectSearch = (id: number): ArtifactSuitModel => {
   return {
     id: 0,
     name: '',
-    raity: 1,
-    solts: {
+    rarity: 1,
+    slots: {
       FlowerOfLife: {
         imgUrl: '',
         name: '',

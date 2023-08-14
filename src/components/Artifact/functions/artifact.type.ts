@@ -5,7 +5,7 @@
  *
  */
 
-import { type ArtifactSolt, ArtifactSoltChinese, type ArtifactSuitModel } from '../interfaces';
+import { type ArtifactSlot, ArtifactSlotChinese, type ArtifactSuitModel } from '../interfaces';
 
 /**
  * 通过圣遗物id找到对应套装
@@ -23,17 +23,17 @@ const GetArtifactSuitInfoWithID = (
   return null;
 };
 
-const VerifyArtifactHasSolt = (suit: ArtifactSuitModel, solt: ArtifactSolt): boolean => {
-  return suit.solts[solt] !== null;
+const VerifyArtifactHasSlot = (suit: ArtifactSuitModel, slot: ArtifactSlot): boolean => {
+  return suit.slots[slot] !== null;
 };
 
-const VerifyArtifactHasSolts = (suit: ArtifactSuitModel, solts: ArtifactSolt[]): boolean => {
-  return solts.map((solt) => VerifyArtifactHasSolt(suit, solt)).reduce((x, y) => x && y, true);
+const VerifyArtifactHasSlots = (suit: ArtifactSuitModel, slots: ArtifactSlot[]): boolean => {
+  return slots.map((slot) => VerifyArtifactHasSlot(suit, slot)).reduce((x, y) => x && y, true);
 };
 
-const GetArtifactSolt = (suit: ArtifactSuitModel, solt: ArtifactSolt) => {
+const GetArtifactSlot = (suit: ArtifactSuitModel, slot: ArtifactSlot) => {
   return (
-    suit.solts[solt] || {
+    suit.slots[slot] || {
       name: '',
       imgUrl: '',
       describe: ''
@@ -41,14 +41,14 @@ const GetArtifactSolt = (suit: ArtifactSuitModel, solt: ArtifactSolt) => {
   );
 };
 
-const GetArtifactTypeChinese = (solt: ArtifactSolt) => {
-  return ArtifactSoltChinese[solt];
+const GetArtifactTypeChinese = (slot: ArtifactSlot) => {
+  return ArtifactSlotChinese[slot];
 };
 
 export {
   GetArtifactSuitInfoWithID,
-  VerifyArtifactHasSolt,
-  VerifyArtifactHasSolts,
-  GetArtifactSolt,
+  VerifyArtifactHasSlot,
+  VerifyArtifactHasSlots,
+  GetArtifactSlot,
   GetArtifactTypeChinese
 };
