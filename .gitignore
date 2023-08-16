@@ -27,8 +27,8 @@ coverage
 *.sln
 *.sw?
 
-/src/assets/artfacts/*
-/src/assets/avatar/*
-/src/assets/skills/*
+/src/assets/artfacts
+/src/assets/avatar
+/src/assets/skills
 
 *.xlsx
