@@ -1,63 +1,39 @@
 <script setup lang="ts">
 import { Lock } from '@/components/Tags';
-import BasicDetailCard from '@/components/DetailCard/index.vue';
+import { BasicDetailCard, type BasicDetailCardProps } from '@/components/DetailCard';
+import { WeaponTypesToChinese, type WeaponsTypes } from '@/components/Weapon';
 import { ClassNameFactor } from '@/utils/className';
-import { type ArtifactSlots } from '../interface';
-import Describe from './ArtifactDescribe.vue';
-import { ArtifactSlotsToChinese, ArtifactEffectSearch } from '../functions';
-
 import { reactive, toRefs, watch } from 'vue';
 import { merge } from '@/utils';
 
-interface ArtifactDetailCardProps {
-  id: number;
-  type: ArtifactSlots;
-  lock: boolean;
-  suitCount: 0 | 1 | 2 | 3 | 4 | 5;
-  lvl: number;
-  main: {
-    key: string;
-    value: string;
-    [key: string]: any;
-  };
-  sub?: {
-    key: string;
-    value: string;
-    [key: string]: any;
-  };
-  subs: {
-    key: string;
-    value: string;
-    [key: string]: any;
-  }[];
+interface WeaponCardProps extends BasicDetailCardProps {
+  type: WeaponsTypes;
 }
 
-const props = defineProps<ArtifactDetailCardProps>();
+const props = defineProps<WeaponCardProps>();
 
-const { sub, main, subs, type, suitCount } = toRefs(props);
+const { sub, main, type, rarity, imgurl, title } = toRefs(props);
 
-const S = ClassNameFactor('artifact-detail-card-');
+// const data = reactive(ArtifactEffectSearch(props.id));
 
-const data = reactive(ArtifactEffectSearch(props.id));
-
-watch(
-  () => props.id,
-  () => {
-    merge(data, ArtifactEffectSearch(props.id));
-  }
-);
+// watch(
+//   () => props.id,
+//   () => {
+//     merge(data, ArtifactEffectSearch(props.id));
+//   }
+// );
 </script>
 
 <template>
   <BasicDetailCard
-    :title="data.slots[props.type]!.name"
-    :rarity="data.rarity"
+    :title="title"
+    :rarity="rarity"
     :sub="sub"
     :main="main"
-    :imgurl="data.slots[props.type]!.imgUrl"
-    :type="ArtifactSlotsToChinese(type)"
+    :imgurl="imgurl"
+    :type="WeaponTypesToChinese(type)"
   >
-    <div :class="S('describe')">
+    <!-- <div :class="S('describe')">
       <div :class="S('lvl-container')">
         <div :class="S('lvl')">+{{ props.lvl }}</div>
         <Lock
@@ -80,12 +56,12 @@ watch(
         :active="suitCount"
       />
       <div :class="S('txt-describe')">{{ data.slots[props.type]!.describe }}</div>
-    </div>
+    </div> -->
   </BasicDetailCard>
 </template>
 
 <style scoped lang="less">
-.artifact-detail-card {
+.weapon-detail-card {
   &-attributes > div {
     color: @fontdarkgray;
     font-size: 22px;

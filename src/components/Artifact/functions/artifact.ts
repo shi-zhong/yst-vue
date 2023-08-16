@@ -4,7 +4,7 @@
  * 主要用于校验圣遗物合法性
  */
 
-import { type ArtifactInstanceModel, type ArtifactSuitModel } from '../interfaces';
+import { type ArtifactInstanceModel, type ArtifactSuitModel } from '../interface';
 
 import { GetArtifactSuitInfoWithID, VerifyArtifactHasSlot } from './artifact.type';
 
@@ -42,4 +42,4 @@ const Verify = (suits: ArtifactSuitModel[], artifact: ArtifactInstanceModel) => 
   return chaim.reduce((i, j) => i && j, true);
 };
 
-export { Verify, getMaxUpgradeTime };
+// export { Verify, getMaxUpgradeTime };

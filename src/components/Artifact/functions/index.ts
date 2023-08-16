@@ -1,4 +1,4 @@
-import { type ArtifactSuitModel } from '../interfaces';
+import { type ArtifactSuitModel } from '../interface';
 
 import ArtifactPicture from '@/assets/artifacts/five/wanderers_troupe/wanderers_troupe_plume.png';
 
@@ -89,7 +89,7 @@ const ArtifactEffectSearch = (id: number): ArtifactSuitModel => {
   };
 };
 
-export * from './artifact.attributes';
+// export * from './artifact.attributes';
 export * from './artifact';
 export * from './artifact.type';
 

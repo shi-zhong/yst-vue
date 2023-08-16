@@ -13,7 +13,7 @@ const GetLoopRoute = (routes: readonly RouteRecordRaw[], prefix: string): string
         if (route.path[0] === '/') {
           return route.path;
         } else {
-          return prefix + route.path;
+          return `${prefix}/${route.path}`;
         }
       } else {
         return '';
@@ -24,7 +24,6 @@ const GetLoopRoute = (routes: readonly RouteRecordRaw[], prefix: string): string
 };
 
 const routers = computed(() => GetLoopRoute(router.options.routes, ''));
-
 </script>
 
 <template>

@@ -45,7 +45,7 @@ const visible2 = ref(0);
       <div style="height: 500px; width: 800px">123</div>
     </ScrollView>
   </Modal>
-  <button @click="visible++">open</button>
+  <button @click="visible++">uniqueinfobase</button>
   <button @click="visible1++">open</button>
   <button @click="visible2++">open</button>
 </template>
