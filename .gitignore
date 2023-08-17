@@ -32,3 +32,4 @@ coverage
 /src/assets/skills
 
 *.xlsx
+/backup

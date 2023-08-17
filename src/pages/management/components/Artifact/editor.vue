@@ -12,6 +12,7 @@ import {
 import { useArtifactStore } from '@/stores/Artifact';
 import { Upload } from '@/api/Request';
 import ArrowPng from '@/assets/icons/arrow.png';
+import ArtifactPng from '@/assets/icons/artifact.png';
 
 import { merge, mapper, fileExt } from '@/utils';
 import { ArtifactSuitAdd, ArtifactSuitModify } from '@/api/ArtifactSuit';
@@ -60,7 +61,6 @@ const slotImageFile = reactive<{ [key in ArtifactSlots]: File | undefined }>({
   CircletOfLogos: undefined
 });
 const effects = reactive(['', '', '', '']);
-
 const syncArtifact = (artifact: ArtifactSuitModel) => {
   merge(basic, {
     id: store.uuidMapId.get(artifact.id) || -1,
@@ -78,7 +78,6 @@ const syncArtifact = (artifact: ArtifactSuitModel) => {
   });
   artifact.effects.forEach((i) => (effects[i.limit - 1] = i.describe));
 };
-
 const handleRarity = (dire: boolean) => {
   if (dire && rarity.value < 5) {
     rarity.value++;
@@ -86,13 +85,11 @@ const handleRarity = (dire: boolean) => {
     rarity.value--;
   }
 };
-
 const stopPropation = (e: Event) => {
   if ((e.target! as any).nodeName === 'TEXTAREA' || (e.target! as any).nodeName === 'INPUT') {
     e.stopPropagation();
   }
 };
-
 const buildSave = async (): Promise<ArtifactSuitModel> => {
   const { uuid, name } = toRaw(basic);
 
@@ -147,7 +144,8 @@ const { vDrop } = Drop();
 
 const clear = () => {
   merge(basic, {
-    id: 0,
+    id: -1,
+    uuid: 0,
     name: ''
   });
   merge(slots, {
@@ -184,10 +182,10 @@ const clear = () => {
     GobletOfEonothem: undefined,
     CircletOfLogos: undefined
   });
-  Array(4).forEach((_i, index) => (effects[index] = ''));
+  [...Array(4)].forEach((_i, index) => (effects[index] = ''));
 };
-
-const handleDrop = (text: string) => {
+const handleDrop = (text: string, file: File) => {
+  if (file.type !== 'application/json') return;
   const data = JSON.parse(text);
   emits('change', -1);
   clear();
@@ -242,6 +240,28 @@ const handleDrop = (text: string) => {
   merge(slots, islots);
 };
 
+const handleDropFiles = (files: { file: any; origin: File }[]) => {
+  const mapper: { [key: string]: ArtifactSlots } = {
+    _circlet: 'CircletOfLogos',
+    _flower: 'FlowerOfLife',
+    _goblet: 'GobletOfEonothem',
+    _plume: 'PlumnOfDeath',
+    _sands: 'SandsOfEon'
+  };
+
+  files.map((file) => {
+    if (file.origin.type.startsWith('image')) {
+      Object.keys(mapper).some((key) => {
+        if (file.origin.name.toUpperCase().includes(key.toUpperCase())) {
+          slots[mapper[key]].imgUrl = file.file;
+          slotImageFile[mapper[key]] = file.origin;
+          return true;
+        }
+        return false;
+      });
+    }
+  });
+};
 watchEffect(() => {
   if (store.artifactSuits.has(props.active)) {
     syncArtifact(store.artifactSuits.get(props.active)!);
@@ -253,10 +273,12 @@ watchEffect(() => {
   <div
     class="artifact-edit"
     v-drop="handleDrop"
+    v-drop.files="handleDropFiles"
   >
     <div class="artifact-tool">
       <span>编辑器·{{ props.active !== -1 ? '修改' : '新建' }}</span>
       <div>
+        <button @click="() => {clear(); emits('change', -1)}">关闭</button>
         <button @click="() => {}">预览</button>
         <button
           @click="
@@ -265,6 +287,9 @@ watchEffect(() => {
               let res: any;
               if (props.active === -1) {
                 res = await ArtifactSuitAdd(data);
+                if (res.msg === 'OK') {
+                  basic.id = res.data.id;
+                }
               } else {
                 res = await ArtifactSuitModify(basic.id, data);
               }
@@ -277,108 +302,121 @@ watchEffect(() => {
         </button>
       </div>
     </div>
-    <div class="artifact-basic">
-      <input
-        type="number"
-        class="inputtext"
-        v-model="basic.uuid"
-        placeholder="ID"
-        min="0"
-        max="9999"
-      />
-      <input
-        type="text"
-        class="inputtext"
-        v-model="basic.name"
-        placeholder="套装名称"
-      />
-      <div class="artifact-rarity">
-        <Icon
-          type="projection"
-          color="rgb(72, 85, 103)"
-          :src="ArrowPng"
-          :size="30"
-          @click="() => handleRarity(false)"
+    <template v-if="props.active !== -1 || basic.uuid !== 0">
+      <div class="artifact-basic">
+        <input
+          type="number"
+          class="inputtext"
+          v-model="basic.uuid"
+          placeholder="ID"
+          min="0"
+          max="9999"
         />
-        <Rarity
-          :rarity="rarity"
-          :size="30"
+        <input
+          type="text"
+          class="inputtext"
+          v-model="basic.name"
+          placeholder="套装名称"
         />
-        <Icon
-          type="projection"
-          color="rgb(72, 85, 103)"
-          :src="ArrowPng"
-          :size="30"
-          @click="() => handleRarity(true)"
-          style="transform: rotate(180deg)"
-        />
+        <div class="artifact-rarity">
+          <Icon
+            type="projection"
+            color="rgb(72, 85, 103)"
+            :src="ArrowPng"
+            :size="30"
+            @click="() => handleRarity(false)"
+          />
+          <Rarity
+            :rarity="rarity"
+            :size="30"
+          />
+          <Icon
+            type="projection"
+            color="rgb(72, 85, 103)"
+            :src="ArrowPng"
+            :size="30"
+            @click="() => handleRarity(true)"
+            style="transform: rotate(180deg)"
+          />
+        </div>
       </div>
-    </div>
-    <ScrollView
-      class="artifact-scroll"
-      scroll-behavior="hidden"
-    >
-      <div @mousedown="(e) => stopPropation(e)">
-        <div
-          v-for="(slot, key) in slots"
-          :key="key"
-          class="artifact-slot"
-        >
-          <div>
-            <div>{{ ArtifactSlotsToChinese(key) }}</div>
-            <div>
-              <input
-                type="text"
-                class="inputtext"
-                v-model="slot.name"
-                placeholder="圣遗物名称"
-              />
-            </div>
-          </div>
-
-          <textarea
-            v-model="slot.describe"
-            placeholder="圣遗物描述"
-            cols="30"
-            rows="10"
-          />
-          <DropImage
-            v-model="slotImageFile[key]"
-            style="height: 120px; width: 120px"
-            :size="120"
-            :src="slot.imgUrl"
-          />
-          <button
-            @click="
-              () => {
-                slot.describe = '';
-                slot.imgUrl = '';
-                slot.name = '';
-              }
-            "
+      <ScrollView
+        class="artifact-scroll"
+        scroll-behavior="hidden"
+      >
+        <div @mousedown="(e) => stopPropation(e)">
+          <div
+            v-for="(slot, key) in slots"
+            :key="key"
+            class="artifact-slot"
           >
-            清除
-          </button>
+            <div>
+              <div>{{ ArtifactSlotsToChinese(key) }}</div>
+              <div>
+                <input
+                  type="text"
+                  class="inputtext"
+                  v-model="slot.name"
+                  placeholder="圣遗物名称"
+                />
+              </div>
+            </div>
+
+            <textarea
+              v-model="slot.describe"
+              placeholder="圣遗物描述"
+              cols="30"
+              rows="10"
+            />
+            <DropImage
+              v-model="slotImageFile[key]"
+              style="height: 120px; width: 120px"
+              :size="120"
+              :src="slot.imgUrl"
+            />
+            <button
+              @click="
+                () => {
+                  slot.describe = '';
+                  slot.imgUrl = '';
+                  slot.name = '';
+                }
+              "
+            >
+              清除
+            </button>
+          </div>
+          <div class="effects-box">
+            <textarea
+              class="effects"
+              placeholder="1件套效果"
+              v-model="effects[0]"
+            />
+            <textarea
+              class="effects"
+              placeholder="2件套效果"
+              v-model="effects[1]"
+            />
+            <textarea
+              class="effects"
+              placeholder="4件套效果"
+              v-model="effects[3]"
+            />
+          </div>
         </div>
-        <div class="effects-box">
-          <textarea
-            class="effects"
-            placeholder="1件套效果"
-            v-model="effects[0]"
-          />
-          <textarea
-            class="effects"
-            placeholder="2件套效果"
-            v-model="effects[1]"
-          />
-          <textarea
-            class="effects"
-            placeholder="4件套效果"
-            v-model="effects[3]"
-          />
-        </div>
-      </div>
-    </ScrollView>
+      </ScrollView>
+    </template>
+    <div
+      class="artifact-content"
+      v-else
+    >
+      <Icon
+        :src="ArtifactPng"
+        :size="120"
+        type="projection"
+        color="rgba(72, 85, 103,0.5)"
+      />
+    </div>
   </div>
 </template>
 
@@ -413,6 +451,7 @@ watchEffect(() => {
     }
 
     margin: 30px;
+    min-width: 1008px;
     padding: 30px;
     border-radius: 5px;
     box-shadow: 0 0 10px @fontlightgray;
@@ -436,6 +475,13 @@ watchEffect(() => {
         opacity: 0.8;
       }
     }
+  }
+
+  &-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
 
   &-basic {
