@@ -35,6 +35,7 @@ const handleActive = (e: Event) => {
       ref="view"
       scroll-behavior="scroll"
       data-type="top"
+      slide
       @click="handleActive"
     >
       <div

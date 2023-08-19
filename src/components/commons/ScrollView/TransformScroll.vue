@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useDebounce, useMockScrollDrag, useThrettle } from '@/utils';
+import { useDebounce, useMockScrollDrag, useThrettle, Animate, cubicBezier } from '@/utils';
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue';
 import ScrollBar from './Scrollbar.vue';
 
@@ -8,7 +8,7 @@ interface ScrollViewProps {
   scrollBehavior?: 'auto' | 'scroll' | 'hidden';
 
   customScrollbar?: string;
-  transformBoxClass?: string;
+  // transformBoxClass?: string;
 
   border?: {
     top?: number;
@@ -64,41 +64,12 @@ const transform = reactive<{ x: number; y: number }>({ x: 0, y: 0 });
 const movement = reactive<{ x: number; y: number }>({ x: 0, y: 0 });
 const heights = reactive<{ client: number; scroll: number }>({ client: 1, scroll: 1 });
 const position = ref<'left' | 'right' | 'top' | 'bottom' | ''>('');
-
+const topScroll = ref(true);
 /**
- *
  * 滚动视图相关函数
- *
  */
 
-// 设置滑动
-const doSlide = () => {
-  /**
-   * @todo 表现优化
-   */
-
-  // 自定义滑动阈值
-  let x = transform.x,
-    y = transform.y;
-
-  if (Math.abs(movement.x) > ((props.slideOption && props.slideOption.threshold) || 1)) {
-    x = props.slideOption ? props.slideOption.distance(movement.x) : transform.x - 30 * movement.x;
-  }
-
-  if (Math.abs(movement.y) > ((props.slideOption && props.slideOption.threshold) || 1)) {
-    y = props.slideOption ? props.slideOption.distance(movement.y) : transform.y - 30 * movement.y;
-  }
-
-  ScrollToAnimate({
-    ...limitTransformInVisibleView(y, x),
-    behavior: 'smooth'
-  });
-
-  movement.x = 0;
-  movement.y = 0;
-};
-
-// 将偏移距离限制在visible区域内
+// 将偏移距离限制在visible区域内，用于在滚动时计算是否触碰边界
 const limitTransformInVisibleView = (top: number, left: number) => {
   const retPos = {
     top: top,
@@ -148,122 +119,100 @@ const limitTransformInVisibleView = (top: number, left: number) => {
   return retPos;
 };
 
-// 自定义滚动函数，使用 requestAnimationFrame 进行动画
-const mergeAnimate = reactive<{
-  close: undefined | (() => void);
-  x: number;
-  y: number;
-  muti: 'cancel' | 'merge';
-}>({
-  close: undefined,
-  x: 0,
-  y: 0,
-  muti: 'cancel'
-});
+// 用于清除动画，保存动画的id
+const clearAnimate = ref<number>(0);
 
 /**
- * @todo 优化滚动函数表现效果 
+ * 调用该函数实现滚动效果，每次调用会清除上一个动画
  */
 const ScrollToAnimate = (
   pos: { top: number; left: number; behavior?: 'smooth' },
-  muti: 'merge' | 'cancel' = 'cancel'
+  duration: number = 500
 ) => {
-  let closeFlag = false;
-
-  const ScrollTo = (pos: { top: number; left: number; behavior?: 'smooth' }) => {
-    let transformTopChange = 0;
-    let transformLeftChange = 0;
-
-    const base = 20;
-
-    /**
-     *      ^
-     * base |    ________
-     *      |   /|
-     *      |  / |
-     *      | /  |
-     *      |---------------> delta
-     *           max
-     *    base < Fn < 2 * base
-     */
-
-    const speedFn = (delta: number) => {
-      const max = 500;
-      if (Math.abs(delta) > max) {
-        return 2 * base;
-      } else {
-        return base + Math.abs((base / max / max) * delta * delta);
-        // return base + Math.abs((base / max) * delta);
-      }
-    };
-
-    /**
-     * 没有 smooth 直接跳转
-     */
-    if (pos.behavior !== 'smooth') {
-      transform.x = pos.left;
-      transform.y = pos.top;
-      return;
-    }
-
-    let finalTop = mergeAnimate.muti === 'merge' ? mergeAnimate.y : pos.top;
-    let finalLeft = mergeAnimate.muti === 'merge' ? mergeAnimate.x : pos.left;
-
-    if (finalTop !== transform.y) {
-      transformTopChange =
-        (finalTop > transform.y ? 1 : -1) *
-        (Math.abs(finalTop - transform.y) < base
-          ? Math.abs(finalTop - transform.y)
-          : speedFn(finalTop - transform.y));
-      transform.y += transformTopChange;
-    }
-
-    if (finalLeft !== transform.x) {
-      transformLeftChange =
-        (finalLeft > transform.x ? 1 : -1) *
-        (Math.abs(finalLeft - transform.x) < base
-          ? Math.abs(finalLeft - transform.x)
-          : speedFn(finalLeft - transform.x));
-      transform.x += transformLeftChange;
-    }
-
-    if (
-      !closeFlag &&
-      mouseState.value === 'up' &&
-      (transformLeftChange !== 0 || transformTopChange !== 0)
-    ) {
-      requestAnimationFrame(() =>
-        ScrollTo({
-          top: finalTop,
-          left: finalLeft,
-          behavior: pos.behavior
-        })
-      );
-      return;
-    }
-    close();
-  };
-
-  const close = () => {
-    closeFlag = true;
-    mergeAnimate.close = undefined;
-    mergeAnimate.muti = 'cancel';
-  };
-
-  // 1. 检查是否有动画正在执行
-  // 没有动画则进行创建，如果有新旧动画有一个可以进行取消则取消重建
-  if (mergeAnimate.close === undefined || mergeAnimate.muti === 'cancel' || muti === 'cancel') {
-    // 取消动画，重新创建
-    mergeAnimate.close && mergeAnimate.close();
-    mergeAnimate.close = close;
-    mergeAnimate.muti = muti;
-    mergeAnimate.x = pos.left;
-    mergeAnimate.y = pos.top;
-    ScrollTo(pos);
-  } else {
-    // 合并动画
-    mergeAnimate.y = pos.top;
+  /**
+   * 没有 smooth 直接跳转
+   */
+  if (pos.behavior !== 'smooth') {
+    transform.x = pos.left;
+    transform.y = pos.top;
+    return;
   }
+
+  const thisFlag = clearAnimate.value + 1;
+  clearAnimate.value = thisFlag;
+
+  const animate = Animate({
+    duration: duration,
+    groups: [
+      {
+        start: transform.x,
+        end: pos.left
+      },
+      {
+        start: transform.y,
+        end: pos.top
+      }
+    ],
+    timeFunc: cubicBezier(0, 0.6, 0.63, 0.96)
+  });
+
+  const ScrollTo = (): void => {
+    const results = animate();
+
+    transform.x = results.groups[0];
+    transform.y = results.groups[1];
+
+    if (!results.progress.end && thisFlag === clearAnimate.value && mouseState.value === 'up') {
+      requestAnimationFrame(() => ScrollTo());
+    }
+  };
+
+  ScrollTo();
+};
+
+const ScrollByAnimate = (
+  pos: { top: number; left: number; behavior?: 'smooth' },
+  duration: number = 500
+) => {
+  /**
+   * 没有 smooth 直接跳转
+   */
+  if (pos.behavior !== 'smooth') {
+    transform.x += pos.left;
+    transform.y += pos.top;
+    return;
+  }
+
+  const thisFlag = clearAnimate.value + 1;
+  clearAnimate.value = thisFlag;
+
+  const animate = Animate({
+    duration: duration,
+    groups: [
+      {
+        start: 0,
+        end: pos.left
+      },
+      {
+        start: 0,
+        end: pos.top
+      }
+    ],
+    timeFunc: 'linear'
+  });
+
+  const ScrollBy = (): void => {
+    const results = animate();
+
+    transform.x += results.groups[0];
+    transform.y += results.groups[1];
+
+    if (!results.progress.end && thisFlag === clearAnimate.value && mouseState.value === 'up') {
+      requestAnimationFrame(ScrollBy);
+    }
+  };
+
+  ScrollBy();
 };
 
 const resetWhenBlankVisible = () => {
@@ -276,8 +225,9 @@ const resetWhenBlankVisible = () => {
 // 复位至合适的位置
 const resetWhenBlankVisibleDebounce = () => useDebounce()(resetWhenBlankVisible);
 
-// 滚动条位置和滚动距离的相关系数
-const blankWidthCoefficient = () => {
+// 滚动条位置和滚动距离的相关系数，用于保证在使用滚轮滚动时，空白部分的比例
+const blankWidthCoefficient = (coe: number = 0.8) => {
+  // 保证空白部分不会被扯开太多，有系数 1 - top / coe * CH
   const coefficient = {
     x: 1,
     y: 1
@@ -285,28 +235,22 @@ const blankWidthCoefficient = () => {
 
   if (!scrollRef.value) return coefficient;
 
-  /**
-   *
-   * ** 公式说明 **
-   * 同上
-   */
-
   const { scrollHeight, clientHeight, scrollWidth, clientWidth } = scrollRef.value;
 
   // top b
   if (transform.y < 0 || scrollHeight === clientHeight) {
-    coefficient.y = 1 + transform.y / (0.8 * scrollHeight);
+    coefficient.y = 1 + transform.y / (coe * clientHeight);
   } else if (transform.y > scrollHeight - clientHeight) {
     // bottom b
-    coefficient.y = 1 - (transform.y + clientHeight - scrollHeight) / (0.8 * scrollHeight);
+    coefficient.y = 1 - (transform.y + clientHeight - scrollHeight) / (coe * clientHeight);
   }
 
   // left b
   if (transform.x < 0 || scrollWidth === clientWidth) {
-    coefficient.x = 1 - transform.x / (0.8 * scrollWidth);
+    coefficient.x = 1 - transform.x / (coe * clientWidth);
   } else if (transform.x > scrollWidth - clientWidth) {
     // right b
-    coefficient.x = 1 - (transform.x + clientWidth - scrollWidth) / (0.8 * scrollWidth);
+    coefficient.x = 1 - (transform.x + clientWidth - scrollWidth) / (coe * clientWidth);
   }
 
   return coefficient;
@@ -357,29 +301,60 @@ const LimitborderPosition = (top: number, left: number) => {
   return retPos;
 };
 
+const doSlide = () => {
+  /**
+   * 一般movement普通滑动不超过10
+   * 快速滑动会高达30
+   */
+  const defaultSlide = 23;
+  let slideFlag = false;
+
+  // 自定义滑动阈值
+  let x = transform.x,
+    y = transform.y;
+
+  if (Math.abs(movement.x) > ((props.slideOption && props.slideOption.threshold) || defaultSlide)) {
+    slideFlag = true;
+    x -= props.slideOption ? props.slideOption.distance(movement.x) : 30 * movement.x;
+
+    ScrollToAnimate({
+      ...limitTransformInVisibleView(y, x),
+      behavior: 'smooth'
+    });
+  }
+
+  if (Math.abs(movement.y) > ((props.slideOption && props.slideOption.threshold) || defaultSlide)) {
+    slideFlag = true;
+    y -= props.slideOption ? props.slideOption.distance(movement.y) : 30 * movement.y;
+
+    ScrollToAnimate({
+      ...limitTransformInVisibleView(y, x),
+      behavior: 'smooth'
+    });
+  }
+
+  movement.x = 0;
+  movement.y = 0;
+  return slideFlag;
+};
+
 /**---------------------------------------------------------------- */
 // Y轴方向滚动
 const handleWheel = (e: WheelEvent) => {
   // 保证空白部分不会被扯开太多，有系数 1 - top / 80% * CH
-  const coefficient = blankWidthCoefficient();
-  // 滚轮delta基数大，加一个额外系数来限制滚动距离
-  const limitedBorderPosition = LimitborderPosition(
-    (mergeAnimate.close && mergeAnimate.muti === 'merge' ? mergeAnimate.y : transform.y) +
-      0.5 * e.deltaY * coefficient.y,
-    (mergeAnimate.close && mergeAnimate.muti === 'merge' ? mergeAnimate.x : transform.x) +
-      0.5 * e.deltaY * coefficient.x
-  );
+  const coefficient = blankWidthCoefficient(0.5);
+
   // 处理滚动上，使用transform
   if (props.direction === 'y' || props.direction === 'both') {
-    ScrollToAnimate(
-      { top: limitedBorderPosition.top, left: transform.x, behavior: 'smooth' },
-      'merge'
+    ScrollByAnimate(
+      { top: 0.4 * e.deltaY * coefficient.y, left: transform.x, behavior: 'smooth' },
+      100
     );
   }
   if (props.direction === 'x') {
-    ScrollToAnimate(
-      { top: transform.y, left: limitedBorderPosition.left, behavior: 'smooth' },
-      'merge'
+    ScrollByAnimate(
+      { top: transform.y, left: 0.4 * e.deltaY * coefficient.x, behavior: 'smooth' },
+      100
     );
   }
 
@@ -432,10 +407,10 @@ const { mouseState } = useMockScrollDrag(scrollRef, {
     movement.y = pos.calcMovementY;
   },
   mouseUp() {
-    if (props.slide) {
-      doSlide();
+    // 滚动scrollTo函数会取消其他上一个动画，当滑动触发时，不重置空白，滑动本身保证不出现空白
+    if (!props.slide || !doSlide()) {
+      resetWhenBlankVisible();
     }
-    resetWhenBlankVisible();
   },
   mouseMove() {},
   mouseDown() {
@@ -446,10 +421,8 @@ const { mouseState } = useMockScrollDrag(scrollRef, {
 /**
  * 计算滚动条高度
  */
-const calcSrollBarHeightThrettle = useThrettle(100);
-
 const calcSrollBarHeight = () =>
-  calcSrollBarHeightThrettle(() => {
+  useThrettle(100)(() => {
     if (!scrollRef.value) return;
     const { scrollHeight, clientHeight } = scrollRef.value;
     if (transform.y < 0) {
@@ -468,6 +441,16 @@ const scrollBarInit = () => {
   }
 };
 
+const isTopScroll = (div: HTMLElement) => {
+  let current = div;
+  while (current.parentElement) {
+    if (current.dataset.component === 'scrollView') {
+      return false;
+    }
+  }
+  return true;
+};
+
 defineExpose({
   scrollTo,
   getScroll: () => ({ x: transform.x, y: transform.y })
@@ -476,6 +459,9 @@ defineExpose({
 onMounted(() => {
   calcSrollBarHeight();
   scrollBarInit();
+  if (scrollRef.value) {
+    topScroll.value = isTopScroll(scrollRef.value);
+  }
 });
 
 // 无条件尝试清除监听器
@@ -493,10 +479,11 @@ const showScroll = computed(
   <div
     class="scroll-container"
     ref="scrollRef"
+    data-component="scrollView"
     :data-type="dataType"
     @click="(e:Event) => emits('click',e)"
     @click.capture="onClickCapture"
-    @wheel="handleWheel"
+    @wheel.stop="handleWheel"
   >
     <div
       :class="{ 'horizontal-flow': direction === 'x' }"
@@ -506,6 +493,7 @@ const showScroll = computed(
     >
       <slot></slot>
     </div>
+    <!-- extra slot 用于处理不限制不受滚动影响，但受父元素影响的元素 -->
     <slot name="extra"></slot>
     <!-- 滚动条位置依赖于外部 -->
     <ScrollBar

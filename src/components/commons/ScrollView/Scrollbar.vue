@@ -51,7 +51,7 @@ useMockScrollDrag(thumbRef, {
     top: 0;
     right: 0;
 
-    background: rgba(76, 76, 76, 0.3);
+    // background: rgba(76, 76, 76, 0.3);
     width: @width;
     height: 100%;
     overflow: hidden;

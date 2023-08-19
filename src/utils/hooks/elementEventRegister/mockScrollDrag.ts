@@ -12,6 +12,7 @@ interface MockScrollDragOptions {
   mouseMove?: (e: MouseEvent, mouseState: 'up' | 'move' | 'down') => void;
   mouseUp?: (e?: MouseEvent) => void;
   moveMethod?: (crtPos: MousePositionInfo, pvePos: MousePositionInfo, e: MouseEvent) => void;
+  stopPropagation?: (e: MouseEvent) => boolean;
   // 用于测试实例是否挂上
   debug?: boolean;
 }
@@ -44,7 +45,7 @@ export const useMockScrollDrag = (
   divRef: Ref<HTMLDivElement | undefined>,
   options: MockScrollDragOptions
 ) => {
-  const { mouseDown, mouseMove, mouseUp, moveMethod, debug } = options;
+  const { mouseDown, mouseMove, mouseUp, moveMethod, stopPropagation, debug } = options;
 
   const mouseState = ref<'up' | 'move' | 'down'>('up');
 
@@ -71,7 +72,10 @@ export const useMockScrollDrag = (
    * @param e
    */
   const handleMouseDown = (e: MouseEvent) => {
-    e.stopPropagation();
+    if (!stopPropagation || stopPropagation(e)) {
+      e.stopPropagation();
+    }
+    if (e.button !== 0) return handleMouseUp(e);
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
     mouseState.value = 'down';
