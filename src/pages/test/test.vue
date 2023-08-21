@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Modal} from '@@/commons/Modal/index';
+import { Modal } from '@@/commons/Modal/index';
 import { ScrollView } from '@/components';
 import { ref } from 'vue';
+
+import { DropFile, DropImage } from '@/components';
 
 const visible = ref(0);
 const visible1 = ref(0);
@@ -48,6 +50,11 @@ const visible2 = ref(0);
   <button @click="visible++">uniqueinfobase</button>
   <button @click="visible1++">open</button>
   <button @click="visible2++">open</button>
+  <DropFile style="background-color: red; width: 100px; height: 100px; display: inline-block">
+    <div></div>
+    <template #dropover> dropover </template>
+  </DropFile>
+  <DropImage />
 </template>
 
 <style scoped lang="less">

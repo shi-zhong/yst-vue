@@ -4,23 +4,13 @@ import { ClassNameFactor } from '@/utils/className';
 import { toRefs } from 'vue';
 import { type BasicDetailCardProps } from './interface';
 
-const props = defineProps<BasicDetailCardProps>();
+const props = withDefaults(defineProps<BasicDetailCardProps & { size?: number }>(), {
+  size: 50
+});
 
 const { title, type, sub, main, rarity, imgurl } = toRefs(props);
 
 const S = ClassNameFactor('common-detail-card');
-
-// const WeaponDetailCard = (props: WeaponDetailCardProps) => {
-//   return (
-//     <BasicDetailCard {...props}>
-//       <div>
-//         <div>
-//           <RankBar rank={props.rank} />
-//         </div>
-//       </div>
-//     </BasicDetailCard>
-//   );
-// };
 </script>
 
 <template>
@@ -40,7 +30,7 @@ const S = ClassNameFactor('common-detail-card');
         <Rarity
           :rarity="rarity"
           align="left"
-          :size="30"
+          :size="(30 / 50) * props.size"
         />
       </div>
       <div>
@@ -56,22 +46,21 @@ const S = ClassNameFactor('common-detail-card');
 </template>
 
 <style scoped lang="less">
-@title-height: 50px;
-@leftindent: (@title-height / 2);
-
 .common-detail-card {
+  --title-border: calc(var(--title-height) / 17);
+  --leftindent: calc(var(--title-height) / 2);
+  --4-title-height: calc(4 * var(--title-height));
+  --4-more-leftindent: calc(var(--leftindent) + 4px);
+
   margin: 10px;
-  width: 9 * @title-height;
+  width: calc(9 * var(--title-height));
   box-shadow: @box-shadow;
   user-select: none;
 
-  @title-border: (@title-height / 17);
-  // @title-border: 2px;
-
   &-title {
     position: relative;
-    height: @title-height;
-    line-height: @title-height;
+    height: var(--title-height);
+    line-height: var(--title-height);
     padding: 3px;
     font-size: 25px;
 
@@ -81,10 +70,10 @@ const S = ClassNameFactor('common-detail-card');
     & > p {
       width: 100%;
       box-sizing: border-box;
-      border: @title-border solid rgba(56, 56, 56, 0.2);
-      padding-left: @leftindent;
+      border: var(--title-border) solid rgba(56, 56, 56, 0.2);
+      padding-left: var(--leftindent);
 
-      font-size: (@title-height / 2);
+      font-size: var(--leftindent);
 
       color: @blank-white;
     }
@@ -107,7 +96,7 @@ const S = ClassNameFactor('common-detail-card');
   }
 
   &-attribute {
-    height: 4 * @title-height;
+    height: var(--4-title-height);
 
     &-golden {
       background: @rank-golden-gradient-box;
@@ -131,63 +120,64 @@ const S = ClassNameFactor('common-detail-card');
       height: 100%;
       &:first-child {
         padding-top: 5px;
-        width: 4 * @title-height;
+        width: var(--4-title-height);
       }
       &:last-child {
-        width: 4 * @title-height;
+        width: var(--4-title-height);
       }
     }
 
     &-data {
-      padding-left: @leftindent + 4;
+      padding-left: var(--4-more-leftindent);
       & > div {
-        @attribute-base-height: (@title-height / 2);
-        @attribute-base-font-size: (@title-height / 4);
+        --attribute-base-font-size: calc(var(--title-height) / 4);
 
         padding: 2px 0;
-        line-height: (@title-height / 1.5);
+        line-height: calc(var(--title-height) / 1.5);
         box-sizing: border-box;
 
         &:nth-child(1),
         &:nth-child(3) {
-          height: @attribute-base-height;
+          height: var(--leftindent);
           color: @blank-white;
 
-          font-size: @attribute-base-font-size * 1.3;
+          font-size: calc(var(--attribute-base-font-size) * 1.3);
         }
 
         &:nth-child(3) {
-          font-size: @attribute-base-font-size * 1.8;
+          font-size: calc(var(--attribute-base-font-size) * 1.8);
         }
 
         &:nth-child(2),
         &:nth-child(4) {
-          height: @attribute-base-height;
+          height: var(--leftindent);
           color: @blank-white;
-          font-size: @attribute-base-font-size * 1.3;
+          font-size: calc(var(--attribute-base-font-size) * 1.3);
           opacity: 0.5;
         }
         &:nth-child(5) {
-          height: @title-height;
-          line-height: @title-height;
-          font-size: @attribute-base-font-size * 3;
+          height: var(--title-height);
+          line-height: var(--title-height);
+          font-size: calc(var(--attribute-base-font-size) * 3);
           color: @blank-white;
         }
         &:nth-child(6) {
-          height: @title-height;
+          height: var(--title-height);
         }
       }
     }
 
     & > div > img {
-      width: 4 * @title-height;
+      width: var(--4-title-height);
     }
   }
 
   &-describe {
     background: @blank-white;
-    padding: 15px @leftindent + 4 60px @leftindent + 4;
-    min-height: 4 * @title-height;
+    padding: 15px 0 60px 0;
+    padding-right: var(--4-more-leftindent);
+    padding-left: var(--4-more-leftindent);
+    min-height: var(--4-title-height);
   }
 }
 </style>

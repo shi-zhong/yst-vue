@@ -32,6 +32,7 @@ useMockScrollDrag(thumbRef, {
 
 <template>
   <div :class="'scroll-track '">
+    <!-- 通过更新滚动视区的位置来间接更新滚动条 -->
     <div
       class="scroll-thumb"
       :style="`transform: translateY(${(scrollTop * heights.client) / heights.scroll}px); height:${

@@ -9,6 +9,6 @@ import Button from './commons/Button/Button.vue';
 import ScrollView from './commons/ScrollView/TransformScroll.vue';
 import Select from './commons/Select/index.vue';
 import Icon from './commons/Icon/index.vue';
-import DropImage from './commons/DropImage/index.vue';
+export * from './commons/Drop'
 
-export { HighLight, Select, ScrollView, Button, Icon, DropImage };
+export { HighLight, Select, ScrollView, Button, Icon };

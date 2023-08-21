@@ -76,7 +76,11 @@ const innerTimeFuncs = {
 };
 
 type timeFunc = keyof typeof innerTimeFuncs;
-
+/**
+ * 创建一个持续一段时间的动画，每次调用闭包会返回一个当前动画进度用于调整动画
+ * @param options 
+ * @returns 
+ */
 export const Animate = (options: {
   duration: number;
   timeFunc: timeFunc | AnimateTimeingFucntion;

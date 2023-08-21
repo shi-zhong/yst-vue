@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref, toRaw, watchEffect } from 'vue';
 import { Drop } from '@/utils/directive';
-import { Rarity, Icon, ScrollView, DropImage } from '@/components';
-import { type ArtifactSuitModel } from '@/components/Artifact/interfaces';
+import { Rarity, Icon, ScrollView, DropImage, DropFile } from '@/components';
 import ArrowPng from '@/assets/icons/arrow.png';
-
 import { merge } from '@/utils';
 
 const basic = reactive({
@@ -12,33 +10,7 @@ const basic = reactive({
   name: ''
 });
 const rarity = ref<1 | 2 | 3 | 4 | 5>(1);
-const slots = reactive({
-  FlowerOfLife: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  PlumnOfDeath: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  SandsOfEon: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  GobletOfEonothem: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  CircletOfLogos: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  }
-});
+
 const slotImageFile = reactive({
   FlowerOfLife: undefined,
   PlumnOfDeath: undefined,
@@ -48,32 +20,7 @@ const slotImageFile = reactive({
 });
 const effects = reactive(['', '', '', '']);
 
-watchEffect(() => {
-
-});
-
-const KeyToType = (key: string) => {
-  switch (key) {
-    case 'FlowerOfLife': {
-      return '生之花';
-    }
-    case 'PlumnOfDeath': {
-      return '死之羽';
-    }
-    case 'SandsOfEon': {
-      return '时之沙';
-    }
-    case 'GobletOfEonothem': {
-      return '空之杯';
-    }
-    case 'CircletOfLogos': {
-      return '理之冠';
-    }
-    default: {
-      return '';
-    }
-  }
-};
+watchEffect(() => {});
 
 const handleRarity = (dire: boolean) => {
   if (dire && rarity.value < 5) {
@@ -89,133 +36,15 @@ const stopPropation = (e: Event) => {
   }
 };
 
-const buildSave = (): ArtifactSuitModel => {
-  const { id, name } = toRaw(basic);
-
-  if (Object.values(slotImageFile).some((i) => i !== undefined)) {
-    // upload image file
-  }
-
-  return {
-    id,
-    name,
-    rarity: rarity.value,
-    slots,
-    effects: effects
-      .map((t, i) => ({
-        limit: i + 1,
-        describe: t
-      }))
-      .filter((i) => i.describe !== '')
-  };
+const buildSave = () => {
+  
 };
 
 const { vDrop } = Drop();
 
-const clear = () => {
-  merge(basic, {
-    id: 0,
-    name: ''
-  });
-  merge(slots, {
-    FlowerOfLife: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    PlumnOfDeath: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    SandsOfEon: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    GobletOfEonothem: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    CircletOfLogos: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    }
-  });
-  merge(slotImageFile, {
-    FlowerOfLife: undefined,
-    PlumnOfDeath: undefined,
-    SandsOfEon: undefined,
-    GobletOfEonothem: undefined,
-    CircletOfLogos: undefined
-  });
-  Array(4).forEach((_i, index) => (effects[index] = ''));
-};
+const clear = () => {};
 
-const handleDrop = (text: string) => {
-  const data = JSON.parse(text);
-  clear();
-
-  basic.name = data.name;
-  basic.id = Number(data.id);
-  rarity.value = data.rarity;
-
-  data.effects.map((m: { limit: number; describe: string }) => {
-    effects[m.limit - 1] = m.describe;
-  });
-
-  const islots = {
-    FlowerOfLife: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    PlumnOfDeath: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    SandsOfEon: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    GobletOfEonothem: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    CircletOfLogos: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    }
-  };
-
-  const map = {
-    生之花: 'FlowerOfLife',
-    死之羽: 'PlumnOfDeath',
-    时之沙: 'SandsOfEon',
-    空之杯: 'GobletOfEonothem',
-    理之冠: 'CircletOfLogos'
-  };
-
-  type key = keyof typeof map;
-  type value = keyof typeof islots;
-
-  data.slot.map((i: { type: string; name: string; desc: string; story: string }) => {
-    const p = {
-      name: i.name,
-      imgUrl: '',
-      describe: i.desc
-    };
-    if (i.type) islots[map[i.type as key] as value] = p;
-  });
-
-  merge(slots, islots);
-};
+const handleDrop = (text: string) => {};
 </script>
 
 <template>
@@ -277,9 +106,7 @@ const handleDrop = (text: string) => {
       class="artifact-scroll"
       scroll-behavior="hidden"
     >
-      
 
- 
     </ScrollView>
   </div>
 </template>
@@ -398,5 +225,4 @@ const handleDrop = (text: string) => {
     padding: 3px;
   }
 }
-
 </style>

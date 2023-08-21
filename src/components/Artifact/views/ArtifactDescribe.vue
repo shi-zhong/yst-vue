@@ -2,23 +2,39 @@
 import { Enable } from '@/components/Tags';
 /** @todo 使用网络获取数据  */
 import { ArtifactEffectSearch } from '../functions';
-import { reactive, watch } from 'vue';
+import { onMounted, reactive, watch } from 'vue';
 import { merge } from '@/utils';
+import type { ArtifactSuitModel } from '..';
 
 interface ArtifacDescribe {
   id: number;
   active: number; // 激活数
+  suit?: ArtifactSuitModel;
   hideDisable?: boolean;
 }
 
-const props = defineProps<ArtifacDescribe>();
+const props = withDefaults(defineProps<ArtifacDescribe & { size?: number }>(), {
+  size: 50
+});
 
-const data = reactive(ArtifactEffectSearch(props.id));
+const data = reactive<ArtifactSuitModel>(ArtifactEffectSearch(props.id));
+
+onMounted(() => {
+  if (props.id === 0 && props.suit) {
+    merge(data, props.suit);
+  } else {
+    merge(data, ArtifactEffectSearch(props.id));
+  }
+});
 
 watch(
   () => props.id,
   () => {
-    merge(data, ArtifactEffectSearch(props.id));
+    if (props.id === 0 && props.suit) {
+      merge(data, props.suit);
+    } else {
+      merge(data, ArtifactEffectSearch(props.id));
+    }
   }
 );
 </script>
@@ -33,7 +49,7 @@ watch(
       v-show="!(props.hideDisable && i.limit > props.active)"
     >
       <Enable
-        :size="20"
+        :size="props.size / 3"
         :enable="i.limit <= props.active"
       />
       <div
@@ -53,7 +69,7 @@ watch(
   text-align: justify;
   display: inline-block;
   color: @fontlightgray;
-  line-height: 30px;
+  line-height: calc(var(--title-height, 50px) * 0.6);
 }
 .suit {
   display: flex;

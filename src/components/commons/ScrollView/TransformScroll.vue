@@ -8,7 +8,7 @@ interface ScrollViewProps {
   scrollBehavior?: 'auto' | 'scroll' | 'hidden';
 
   customScrollbar?: string;
-  // transformBoxClass?: string;
+  transformBoxClass?: string;
 
   border?: {
     top?: number;
@@ -204,8 +204,13 @@ const ScrollByAnimate = (
   const ScrollBy = (): void => {
     const results = animate();
 
-    transform.x += results.groups[0];
-    transform.y += results.groups[1];
+    const limit = LimitborderPosition(
+      transform.y + results.groups[1],
+      transform.x + results.groups[0]
+    );
+
+    transform.x = limit.left;
+    transform.y = limit.top;
 
     if (!results.progress.end && thisFlag === clearAnimate.value && mouseState.value === 'up') {
       requestAnimationFrame(ScrollBy);
@@ -383,7 +388,10 @@ const onClickCapture = (e: Event) => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const syncTransform = (_x: number, y: number) => {
-  transform.y = LimitborderPosition(transform.y + (y * heights.scroll) / heights.client, 0).top;
+  transform.y = limitTransformInVisibleView(
+    transform.y + (y * heights.scroll) / heights.client,
+    0
+  ).top;
 };
 
 const { mouseState } = useMockScrollDrag(scrollRef, {
@@ -486,7 +494,7 @@ const showScroll = computed(
     @wheel.stop="handleWheel"
   >
     <div
-      :class="{ 'horizontal-flow': direction === 'x' }"
+      :class="{ 'horizontal-flow': direction === 'x', [transformBoxClass ||'']: transformBoxClass }"
       :style="{
         transform: `translate(${-1 * transform.x}px, ${-1 * transform.y}px)`
       }"
