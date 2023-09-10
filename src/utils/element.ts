@@ -1,50 +1,34 @@
 import { Elements, type ElementsChinese, ElementPicture } from '@/interface';
 
 export const GetElementPicture = (element: ElementsChinese) => {
-  return ElementPicture[GetElementReflect(element)];
+  return ElementPicture[ElementReflect(element)];
 };
 
-/**
- * 获得中文元素的英文标识符
- *  */
-export const GetElementReflect = (element: ElementsChinese) => {
-  switch (element) {
-    //
-    case '风':
-      return Elements.Anemo;
-    case '雷':
-      return Elements.Electro;
-    case '水':
-      return Elements.Hydro;
-    case '火':
-      return Elements.Pyro;
-    case '冰':
-      return Elements.Cryo;
-    case '草':
-      return Elements.Dendro;
-    case '岩':
-      return Elements.Geo;
-  }
-};
+const ElementsMapper = (() => {
+  const map = new Map<string, string>();
 
-/**
- * 从元素标识符获取元素中文
- */
-export const GetElementChinese = (element: Elements): ElementsChinese => {
-  switch (element) {
-    case Elements.Anemo:
-      return '风';
-    case Elements.Electro:
-      return '雷';
-    case Elements.Hydro:
-      return '水';
-    case Elements.Pyro:
-      return '火';
-    case Elements.Cryo:
-      return '冰';
-    case Elements.Dendro:
-      return '草';
-    case Elements.Geo:
-      return '岩';
-  }
-};
+  map.set('风', Elements.Anemo);
+  map.set('雷', Elements.Electro);
+  map.set('水', Elements.Hydro);
+  map.set('火', Elements.Pyro);
+  map.set('冰', Elements.Cryo);
+  map.set('草', Elements.Dendro);
+  map.set('岩', Elements.Geo);
+
+  map.set(Elements.Anemo, '风');
+  map.set(Elements.Electro, '雷');
+  map.set(Elements.Hydro, '水');
+  map.set(Elements.Pyro, '火');
+  map.set(Elements.Cryo, '冰');
+  map.set(Elements.Dendro, '草');
+  map.set(Elements.Geo, '岩');
+  return map;
+})();
+
+function ElementReflect(element: ElementsChinese): Elements;
+function ElementReflect(element: Elements): ElementsChinese;
+function ElementReflect(element: ElementsChinese | Elements) {
+  return ElementsMapper.get(element);
+}
+
+export { ElementReflect };

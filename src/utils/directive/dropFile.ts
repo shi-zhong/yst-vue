@@ -64,14 +64,10 @@ export const Drop = (): { vDrop: Directive } => {
 
         el.addEventListener('drop', handleDrop as any);
         el.addEventListener('dragover', preventDefault);
-        // el.addEventListener('dropenter', preventDefault);
-        // el.addEventListener('dropleave', preventDefault);
       },
       unmounted(el) {
-        el.addEventListener('drop', handleDrop);
+        el.removeEventListener('drop', handleDrop);
         el.removeEventListener('dragover', preventDefault);
-        el.removeEventListener('dropenter', preventDefault);
-        el.removeEventListener('dropleave', preventDefault);
       }
     }
   };

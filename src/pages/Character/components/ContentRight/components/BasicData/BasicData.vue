@@ -9,7 +9,7 @@ import Defence from '@/assets/icons/defence.png';
 import EMaster from '@/assets/icons/elementMaster.png';
 import Power from '@/assets/icons/power.png';
 
-import DetailData from './DetailDate.vue';
+import DetailData from './DetailData.vue';
 
 const buttonSelect = ref(false);
 

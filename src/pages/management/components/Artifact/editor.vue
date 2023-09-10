@@ -21,7 +21,7 @@ import { ArtifactSuitAdd, ArtifactSuitModify } from '@/api/ArtifactSuit';
 const props = defineProps<{ active: number }>();
 const emits = defineEmits<{ (e: 'change', id: number): void }>();
 const store = useArtifactStore();
-const preview = ref(false);
+const preview = ref(true);
 
 const editorState = computed(() => {
   if (props.active !== -1 || basic.uuid !== 0) {
@@ -361,6 +361,7 @@ const handleDropFiles = (files: { file: any; origin: File }[]) => {
 watchEffect(() => {
   if (store.artifactSuits.has(props.active)) {
     syncArtifact(store.artifactSuits.get(props.active)!);
+    previewCardGroup.value = previewArtifactCard();
   }
 });
 </script>
@@ -527,9 +528,9 @@ watchEffect(() => {
       </template>
       <ScrollView
         direction="x"
-        scroll-behavior="hidden"
+        scroll-behavior="scroll"
         transform-box-class="tsbox"
-        style="height: 100%;"
+        style="height: 100%"
         v-else-if="editorState === 'preview'"
       >
         <ScrollView
@@ -537,7 +538,6 @@ watchEffect(() => {
           :key="artifact.type"
           :border="{ top: 100, bottom: 100 }"
           scroll-behavior="hidden"
-          style="height: 95%;"
         >
           <ArtifactDetailCard
             :size="40"

@@ -36,7 +36,7 @@ export default defineComponent({
 
 <template>
   <component v-if="isDecoration" :is="icon" :class="S('special')" />
-  <img v-else :class="S('image')" :style="{ width: 50 }" :draggable="false" :src="icon" :alt="icon || 'button'" />
+  <img v-else :class="S('image')" :draggable="false" :src="icon" :alt="icon || 'button'" />
 </template>
 
 <style scoped lang="less">

@@ -85,8 +85,8 @@ const render = document.getElementsByClassName('character-page-')[0];
           slide
         >
           <div :class="S('title')">元素</div>
+          <!-- :class="S('option-list')" -->
           <div
-            :class="S('option-list')"
             data-type="click"
             @click="updateModelElement"
           >
@@ -107,8 +107,8 @@ const render = document.getElementsByClassName('character-page-')[0];
             </div>
           </div>
           <div :class="S('title')">武器</div>
+          <!-- :class="S('option-list')" -->
           <div
-            :class="S('option-list')"
             data-type="click"
             @click="updateModelWeapon"
             style="margin-bottom: 50px"

@@ -61,14 +61,13 @@ const clickOutsideToClose = () => {
 const handleClick = (e: Event) => {
   EventDispatch(e, {
     skill: (dataset) => {
+      e.stopPropagation();
       if (select.value === -1 && dataset.index) {
         document.addEventListener('click', clickOutsideToClose);
         stateStore.sidebar.next('talents');
       }
       select.value = parseInt(dataset.index || '-1');
-      return false;
-    },
-    'talent-right': () => clickOutsideToClose()
+    }
   });
 };
 </script>

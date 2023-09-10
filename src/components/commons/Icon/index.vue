@@ -28,7 +28,6 @@ const props = withDefaults(defineProps<IconProps>(), {
   <div class="icon">
     <img
       v-if="props.src !== ''"
-      class="after"
       :style="{
         ...(props.imgStyle || {}),
         width: `${props.size}px`,

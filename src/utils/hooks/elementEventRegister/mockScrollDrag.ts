@@ -2,17 +2,24 @@ import { merge } from '@/utils';
 import { onMounted, onUnmounted, reactive, ref, type Ref } from 'vue';
 
 interface MockScrollDragOptions {
-  mouseDown?: (e?: MouseEvent) => void;
+  mouseDown?: (e: MouseEvent & { payload?: Record<string, any> }) => void;
   /**
    * 鼠标移动事件
    * @param e
    * @param mouseState 鼠标状态
    * @returns
    */
-  mouseMove?: (e: MouseEvent, mouseState: 'up' | 'move' | 'down') => void;
-  mouseUp?: (e?: MouseEvent) => void;
-  moveMethod?: (crtPos: MousePositionInfo, pvePos: MousePositionInfo, e: MouseEvent) => void;
-  stopPropagation?: (e: MouseEvent) => boolean;
+  mouseMove?: (
+    e: MouseEvent & { payload?: Record<string, any> },
+    mouseState: 'up' | 'move' | 'down'
+  ) => void;
+  mouseUp?: (e: MouseEvent & { payload?: Record<string, any> }) => void;
+  moveMethod?: (
+    crtPos: MousePositionInfo,
+    pvePos: MousePositionInfo,
+    e: MouseEvent & { payload?: Record<string, any> }
+  ) => void | boolean;
+  stopPropagation?: (e: MouseEvent & { payload?: Record<string, any> }) => boolean;
   // 用于测试实例是否挂上
   debug?: boolean;
 }
@@ -36,7 +43,7 @@ interface MousePositionInfo {
 }
 
 /**
- * 实现模拟滚动的钩子函数
+ * 实现模拟滚动的钩子函数, 需要在生命周期外调用
  * @param divRef 目标div节点的 ref 对象, 内部进行判断
  * @param options 事件配置选项
  * @returns
@@ -65,8 +72,6 @@ export const useMockScrollDrag = (
     timeStamp: 0
   });
 
-  let flag = 0;
-
   /**
    * 处理模拟滚动开始事件
    * @param e
@@ -89,8 +94,12 @@ export const useMockScrollDrag = (
       // 同一时间戳，事件会执行两次
       if (_mousePosition.timeStamp !== mousePosition.timeStamp) {
         if (moveMethod) {
-          moveMethod(_mousePosition, mousePosition, e);
+          // 默认阻止, 返回true继续传播
+          if (moveMethod(_mousePosition, mousePosition, e) !== true) true;
+          e.stopPropagation();
         } else {
+          // 默认阻止
+          e.stopPropagation();
           divRef.value!.scrollTop -= _mousePosition.calcMovementY;
         }
         merge(mousePosition, _mousePosition);
@@ -129,39 +138,21 @@ export const useMockScrollDrag = (
     mouseUp && mouseUp(e);
   };
 
-  const handleRigister = () => {
+  onMounted(() => {
     // 防止事件被多次注册
-    if (flag >= 2) return;
     if (!divRef.value) {
-      if (flag !== 0)
-        console.error('Error: Current ref has a undefined value.Unable to add event listener.');
-      flag++;
-
+      console.error('Error: Current ref has a undefined value.Unable to add event listener.');
       return;
     }
-    flag = 2;
     debug && console.log('MockScroll Rigisted.');
     divRef.value.addEventListener('mousedown', handleMouseDown);
-    divRef.value.addEventListener('mousemove', handleMouseMove);
-  };
-
-  /**
-   * 回调执行第二次
-   * 如果这个函数在onMounted中执行，这个onMounted将不会有作用
-   */
-  onMounted(handleRigister);
-  /**
-   * 第一次执行
-   * 配合onMounted，保证实例一定被挂上监听器
-   */
-  handleRigister();
+  });
 
   onUnmounted(() => {
     if (!divRef.value) {
       return;
     }
     divRef.value.removeEventListener('mousedown', handleMouseDown);
-    divRef.value.removeEventListener('mousemove', handleMouseMove);
   });
 
   debug && console.log('MockScrollDrag runned. Ref value is', divRef.value);

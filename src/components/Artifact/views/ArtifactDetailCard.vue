@@ -6,7 +6,7 @@ import { type ArtifactSlots, type ArtifactSuitModel } from '../interface';
 import Describe from './ArtifactDescribe.vue';
 import { ArtifactSlotsToChinese, ArtifactEffectSearch } from '../functions';
 
-import { onMounted, reactive, toRefs, watch } from 'vue';
+import { reactive, toRefs, watch } from 'vue';
 import { merge } from '@/utils';
 
 interface ArtifactDetailCardProps {
@@ -39,23 +39,20 @@ const S = ClassNameFactor('artifact-detail-card-');
 
 const data = reactive<ArtifactSuitModel>(ArtifactEffectSearch(props.id));
 
-onMounted(() => {
-  if (props.id === 0 && props.suit) {
-    merge(data, props.suit);
-  } else {
-    merge(data, ArtifactEffectSearch(props.id));
-  }
-});
-
+/**
+ * 为了兼容添加套装时，圣遗物不存在id的情况，需要有不依赖于id内置逻辑
+ * 当id不存在时，优先执行props.suit模型
+ **/
 watch(
-  () => props.id,
+  [() => props.id, () => props.suit],
   () => {
     if (props.id === 0 && props.suit) {
       merge(data, props.suit);
     } else {
       merge(data, ArtifactEffectSearch(props.id));
     }
-  }
+  },
+  { immediate: true }
 );
 </script>
 
@@ -72,7 +69,7 @@ watch(
       <div :class="S('lvl-container')">
         <div :class="S('lvl')">+{{ props.lvl }}</div>
         <Lock
-          :size="30 / 50 * props.size"
+          :size="(30 / 50) * props.size"
           :lock="props.lock"
         />
       </div>

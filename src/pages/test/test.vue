@@ -54,7 +54,13 @@ const visible2 = ref(0);
     <div></div>
     <template #dropover> dropover </template>
   </DropFile>
-  <DropImage />
+  <ScrollView style="height: 500px; border: 1px solid black">
+    <div style="background-color: rebeccapurple; height: 700px;overflow:hidden">
+      <ScrollView style="height: 100px; border: 1px solid black; margin-top: 100px">
+        <div style="background-color: red; height: 200px">123</div>
+      </ScrollView>
+    </div>
+  </ScrollView>
 </template>
 
 <style scoped lang="less">

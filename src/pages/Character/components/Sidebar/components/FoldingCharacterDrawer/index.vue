@@ -75,7 +75,7 @@ const handleClickDispatch = (e: Event) => {
             element: c.element,
             name: c.name
           });
-          stateStore.setActive(parseInt(dataset.index || '') + 1);
+          stateStore.setActive(parseInt(dataset.index || ''));
           return true;
         }
       });
@@ -103,7 +103,7 @@ const handleClickDispatch = (e: Event) => {
       >
         <div
           :class="S('active-tag')"
-          :style="{ top: `${active * 100 - 100}px` }"
+          :style="{ top: `${active * 100}px` }"
         >
           <img
             :class="S('active-star')"

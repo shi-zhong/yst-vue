@@ -19,23 +19,16 @@ const props = withDefaults(defineProps<ArtifacDescribe & { size?: number }>(), {
 
 const data = reactive<ArtifactSuitModel>(ArtifactEffectSearch(props.id));
 
-onMounted(() => {
-  if (props.id === 0 && props.suit) {
-    merge(data, props.suit);
-  } else {
-    merge(data, ArtifactEffectSearch(props.id));
-  }
-});
-
 watch(
-  () => props.id,
+  [() => props.id, () => props.suit],
   () => {
     if (props.id === 0 && props.suit) {
       merge(data, props.suit);
     } else {
       merge(data, ArtifactEffectSearch(props.id));
     }
-  }
+  },
+  { immediate: true }
 );
 </script>
 

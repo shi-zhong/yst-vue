@@ -18,7 +18,7 @@ export const useCharacterStateStore = defineStore('character-state', {
     ({
       cRight: 'attr',
       team: [10, 12],
-      active: 1,
+      active: 0,
       sidebar: useStateMachine<SidebarNames>(
         {
           folding: [

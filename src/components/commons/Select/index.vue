@@ -53,6 +53,7 @@ const handleOutSideClose = () => {
     visible.value = false;
     document.removeEventListener('click', handleOutSideClose);
   }
+  move.value = false;
 };
 
 const handleUpdate = (aft: SelectOptionProps) => {
@@ -133,12 +134,12 @@ watch(
 useMockScrollDrag(liRef, {
   mouseMove(e, state) {
     if (state !== 'up') move.value = true;
-  },
-  mouseUp() {
-    setTimeout(() => {
-      move.value = false;
-    }, 10);
   }
+  // mouseUp() {
+  //   setTimeout(() => {
+  //     move.value = false;
+  //   }, 10);
+  // }
 });
 </script>
 

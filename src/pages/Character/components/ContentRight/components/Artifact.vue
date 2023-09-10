@@ -8,7 +8,7 @@ import Defence from '@/assets/icons/defence.png';
 import EMaster from '@/assets/icons/elementMaster.png';
 import { ArtifactDescribe } from '@/components/Artifact';
 
-import DetailData from './BasicData/DetailDate.vue';
+import DetailData from './BasicData/DetailData.vue';
 
 const buttonSelect = ref(false);
 

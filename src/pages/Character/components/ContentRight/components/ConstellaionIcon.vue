@@ -11,23 +11,23 @@ interface ConstellationIconProps {
 
 const S = ClassNameFactor('constellation-');
 
-const props = defineProps<ConstellationIconProps>();
+defineProps<ConstellationIconProps>();
 </script>
 
 <template>
   <div
     :class="S(['icon ', element])"
     data-type="active"
-    :data-index="props.index || 0"
+    :data-index="index || 0"
   >
     <img
       :draggable="false"
       :class="S('life')"
-      :src="props.icon"
+      :src="icon"
       alt=""
     />
     <div
-      v-if="props.lock"
+      v-if="lock"
       :class="S('lock')"
     >
       <img

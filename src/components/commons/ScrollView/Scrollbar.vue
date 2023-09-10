@@ -4,9 +4,10 @@ import { ref } from 'vue';
 import { useMockScrollDrag } from '@/utils/hooks';
 
 interface ScrollbarProps {
+  by: 'x' | 'y';
   customScrollbar?: string;
-  heights: { client: number; scroll: number };
-  scrollTop: number;
+  direction: { client: number; scroll: number };
+  distance: number;
 }
 
 interface ScrollbarEmits {
@@ -14,15 +15,20 @@ interface ScrollbarEmits {
   (e: 'resetWhenBlankVisible'): void;
 }
 
-defineProps<ScrollbarProps>();
+const props = defineProps<ScrollbarProps>();
 const emits = defineEmits<ScrollbarEmits>();
 
 const thumbRef = ref();
 
+const emitsSyncTransform = (function () {
+  if (props.by === 'x') return (e: any) => emits('syncTransform', e.calcMovementX, 0);
+  else return (e: any) => emits('syncTransform', 0, e.calcMovementY);
+})();
+
 // 滚动事件只注册一次
 useMockScrollDrag(thumbRef, {
   moveMethod(e) {
-    emits('syncTransform', 0, e.calcMovementY);
+    emitsSyncTransform(e);
   },
   mouseUp() {
     emits('resetWhenBlankVisible');
@@ -31,13 +37,13 @@ useMockScrollDrag(thumbRef, {
 </script>
 
 <template>
-  <div :class="'scroll-track '">
+  <div :class="`scroll-track scroll-track-${by} `">
     <!-- 通过更新滚动视区的位置来间接更新滚动条 -->
     <div
-      class="scroll-thumb"
-      :style="`transform: translateY(${(scrollTop * heights.client) / heights.scroll}px); height:${
-        heights.client ** 2 / heights.scroll
-      }px;`"
+      :class="`scroll-thumb scroll-thumb-${by}`"
+      :style="`transform: translate${by.toUpperCase()}(${
+        (distance * direction.client) / direction.scroll
+      }px); ${by === 'x' ? 'width' : 'height'}:${direction.client ** 2 / direction.scroll}px;`"
       ref="thumbRef"
       @dragstart.stop.prevent="() => {}"
     ></div>
@@ -49,19 +55,31 @@ useMockScrollDrag(thumbRef, {
   @width: 5px;
   &-track {
     position: absolute;
-    top: 0;
-    right: 0;
-
-    // background: rgba(76, 76, 76, 0.3);
-    width: @width;
-    height: 100%;
     overflow: hidden;
+    &-x {
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: @width;
+    }
+    &-y {
+      top: 0;
+      right: 0;
+      width: @width;
+      height: 100%;
+    }
   }
   &-thumb {
-    width: 5px;
     background: rgba(217, 217, 217, 0.5);
     border-radius: 2px;
-    transition: 'width' 0.3s;
+    &-x {
+      height: @width;
+      transition: 'width' 0.3s;
+    }
+    &-y {
+      width: @width;
+      transition: 'height' 0.3s;
+    }
 
     &:hover {
       background: rgba(217, 217, 217, 0.8);

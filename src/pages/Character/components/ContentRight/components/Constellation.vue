@@ -90,7 +90,7 @@ const nowlife = 4;
     <div
       v-for="(i, index) in lifes"
       :key="index"
-      :class="S({ box: true, locked: nowlife <= index })"
+      :class="S('box')"
       data-type="constellation"
       :data-index="index"
     >

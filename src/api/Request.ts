@@ -36,9 +36,12 @@ const Fetch = (url: string, options?: Options) => {
     token: options?.token && Cookie.get('genshinTool')
   };
 
-  return fetch(url, opt).then((res) => {
-    return res.json();
-  });
+  return fetch(url, opt).then(
+    (res) => {
+      return res.json();
+    },
+    () => ({ msg: 'fail.' })
+  );
 };
 
 export const Upload = (formData: FormData): Promise<GlobalResponseDataStruct<{ url: string }>> => {
