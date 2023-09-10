@@ -1,10 +1,6 @@
 import { shallowReactive, shallowRef, type ShallowReactive, type ShallowRef } from 'vue';
 
-/**
- *
- * @param init 数组初始化
- * @param mapper 映射函数 根据入参和栈产生符合栈的元素
- */
+
 
 export interface Stack<T> {
   key: string | symbol;
@@ -60,6 +56,11 @@ export function useStack<T, E = any>(
  */
 export function useStack<T, E = any>(): useStackReturn<T, E>;
 
+/**
+ *
+ * @param init 数组初始化
+ * @param mapper 映射函数 根据入参和栈产生符合栈的元素
+ */
 export function useStack<T, E>(
   init?: T[] | null,
   mapper?: (
@@ -94,6 +95,12 @@ export function useStack<T, E>(
     }
   };
 
+  /**
+   * 使用key保存原始数据
+   * @param key 
+   * @param raw 
+   * @returns 
+   */
   const toStack = (key: symbol | string, raw: T) => {
     return {
       key,

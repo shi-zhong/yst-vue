@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Modal } from '@@/commons/Modal/index';
+import Modal from '@@/commons/Modal/Modal.vue';
 import { ScrollView } from '@/components';
 import { ref } from 'vue';
 
@@ -55,7 +55,7 @@ const visible2 = ref(0);
     <template #dropover> dropover </template>
   </DropFile>
   <ScrollView style="height: 500px; border: 1px solid black">
-    <div style="background-color: rebeccapurple; height: 700px;overflow:hidden">
+    <div style="background-color: rebeccapurple; height: 700px; overflow: hidden">
       <ScrollView style="height: 100px; border: 1px solid black; margin-top: 100px">
         <div style="background-color: red; height: 200px">123</div>
       </ScrollView>
