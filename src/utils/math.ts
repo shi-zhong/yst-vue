@@ -16,5 +16,3 @@ export const ElementMastery = (master: number) => {
     crystal: Round((4.44 * master) / (1400 + master), 4)
   };
 };
-
-export default { Round };

@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { Lock } from '@/components/Tags';
 import BasicDetailCard from '@/components/DetailCard/index.vue';
-import { ClassNameFactor } from '@/utils/className';
-import { type ArtifactSlots, type ArtifactSuitModel } from '../interface';
+import type { ArtifactSlots, ArtifactSuitModel } from '../interface';
 import Describe from './ArtifactDescribe.vue';
-import { ArtifactSlotsToChinese, ArtifactEffectSearch } from '../functions';
-
+import { ArtifactSlotsNameTransform } from '../functions';
 import { reactive, toRefs, watch } from 'vue';
-import { merge } from '@/utils';
+import { merge, ClassNameFactor } from '@/utils';
+import { useArtifactStore } from '@/stores/Artifact';
 
 interface ArtifactDetailCardProps {
   id: number;
@@ -33,11 +32,13 @@ const props = withDefaults(defineProps<ArtifactDetailCardProps>(), {
   size: 50
 });
 
+const store = useArtifactStore();
+
 const { main, subs, type, suitCount } = toRefs(props);
 
 const S = ClassNameFactor('artifact-detail-card-');
 
-const data = reactive<ArtifactSuitModel>(ArtifactEffectSearch(props.id));
+const data = reactive<ArtifactSuitModel>(store.ArtifactSuitById(props.id));
 
 /**
  * 为了兼容添加套装时，圣遗物不存在id的情况，需要有不依赖于id内置逻辑
@@ -49,7 +50,7 @@ watch(
     if (props.id === 0 && props.suit) {
       merge(data, props.suit);
     } else {
-      merge(data, ArtifactEffectSearch(props.id));
+      merge(data, store.ArtifactSuitById(props.id));
     }
   },
   { immediate: true }
@@ -62,7 +63,7 @@ watch(
     :rarity="data.rarity"
     :main="main"
     :imgurl="data.slots[props.type]!.imgUrl"
-    :type="ArtifactSlotsToChinese(type)"
+    :type="ArtifactSlotsNameTransform(type)"
     :style="`--title-height: ${props.size}px`"
   >
     <div :class="S('describe')">

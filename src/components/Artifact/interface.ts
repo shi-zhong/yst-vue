@@ -1,44 +1,63 @@
-import { type ArtifactSlots } from './functions/artifact.type';
+export type ArtifactSlots =
+  | 'FlowerOfLife'
+  | 'PlumnOfDeath'
+  | 'SandsOfEon'
+  | 'GobletOfEonothem'
+  | 'CircletOfLogos';
 
-export { type ArtifactSlots };
-
-export interface ArtifactAttributesModel {
-  main: {
-    [key: string]: [number, number];
-  };
-  sub: {
-    [key: string]: [number, number, number, number];
-  };
-}
+export type ArtifactSlotsChinese = '生之花' | '死之羽' | '时之沙' | '空之杯' | '理之冠';
 
 export type ArtifactMainAttributes = {
-  [key in ArtifactSlots]: string[];
+  [key in ArtifactSlots]: ArtifactMainArrtibutes[];
 };
 
-export type ArtifactLvlData = {
-  [key in 'one' | 'two' | 'three' | 'four' | 'five']: ArtifactAttributesModel;
-};
+export type ArtifactMainArrtibutes =
+  | 'HP'
+  | 'ATK'
+  | 'ATKPercentage'
+  | 'DEFPercentage'
+  | 'HPPercentage'
+  | 'ElementalMastery'
+  | 'EnergyRecharge'
+  | 'PhysicalDMGBonus'
+  | 'PyroDMGBonus'
+  | 'HyDroDMGBonus'
+  | 'DendroDMGBonus'
+  | 'ElectroDMGBonus'
+  | 'AnemoDMGBonus'
+  | 'CryoDMGBonus'
+  | 'GeoDMGBonus'
+  | 'CRITRate'
+  | 'CRITDMG'
+  | 'HealingBonus';
 
-export interface ArtifactAttributesStaticModel {
-  mains: ArtifactMainAttributes;
-  subs: string[];
-  maps: [string, string][];
-  lvl_data: ArtifactLvlData;
-}
+export type ArtifactSubArrtibutes =
+  | 'ATK'
+  | 'ATKPercentage'
+  | 'DEF'
+  | 'DEFPercentage'
+  | 'HP'
+  | 'HPPercentage'
+  | 'CRITRate'
+  | 'CRITDMG'
+  | 'ElementalMastery'
+  | 'EnergyRecharge';
 
 export interface ArtifactInstanceModel {
   id: number;
-  suit_id: number;
-  slot: ArtifactSlots;
-  main: {
-    tag: string;
-    value: number;
+  suit: number;
+  rarity: number;
+  slot: number;
+  data: {
+    main: {
+      key: ArtifactMainArrtibutes;
+      value: number;
+    };
+    subs: {
+      key: ArtifactSubArrtibutes;
+      value: number;
+    }[];
   };
-  subs: {
-    tag: string;
-    value: number;
-  }[];
-  lvl: number;
   lock: boolean;
 }
 

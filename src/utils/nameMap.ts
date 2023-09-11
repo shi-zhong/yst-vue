@@ -16,29 +16,28 @@ type WeaponMap = {
   type: WeaponsTypes;
 };
 
-const getMaper = async () => {
+export const mapper = await (async () => {
   const { data, msg } = await Mapper();
 
   const { character, artifact, weapon } = data;
 
   if (msg !== 'OK') {
     console.error('Can not get mapper.');
-    return () => '';
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return (_origin: CharacterMap | ArtifactMap | WeaponMap) => [0];
   }
 
   return (origin: CharacterMap | ArtifactMap | WeaponMap) => {
     if (origin.name === 'character') {
-      return `${character.base}`;
+      return [character.base];
     } else if (origin.name === 'artifact') {
-      return `${artifact.base}${artifact[origin.slot]}`;
+      return [artifact.base, artifact[origin.slot]];
     } else if (origin.name === 'weapon') {
-      return `${weapon.base}${weapon[origin.type]}`;
+      return [weapon.base, weapon[origin.type]];
     }
-    return '';
+    return [0];
   };
-};
-
-export const mapper = await getMaper();
+})();
 
 export const fileExt = (filename: string) => {
   let ext = '';

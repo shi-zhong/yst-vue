@@ -1,9 +1,8 @@
 <script setup lang="tsx">
 import { ref } from 'vue';
 import { ScrollView, Icon } from '@/components';
-import { EventDispatch } from '@/utils/event';
+import { EventDispatch, ElementMastery } from '@/utils';
 import DropMask from './DropMask.vue';
-import { ElementMastery } from '@/utils/math';
 
 import LifeMax from '@/assets/icons/lifeMax.png';
 import Attack from '@/assets/icons/attack.png';

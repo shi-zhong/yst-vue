@@ -4,8 +4,7 @@ import { Drop } from '@/utils/directive';
 import { Rarity, Icon, ScrollView, DropImage, DropFile } from '@/components';
 import {
   type ArtifactSuitModel,
-  ArtifactSlotsToChinese,
-  ArtifactSlotsToEnglish,
+  ArtifactSlotsNameTransform,
   type ArtifactSlotsChinese,
   type ArtifactSlots,
   ArtifactDetailCard
@@ -198,7 +197,7 @@ const buildSave = async (): Promise<ArtifactSuitModel> => {
             mapper({
               name: 'artifact',
               slot: k as ArtifactSlots
-            }) +
+            }).join('') +
             '_' +
             fileExt(f.name)
         );
@@ -329,7 +328,7 @@ const handleDrop = (text: string, file: File) => {
       imgUrl: '',
       describe: i.desc
     };
-    if (i.type) islots[ArtifactSlotsToEnglish(i.type) as key] = p;
+    if (i.type) islots[ArtifactSlotsNameTransform(i.type) as key] = p;
   });
 
   merge(slots, islots);
@@ -471,7 +470,7 @@ watchEffect(() => {
               class="artifact-slot"
             >
               <div>
-                <div>{{ ArtifactSlotsToChinese(key) }}</div>
+                <div>{{ ArtifactSlotsNameTransform(key) }}</div>
                 <div>
                   <input
                     type="text"

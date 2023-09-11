@@ -15,4 +15,4 @@ interface CharacterCardProps extends BasicCardProps {
   selected?: boolean;
 }
 
-export { type CardProps, type CharacterCardProps, type BasicCardProps };
+export type { CardProps, CharacterCardProps, BasicCardProps };

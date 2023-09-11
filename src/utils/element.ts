@@ -25,10 +25,8 @@ const ElementsMapper = (() => {
   return map;
 })();
 
-function ElementReflect(element: ElementsChinese): Elements;
-function ElementReflect(element: Elements): ElementsChinese;
-function ElementReflect(element: ElementsChinese | Elements) {
+export function ElementReflect(element: ElementsChinese): Elements;
+export function ElementReflect(element: Elements): ElementsChinese;
+export function ElementReflect(element: ElementsChinese | Elements) {
   return ElementsMapper.get(element);
 }
-
-export { ElementReflect };

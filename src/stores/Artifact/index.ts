@@ -11,6 +11,40 @@ interface ArtifactStore {
   uuidMapId: Map<number, number>;
 }
 
+const emptyArtifactSuit: ArtifactSuitModel = {
+  id: 0,
+  name: '',
+  rarity: 1,
+  slots: {
+    FlowerOfLife: {
+      imgUrl: '',
+      name: '',
+      describe: ''
+    },
+    PlumnOfDeath: {
+      imgUrl: '',
+      name: '',
+      describe: ''
+    },
+    SandsOfEon: {
+      imgUrl: '',
+      name: '',
+      describe: ''
+    },
+    GobletOfEonothem: {
+      imgUrl: '',
+      name: '',
+      describe: ''
+    },
+    CircletOfLogos: {
+      imgUrl: '',
+      name: '',
+      describe: ''
+    }
+  },
+  effects: []
+};
+
 export const useArtifactStore = defineStore('artifact', {
   state: () =>
     ({
@@ -18,8 +52,11 @@ export const useArtifactStore = defineStore('artifact', {
       uuidMapId: new Map()
     } as ArtifactStore),
   getters: {
-    GetArtifactSuitById(state) {
-      return (id: number) => state.artifactSuits.get(id);
+    ArtifactSuitById(state) {
+      return (id: number) =>
+        (state.artifactSuits.has(id)
+          ? state.artifactSuits.get(id)!
+          : emptyArtifactSuit) as ArtifactSuitModel;
     }
   },
   actions: {

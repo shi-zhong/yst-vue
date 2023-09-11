@@ -2,7 +2,7 @@ import { type FunctionalComponent } from 'vue';
 import { type CardProps } from './interface';
 import { Rarity, RarityToColor } from '@/components/Tags';
 
-import { type CharacterCardProps, type BasicCardProps } from './interface';
+import type { CharacterCardProps, BasicCardProps } from './interface';
 import { GetElementPicture, ClassNameWithCSSModuleFactor } from '@/utils';
 
 import Style from './index.module.less';

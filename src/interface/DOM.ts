@@ -1,7 +1,3 @@
-// export interface EventTarget<T> {
-
-// }
-
 export interface DivElement {
   autofocus: boolean;
   childElementCount: 16;

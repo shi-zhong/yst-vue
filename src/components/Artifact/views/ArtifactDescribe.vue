@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Enable } from '@/components/Tags';
 /** @todo 使用网络获取数据  */
-import { ArtifactEffectSearch } from '../functions';
-import { onMounted, reactive, watch } from 'vue';
+import { Enable } from '@/components/Tags';
+import { useArtifactStore } from '@/stores/Artifact';
+import { reactive, watch } from 'vue';
 import { merge } from '@/utils';
 import type { ArtifactSuitModel } from '..';
 
@@ -17,7 +17,9 @@ const props = withDefaults(defineProps<ArtifacDescribe & { size?: number }>(), {
   size: 50
 });
 
-const data = reactive<ArtifactSuitModel>(ArtifactEffectSearch(props.id));
+const store = useArtifactStore()
+
+const data = reactive<ArtifactSuitModel>(store.ArtifactSuitById(props.id));
 
 watch(
   [() => props.id, () => props.suit],
@@ -25,7 +27,7 @@ watch(
     if (props.id === 0 && props.suit) {
       merge(data, props.suit);
     } else {
-      merge(data, ArtifactEffectSearch(props.id));
+      merge(data, store.ArtifactSuitById(props.id));
     }
   },
   { immediate: true }
