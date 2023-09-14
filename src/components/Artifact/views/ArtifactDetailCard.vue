@@ -50,7 +50,12 @@ watch(
     if (props.id === 0 && props.suit) {
       merge(data, props.suit);
     } else {
-      merge(data, store.ArtifactSuitById(props.id));
+      const willmerge = store.ArtifactSuitById(props.id);
+      if (willmerge.id === 0) {
+        console.error('Artifact Id Error.');
+      }
+
+      merge(data, willmerge);
     }
   },
   { immediate: true }
@@ -59,47 +64,41 @@ watch(
 
 <template>
   <BasicDetailCard
-    :title="data.slots[props.type]!.name"
+    :title="data.slots[type]!.name"
     :rarity="data.rarity"
     :main="main"
-    :imgurl="data.slots[props.type]!.imgUrl"
+    :imgurl="data.slots[type]!.imgUrl"
     :type="ArtifactSlotsNameTransform(type)"
-    :style="`--title-height: ${props.size}px`"
+    :size="size"
   >
-    <div :class="S('describe')">
-      <div :class="S('lvl-container')">
-        <div :class="S('lvl')">+{{ props.lvl }}</div>
-        <Lock
-          :size="(30 / 50) * props.size"
-          :lock="props.lock"
-        />
-      </div>
-      <div :class="S('attributes')">
-        <div
-          v-for="i in subs"
-          :key="i.key + i.value"
-        >
-          {{ ' · ' }}
-          {{ i.key }}+{{ i.value }}
-        </div>
-      </div>
-      <Describe
-        :class="S('effect-describe')"
-        :id="props.id"
-        :suit="props.suit"
-        :active="suitCount"
+    <div :class="S('lvl-container')">
+      <div :class="S('lvl')">+{{ lvl }}</div>
+      <Lock
+        :size="(30 / 50) * size"
+        :lock="lock"
       />
-      <div :class="S('txt-describe')">{{ data.slots[props.type]!.describe }}</div>
     </div>
+    <div :class="S('attributes')">
+      <div
+        v-for="i in subs"
+        :key="i.key + i.value"
+      >
+        {{ ' · ' }}
+        {{ i.key }}+{{ i.value }}
+      </div>
+    </div>
+    <Describe
+      :class="S('effect-describe')"
+      :id="id"
+      :suit="suit"
+      :active="suitCount"
+    />
+    <div :class="S('txt-describe')">{{ data.slots[type]!.describe }}</div>
   </BasicDetailCard>
 </template>
 
 <style scoped lang="less">
 .artifact-detail-card {
-  &-describe {
-    --attribute-size: calc(var(--title-height) / 2.3);
-  }
-
   &-attributes > div {
     color: @fontdarkgray;
     font-size: var(--attribute-size);

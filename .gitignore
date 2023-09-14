@@ -31,5 +31,7 @@ coverage
 /src/assets/avatar
 /src/assets/skills
 
+/src/**/__test__
+
 *.xlsx
 /backup

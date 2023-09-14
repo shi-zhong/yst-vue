@@ -1,50 +1,39 @@
-import { type WeaponsTypes } from './function';
+export type WeaponTypes = 'Sword' | 'Catalyst' | 'Claymore' | 'Bow' | 'Polearm';
+export type WeaponTypesChinese = '单手剑' | '法器' | '双手剑' | '弓箭' | '长柄武器';
 
+/**
+ *
+ */
 export interface WeaponTypeModel {
   id: number;
-  name: string;
-  type: {
-    key: string;
-    value: string;
+  basic: {
+    name: string;
+    star: 1 | 2 | 3 | 4 | 5;
+    type: number;
+    imgurl: string;
   };
-  imgUrl: string;
-  main: {
-    key: string;
-    value: [number, number];
+  describe: string;
+  data: {
+    main: number[];
+    sub: {
+      key: string;
+      start: number;
+      growth: number;
+    };
   };
-  sub: {
-    key: string;
-    value: [number, number];
-  };
+  story: string[];
   effects: {
     name: string;
-    effect: string;
+    describe: string;
+    $: (string | number)[][];
   };
-  describe: string;
 }
 
-export interface WeaponsModel {
-  name: string;
-  imgurl: string;
-  type: WeaponsTypes;
-  rank: 1 | 2 | 3 | 4 | 5;
-  main: {
-    tag: string;
-    value: string;
-  };
-  sub?: {
-    tag: string;
-    value: string;
-  };
-  lvl: number;
-  stars: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export interface WeaponsInstanceModel {
+  id: number;
+  type_id: number;
   lock: boolean;
-  refine: number;
-  refinedEnd: boolean;
-  effect: {
-    name: string;
-    effectDescribe: string;
-    refinedEffectAttribute: (string | number)[];
-  };
-  describe: string;
+  rank: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  lvl: 1 | 20 | 40 | 50 | 60 | 70 | 80 | 90;
+  refine: 0 | 1 | 2 | 3 | 4 | 5;
 }

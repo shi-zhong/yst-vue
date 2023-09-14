@@ -14,18 +14,21 @@ const S = ClassNameFactor('common-detail-card');
 </script>
 
 <template>
-  <div :class="S()">
+  <div
+    :class="S()"
+    :style="`--title-height: ${size}px`"
+  >
     <div :class="S({ '-title': ['', `-${RarityToColor(rarity)}`] })">
-      <p>{{ title }}</p>
+      <p>{{ title || 'Title' }}</p>
     </div>
     <div :class="S({ '-attribute': ['', `-${RarityToColor(rarity)}`] })">
-      <div :class="S(['-attribute-data'])">
+      <div :class="S('-attribute-data')">
         <div>{{ type }}</div>
-
         <div>{{ sub?.key || '' }}</div>
-        <div>{{ sub?.value || '' }}</div>
 
+        <div>{{ sub?.value || '' }}</div>
         <div>{{ main.key }}</div>
+
         <div>{{ main.value }}</div>
         <Rarity
           :rarity="rarity"
@@ -33,15 +36,13 @@ const S = ClassNameFactor('common-detail-card');
           :size="(30 / 50) * props.size"
         />
       </div>
-      <div>
-        <img
-          :draggable="false"
-          :src="imgurl"
-          alt="img"
-        />
-      </div>
+      <img
+        :draggable="false"
+        :src="imgurl"
+        alt="img"
+      />
     </div>
-    <div :class="S(['-describe'])"><slot></slot></div>
+    <div :class="S('-describe')"><slot></slot></div>
   </div>
 </template>
 
@@ -49,13 +50,16 @@ const S = ClassNameFactor('common-detail-card');
 .common-detail-card {
   --title-border: calc(var(--title-height) / 17);
   --leftindent: calc(var(--title-height) / 2);
+  --half-leftindent: calc(var(--title-height) / 4);
   --4-title-height: calc(4 * var(--title-height));
+  --5-title-height: calc(5 * var(--title-height));
   --4-more-leftindent: calc(var(--leftindent) + 4px);
 
   margin: 10px;
   width: calc(9 * var(--title-height));
   box-shadow: @box-shadow;
   user-select: none;
+  background: @blank-white;
 
   &-title {
     position: relative;
@@ -114,70 +118,57 @@ const S = ClassNameFactor('common-detail-card');
       background: @rank-gray-gradient-box;
     }
 
-    & > div {
+    & > :first-child {
       display: inline-block;
       vertical-align: top;
-      height: 100%;
-      &:first-child {
-        padding-top: 5px;
-        width: var(--4-title-height);
-      }
-      &:last-child {
-        width: var(--4-title-height);
-      }
+      width: var(--5-title-height);
+      box-sizing: border-box;
+      padding-left: var(--4-more-leftindent);
+      padding-top: var(--half-leftindent);
+      padding-bottom: var(--half-leftindent);
+    }
+
+    & > :last-child {
+      width: var(--4-title-height);
     }
 
     &-data {
-      padding-left: var(--4-more-leftindent);
       & > div {
-        --attribute-base-font-size: calc(var(--title-height) / 4);
-
-        padding: 2px 0;
-        line-height: calc(var(--title-height) / 1.5);
         box-sizing: border-box;
 
         &:nth-child(1),
-        &:nth-child(3) {
+        &:nth-child(2),
+        &:nth-child(3),
+        &:nth-child(4) {
           height: var(--leftindent);
+          line-height: var(--leftindent);
           color: @blank-white;
-
-          font-size: calc(var(--attribute-base-font-size) * 1.3);
+          font-size: calc(var(--half-leftindent) * 1.5);
         }
 
         &:nth-child(3) {
-          font-size: calc(var(--attribute-base-font-size) * 1.8);
+          font-size: calc(var(--half-leftindent) * 1.8);
         }
 
         &:nth-child(2),
         &:nth-child(4) {
-          height: var(--leftindent);
-          color: @blank-white;
-          font-size: calc(var(--attribute-base-font-size) * 1.3);
           opacity: 0.5;
         }
         &:nth-child(5) {
           height: var(--title-height);
           line-height: var(--title-height);
-          font-size: calc(var(--attribute-base-font-size) * 3);
           color: @blank-white;
-        }
-        &:nth-child(6) {
-          height: var(--title-height);
+          font-size: calc(var(--half-leftindent) * 3);
         }
       }
-    }
-
-    & > div > img {
-      width: var(--4-title-height);
     }
   }
 
   &-describe {
-    background: @blank-white;
-    padding: 15px 0 60px 0;
-    padding-right: var(--4-more-leftindent);
-    padding-left: var(--4-more-leftindent);
-    min-height: var(--4-title-height);
+    padding: var(--half-leftindent) var(--4-more-leftindent) var(--title-height)
+      var(--4-more-leftindent);
+    font-size: calc(var(--half-leftindent) * 1.685);
+    line-height: calc(var(--leftindent) + 5px);
   }
 }
 </style>

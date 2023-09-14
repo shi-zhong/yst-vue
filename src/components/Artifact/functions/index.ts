@@ -1,6 +1,7 @@
+import { Transformer } from '@/utils';
 import type { ArtifactMainArrtibutes, ArtifactSlots, ArtifactSlotsChinese } from '../interface';
 
-export const AttributesConvertToChineseMapper = {
+export const AttributeseTransform = Transformer({
   ATK: '攻击力',
   ATKPercentage: '攻击力',
   DEF: '防御力',
@@ -20,7 +21,7 @@ export const AttributesConvertToChineseMapper = {
   AnemoDMGBonus: '风元素伤害加成',
   CryoDMGBonus: '冰元素伤害加成',
   GeoDMGBonus: '岩元素伤加成'
-};
+} as const);
 
 const ArtifactSlotMainAttributes = {
   FlowerOfLife: ['HP'],
@@ -59,9 +60,9 @@ const ArtifactSlotMainAttributes = {
 
 /**
  * 查看主属性是否正确
- * @param slot 
- * @param main 
- * @returns 
+ * @param slot
+ * @param main
+ * @returns
  */
 export const ArtifactSlotMainAttributesCheck = (
   slot: ArtifactSlots,
@@ -70,29 +71,10 @@ export const ArtifactSlotMainAttributesCheck = (
   return ArtifactSlotMainAttributes[slot].includes(main);
 };
 
-// 放在函数外，减少创建开销
-const C2E: { [key in ArtifactSlotsChinese]: ArtifactSlots } = {
-  生之花: 'FlowerOfLife',
-  死之羽: 'PlumnOfDeath',
-  时之沙: 'SandsOfEon',
-  空之杯: 'GobletOfEonothem',
-  理之冠: 'CircletOfLogos'
-};
-
-const E2C: { [key in ArtifactSlots]: ArtifactSlotsChinese } = {
+export const ArtifactSlotsNameTransform = Transformer<ArtifactSlots, ArtifactSlotsChinese>({
   FlowerOfLife: '生之花',
   PlumnOfDeath: '死之羽',
   SandsOfEon: '时之沙',
   GobletOfEonothem: '空之杯',
   CircletOfLogos: '理之冠'
-};
-
-export function ArtifactSlotsNameTransform(name: ArtifactSlots): ArtifactSlotsChinese;
-export function ArtifactSlotsNameTransform(name: ArtifactSlotsChinese): ArtifactSlots;
-export function ArtifactSlotsNameTransform(name: ArtifactSlots | ArtifactSlotsChinese) {
-  if (C2E[name as ArtifactSlotsChinese] === undefined) {
-    return C2E[name as ArtifactSlotsChinese];
-  } else {
-    return E2C[name as ArtifactSlots];
-  }
-}
+} as const);

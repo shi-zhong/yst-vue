@@ -38,7 +38,8 @@ const Fetch = (url: string, options?: Options) => {
 
   return fetch(url, opt).then(
     (res) => {
-      return res.json();
+      if (res.status === 200) return res.json();
+      else return { msg: 'fail.' };
     },
     () => ({ msg: 'fail.' })
   );

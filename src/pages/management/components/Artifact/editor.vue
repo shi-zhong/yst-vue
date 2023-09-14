@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, reactive, ref, toRaw, watchEffect } from 'vue';
+import { reactive, ref, toRaw, watchEffect } from 'vue';
 import { Drop } from '@/utils/directive';
-import { Rarity, Icon, ScrollView, DropImage, DropFile } from '@/components';
+import { Icon, ScrollView, DropFile } from '@/components';
 import {
   type ArtifactSuitModel,
   ArtifactSlotsNameTransform,
@@ -11,34 +11,70 @@ import {
 } from '@/components/Artifact';
 import { useArtifactStore } from '@/stores/Artifact';
 import { Upload } from '@/api/Request';
-import ArrowPng from '@/assets/icons/arrow.png';
 import ArtifactPng from '@/assets/icons/artifact.png';
 
-import { merge, mapper, fileExt } from '@/utils';
+import { merge, TypeNameToBackendCode, fileExt } from '@/utils';
 import { ArtifactSuitAdd, ArtifactSuitModify } from '@/api/ArtifactSuit';
+import { template } from './template';
+
+const { vDrop } = Drop();
 
 const props = defineProps<{ active: number }>();
 const emits = defineEmits<{ (e: 'change', id: number): void }>();
 const store = useArtifactStore();
-const preview = ref(true);
 
-const editorState = computed(() => {
-  if (props.active !== -1 || basic.uuid !== 0) {
-    if (preview.value) {
-      return 'preview';
-    } else {
-      return 'edit';
-    }
-  }
-  return 'none';
+const basic = reactive({
+  name: '',
+  id: 0,
+  uuid: 0,
+  rarity: 1 as 1 | 2 | 3 | 4 | 5
 });
 
+const slots = reactive<{
+  [key in ArtifactSlots]: { imgUrl: string; name: string; describe: string };
+}>({
+  FlowerOfLife: {
+    imgUrl: '',
+    name: '',
+    describe: ''
+  },
+  PlumnOfDeath: {
+    imgUrl: '',
+    name: '',
+    describe: ''
+  },
+  SandsOfEon: {
+    imgUrl: '',
+    name: '',
+    describe: ''
+  },
+  GobletOfEonothem: {
+    imgUrl: '',
+    name: '',
+    describe: ''
+  },
+  CircletOfLogos: {
+    imgUrl: '',
+    name: '',
+    describe: ''
+  }
+});
+const slotImageFile = reactive<{ [key in ArtifactSlots]: File | undefined }>({
+  FlowerOfLife: undefined,
+  PlumnOfDeath: undefined,
+  SandsOfEon: undefined,
+  GobletOfEonothem: undefined,
+  CircletOfLogos: undefined
+});
+const effects = reactive(['', '', '', '']);
+
+/** 生成预览卡片参数 */
 const previewArtifactCard = (): any[] => {
-  const { uuid, name } = toRaw(basic);
+  const { uuid, name, rarity } = toRaw(basic);
   const preview = {
     id: uuid,
     name,
-    rarity: rarity.value,
+    rarity: rarity,
     slots: toRaw(slots),
     effects: effects
       .map((t, i) => ({
@@ -110,56 +146,13 @@ const previewArtifactCard = (): any[] => {
     });
 };
 
-const basic = reactive({
-  id: -1,
-  uuid: 0,
-  name: ''
-});
-const rarity = ref<1 | 2 | 3 | 4 | 5>(1);
-const slots = reactive<{
-  [key in ArtifactSlots]: { imgUrl: string; name: string; describe: string };
-}>({
-  FlowerOfLife: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  PlumnOfDeath: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  SandsOfEon: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  GobletOfEonothem: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  CircletOfLogos: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  }
-});
-const slotImageFile = reactive<{ [key in ArtifactSlots]: File | undefined }>({
-  FlowerOfLife: undefined,
-  PlumnOfDeath: undefined,
-  SandsOfEon: undefined,
-  GobletOfEonothem: undefined,
-  CircletOfLogos: undefined
-});
-const effects = reactive(['', '', '', '']);
 const syncArtifact = (artifact: ArtifactSuitModel) => {
   merge(basic, {
-    id: store.uuidMapId.get(artifact.id) || -1,
-    uuid: artifact.id,
-    name: artifact.name
+    id: artifact.id,
+    uuid: artifact.uuid,
+    name: artifact.name,
+    rarity: artifact.rarity
   });
-  rarity.value = artifact.rarity;
   merge(slots, artifact.slots);
   merge(slotImageFile, {
     FlowerOfLife: undefined,
@@ -170,20 +163,9 @@ const syncArtifact = (artifact: ArtifactSuitModel) => {
   });
   artifact.effects.forEach((i) => (effects[i.limit - 1] = i.describe));
 };
-const handleRarity = (dire: boolean) => {
-  if (dire && rarity.value < 5) {
-    rarity.value++;
-  } else if (!dire && rarity.value > 1) {
-    rarity.value--;
-  }
-};
-const stopPropation = (e: Event) => {
-  if ((e.target! as any).nodeName === 'TEXTAREA' || (e.target! as any).nodeName === 'INPUT') {
-    e.stopPropagation();
-  }
-};
+
 const buildSave = async (): Promise<ArtifactSuitModel> => {
-  const { uuid, name } = toRaw(basic);
+  const { id, uuid, name, rarity } = toRaw(basic);
 
   const filePath = await Promise.all(
     Object.entries(slotImageFile).map(([k, f]) => {
@@ -194,7 +176,7 @@ const buildSave = async (): Promise<ArtifactSuitModel> => {
           'imgfile',
           f,
           `${uuid}` +
-            mapper({
+            TypeNameToBackendCode({
               name: 'artifact',
               slot: k as ArtifactSlots
             }).join('') +
@@ -219,9 +201,10 @@ const buildSave = async (): Promise<ArtifactSuitModel> => {
   });
 
   return {
-    id: uuid,
+    id: id,
+    uuid: uuid,
     name,
-    rarity: rarity.value,
+    rarity: rarity,
     slots: toRaw(slots),
     effects: effects
       .map((t, i) => ({
@@ -234,8 +217,7 @@ const buildSave = async (): Promise<ArtifactSuitModel> => {
 
 const previewCardGroup = ref(previewArtifactCard());
 
-const { vDrop } = Drop();
-
+/**清空当前数据 */
 const clear = () => {
   merge(basic, {
     id: -1,
@@ -278,6 +260,7 @@ const clear = () => {
   });
   [...Array(4)].forEach((_i, index) => (effects[index] = ''));
 };
+
 const handleDrop = (text: string, file: File) => {
   if (file.type !== 'application/json') return;
   const data = JSON.parse(text);
@@ -286,7 +269,7 @@ const handleDrop = (text: string, file: File) => {
 
   basic.name = data.name;
   basic.uuid = Number(data.id);
-  rarity.value = data.rarity;
+  basic.rarity = data.rarity;
 
   data.effects.map((m: { limit: number; describe: string }) => {
     effects[m.limit - 1] = m.describe;
@@ -357,12 +340,47 @@ const handleDropFiles = (files: { file: any; origin: File }[]) => {
   });
 };
 
+const downLoadTemplate = (origin: object) => {
+  const tmpLink = document.createElement('a');
+
+  const blob = new File([JSON.stringify(origin, null, 2)], 'artifat_template.json', {
+    type: 'text/plain'
+  });
+
+  const objectUrl = URL.createObjectURL(blob);
+  tmpLink.href = objectUrl;
+
+  tmpLink.download = 'artifat_template.json';
+
+  tmpLink.click();
+  URL.revokeObjectURL(objectUrl);
+};
+
 watchEffect(() => {
   if (store.artifactSuits.has(props.active)) {
-    syncArtifact(store.artifactSuits.get(props.active)!);
+    syncArtifact(store.ArtifactSuitById(props.active)!);
     previewCardGroup.value = previewArtifactCard();
   }
 });
+
+const download = () => {
+  if (props.active !== -1 || basic.uuid !== 0) {
+    const preDownload = {
+      id: basic.id,
+      uuid: basic.uuid,
+      name: basic.name,
+      rarity: basic.rarity,
+      slots: toRaw(slots),
+      effects: effects
+        .map((t, i) => ({
+          limit: i + 1,
+          describe: t
+        }))
+        .filter((i) => i.describe !== '')
+    };
+    downLoadTemplate(preDownload);
+  } else downLoadTemplate(template);
+};
 </script>
 
 <template>
@@ -377,6 +395,7 @@ watchEffect(() => {
           >编辑器·{{ props.active !== -1 ? '修改' : '新建'
           }}{{ willdrop.willdrop ? '·释放新建' : '' }}</span
         >
+        {{ basic.uuid ? `${basic.id}-${basic.uuid}` : '' }}
         <div>
           <button
             @click="
@@ -388,16 +407,8 @@ watchEffect(() => {
           >
             关闭
           </button>
-          <button
-            @click="
-              () => {
-                preview = !preview;
-                previewCardGroup = previewArtifactCard();
-              }
-            "
-            :disabled="editorState === 'none'"
-          >
-            {{ preview ? '取消' : '' }}预览
+          <button @click="download">
+            下载{{ props.active !== -1 || basic.uuid !== 0 ? '数据' : '模板' }}
           </button>
           <button
             @click="
@@ -421,116 +432,12 @@ watchEffect(() => {
           </button>
         </div>
       </div>
-      <template v-if="editorState === 'edit'">
-        <div class="artifact-basic">
-          <input
-            type="number"
-            class="inputtext"
-            v-model="basic.uuid"
-            placeholder="ID"
-            min="0"
-            max="9999"
-          />
-          <input
-            type="text"
-            class="inputtext"
-            v-model="basic.name"
-            placeholder="套装名称"
-          />
-          <div class="artifact-rarity">
-            <Icon
-              type="projection"
-              color="rgb(72, 85, 103)"
-              :src="ArrowPng"
-              :size="30"
-              @click="() => handleRarity(false)"
-            />
-            <Rarity
-              :rarity="rarity"
-              :size="30"
-            />
-            <Icon
-              type="projection"
-              color="rgb(72, 85, 103)"
-              :src="ArrowPng"
-              :size="30"
-              @click="() => handleRarity(true)"
-              style="transform: rotate(180deg)"
-            />
-          </div>
-        </div>
-        <ScrollView
-          class="artifact-scroll"
-          scroll-behavior="hidden"
-        >
-          <div @mousedown="(e) => stopPropation(e)">
-            <div
-              v-for="(slot, key) in slots"
-              :key="key"
-              class="artifact-slot"
-            >
-              <div>
-                <div>{{ ArtifactSlotsNameTransform(key) }}</div>
-                <div>
-                  <input
-                    type="text"
-                    class="inputtext"
-                    v-model="slot.name"
-                    placeholder="圣遗物名称"
-                  />
-                </div>
-              </div>
-
-              <textarea
-                v-model="slot.describe"
-                placeholder="圣遗物描述"
-                cols="30"
-                rows="10"
-              />
-              <DropImage
-                v-model="slotImageFile[key]"
-                style="height: 120px; width: 120px"
-                :size="120"
-                :src="slot.imgUrl"
-              />
-              <button
-                @click="
-                  () => {
-                    slot.describe = '';
-                    slot.imgUrl = '';
-                    slot.name = '';
-                  }
-                "
-              >
-                清除
-              </button>
-            </div>
-            <div class="effects-box">
-              <textarea
-                class="effects"
-                placeholder="1件套效果"
-                v-model="effects[0]"
-              />
-              <textarea
-                class="effects"
-                placeholder="2件套效果"
-                v-model="effects[1]"
-              />
-              <textarea
-                class="effects"
-                placeholder="4件套效果"
-                v-model="effects[3]"
-              />
-            </div>
-          </div>
-        </ScrollView>
-      </template>
       <ScrollView
         direction="x"
         scroll-behavior="scroll"
         transform-box-class="tsbox"
         style="height: 100%"
-        v-else-if="editorState === 'preview'"
+        v-if="props.active !== -1 || basic.uuid !== 0"
       >
         <ScrollView
           v-for="artifact of previewCardGroup"

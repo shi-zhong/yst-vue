@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ClassNameFactor } from '@/utils/className';
-import RankPicture from '@/assets/icons/rank_star.webp';
+import RankPicture from '@/assets/icons/rank_star.png';
 
 const S = ClassNameFactor('line-');
 </script>

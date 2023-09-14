@@ -8,7 +8,7 @@ export const ArtifactSuitGet = (data: number) =>
   get<{ artifacts: ArtifactSuitModel[] }>(`/artifact/suit/get/${data}`);
 
 export const ArtifactSuitGetAll = () =>
-  get<{ artifacts: { id: number; artifact: ArtifactSuitModel }[] }>('/artifact/suit/all');
+  get<{ artifacts: ArtifactSuitModel[] }>('/artifact/suit/all');
 
 export const ArtifactSuitDel = (data: number) => del(`/artifact/suit/del/${data}`);
 

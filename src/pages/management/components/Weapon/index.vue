@@ -43,24 +43,33 @@ const handleActive = (e: Event) => {
         :rarity="5"
       />
       <WeaponDetailCard
-        :imgurl="I"
-        title="狼的末路"
-        :rarity="5"
-        type="bow"
-        :main="{
-          key: '',
-          value: ''
-        }"
-        :sub="{
-          key: '',
-          value: ''
+        :id="0"
+        :type_id="0"
+        :rank="6"
+        :lvl="90"
+        :refine="5"
+        :lock="true"
+        :weapon_type="{
+          id: 0,
+          basic: { name: '狼的末日', star: 5, type: 3, imgurl: I },
+          describe:
+            '黑曜石塑造的一对的权杖中的一件。在传说中，隐藏在沙海尽头的乐园门扉是由这柄密钥开启的。',
+          data: { main: [], sub: { key: 'string', start: 0, growth: 0 } },
+          story: [],
+          effects: {
+            name: '沉入沙海的史诗',
+            describe:
+              ' ·生命值提升$1。元素战技命中敌人时将产生持续20秒的「宏大诗篇」效果：基于装备者生命值上限的$2，获得元素精通提升，该效果每0.3秒至多触发一次，至多叠加3层。该效果叠加至3层或3层的持续时间刷新时，将基于装备者生命值上限的$3，为队伍中附近所有角色提供元素精通提升，持续20秒。',
+            $: [
+              ['20%', '25%', '30%', '35%', '40%'],
+              ['0.12%', '0.15%', '0.18%', '0.21%', '0.24%'],
+              ['0.2%', '0.25%', '0.3%', '0.35%', '0.4%']
+            ]
+          }
         }"
       />
     </ScrollView>
-    <Editor
-      class="weapon-right"
-      v-bind="{}"
-    />
+    <Editor class="weapon-right" />
   </div>
 </template>
 

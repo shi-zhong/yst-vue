@@ -1,62 +1,49 @@
 <script setup lang="ts">
-interface RefineProps {
-  refine: number;
-  refineEnd?: boolean;
-  text?: boolean;
-}
-const props = defineProps<RefineProps>();
+const props = withDefaults(
+  defineProps<{
+    refine: number;
+    refineEnd: boolean;
+    text?: boolean;
+    size?: number;
+  }>(),
+  {
+    text: false,
+    size: 20
+  }
+);
 </script>
 
 <template>
-  <div v-if="props?.text">
-    <div
-      :class="['refine-with-text-container', props.refineEnd ? 'refine-end' : 'refine']"
-    >
-      {{ props.refine }}
+  <div :style="{ '--size': `${size}px` }">
+    <div :class="['refine-container', refineEnd ? 'refine-end' : 'refine']">
+      {{ refine }}
     </div>
-    <span class="refine-with-text-text">精炼{{ props.refine }}阶</span>
-  </div>
-
-  <div
-    v-else
-    :class="['refine-container', props.refineEnd ? 'refine-end' : 'refine']"
-  >
-    {{ props.refine }}
+    <span
+      v-if="props?.text"
+      class="refine-text"
+      >精炼{{ refine }}阶</span
+    >
   </div>
 </template>
 
 <style scoped lang="less">
-
 .refine {
+  @defaultSize: 20px;
   &-container {
-    width: 15px;
-    height: 17px;
-    margin: 5px;
-    border-radius: 3px;
+    width: var(--size, @defaultSize);
+    height: var(--size, @defaultSize);
     text-align: center;
-    line-height: 125%;
-  }
-  &-end {
-    background: @rank-golden-bar;
-    color: @starcolor;
-  }
-  background: @fontdarkgray;
-  color: @blank-white;
-}
-
-.refine-with-text {
-  &-container {
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    line-height: 30px;
+    line-height: var(--size, @defaultSize);
     border-radius: 3px;
     display: inline-block;
     margin-right: 10px;
   }
-
   &-text {
     color: rgb(203, 178, 124);
+  }
+  &-end {
+    background: @rank-golden-bar;
+    color: @starcolor;
   }
   background: @fontdarkgray;
   color: @blank-white;

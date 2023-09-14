@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { fileURLToPath, URL } from 'node:url';
 
 import { defineConfig } from 'vite';
@@ -30,6 +31,10 @@ export default defineConfig({
     }
   },
   plugins: [vue(), vueJsx()],
+  test: {
+    // 模拟dom环境
+    environment: 'node'
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

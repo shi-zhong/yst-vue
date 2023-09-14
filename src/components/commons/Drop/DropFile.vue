@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useThrettleFn } from '@/utils';
 import { ref } from 'vue';
 
 const props = defineProps<{
@@ -7,13 +8,17 @@ const props = defineProps<{
 
 const willDrop = ref(false);
 
+const changeWillDrop = useThrettleFn((bool: boolean) => {
+  willDrop.value = bool;
+}, 20);
+
 const dragenter = (e: DragEvent) => {
   e.stopPropagation();
-  willDrop.value = true;
+  changeWillDrop(true);
 };
 const cancel = (e: DragEvent) => {
   e.stopPropagation();
-  willDrop.value = false;
+  changeWillDrop(false);
 };
 </script>
 

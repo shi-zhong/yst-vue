@@ -1,52 +1,65 @@
-import { mapper as Mapper } from '@/api/common';
+import { Transformer } from './tools';
+import { getMapperApi } from '@/api/common';
 import type { ArtifactSlots } from '@/components/Artifact';
-import type { WeaponsTypes } from '@/components/Weapon';
+import type { WeaponTypes } from '@/components/Weapon/interface';
 
 type CharacterMap = {
   name: 'character';
 };
 
-type ArtifactMap = {
+type ArtifactMapToCode = {
   name: 'artifact';
   slot: ArtifactSlots;
 };
-
-type WeaponMap = {
-  name: 'weapon';
-  type: WeaponsTypes;
+type ArtifactMapToSlot = {
+  name: 'artifact';
+  code: number;
 };
 
-export const mapper = await (async () => {
-  const { data, msg } = await Mapper();
+type WeaponMapToCode = {
+  name: 'weapon';
+  type: WeaponTypes;
+};
+type WeaponMapToType = {
+  name: 'weapon';
+  code: number;
+};
 
-  const { character, artifact, weapon } = data;
+export const TypeNameToBackendCode = await (async () => {
+  const { data, msg } = await getMapperApi();
 
   if (msg !== 'OK') {
-    console.error('Can not get mapper.');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return (_origin: CharacterMap | ArtifactMap | WeaponMap) => [0];
+    throw new Error('Can not get mapper.');
   }
 
-  return (origin: CharacterMap | ArtifactMap | WeaponMap) => {
+  // const character = Transformer(data.character);
+  const artifact = Transformer(data.artifact.slots);
+  const weapon = Transformer(data.weapon.types);
+
+  function m(origin: CharacterMap): [number];
+  function m(origin: ArtifactMapToSlot): [number, ArtifactSlots];
+  function m(origin: ArtifactMapToCode): [number, number];
+  function m(origin: WeaponMapToType): [number, WeaponTypes];
+  function m(origin: WeaponMapToCode): [number, number];
+  function m(
+    origin: CharacterMap | ArtifactMapToSlot | ArtifactMapToCode | WeaponMapToType | WeaponMapToCode
+  ) {
     if (origin.name === 'character') {
-      return [character.base];
+      return [data.character.base];
     } else if (origin.name === 'artifact') {
-      return [artifact.base, artifact[origin.slot]];
+      if ((origin as ArtifactMapToCode).slot) {
+        return [data.artifact.base, artifact((origin as ArtifactMapToCode).slot)];
+      } else {
+        return [data.artifact.base, artifact((origin as ArtifactMapToSlot).code)];
+      }
     } else if (origin.name === 'weapon') {
-      return [weapon.base, weapon[origin.type]];
+      if ((origin as WeaponMapToCode).type) {
+        return [data.weapon.base, weapon((origin as WeaponMapToCode).type)];
+      } else {
+        return [data.weapon.base, weapon((origin as WeaponMapToType).code)];
+      }
     }
     return [0];
-  };
-})();
-
-export const fileExt = (filename: string) => {
-  let ext = '';
-
-  for (let i = filename.length - 1; i >= 0; i--) {
-    ext = filename[i] + ext;
-    if (filename[i] === '.') {
-      break;
-    }
   }
-  return ext;
-};
+  return m;
+})();

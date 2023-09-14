@@ -63,6 +63,7 @@ export interface ArtifactInstanceModel {
 
 export interface ArtifactSuitModel {
   id: number;
+  uuid: number;
   name: string;
   rarity: 1 | 2 | 3 | 4 | 5;
   slots: {

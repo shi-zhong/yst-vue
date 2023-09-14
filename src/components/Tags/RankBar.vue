@@ -1,26 +1,38 @@
 <script setup lang="ts">
-import RankPicture from '@/assets/icons/rank_star.webp';
+import RankPicture from '@/assets/icons/rank_star.png';
 
-interface RankBarProps {
-  rank: 0 | 1 | 2 | 3 | 4 | 5 | 6;
-  size?: number;
-  display?: 'block' | 'inline-block';
-}
-
-const props = defineProps<RankBarProps>();
+withDefaults(
+  defineProps<{
+    rank: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+    maxRank?: number;
+    size?: number;
+  }>(),
+  {
+    maxRank: 6
+  }
+);
 </script>
 
 <template>
-  <div :style="{ display: props.display }">
-    <img
+  <div
+    :style="{
+      height: `${size || 25}px`
+    }"
+  >
+    <template
       v-for="i in [0, 1, 2, 3, 4, 5]"
       :key="i"
-      :draggable="false"
-      :src="RankPicture"
-      :style="{
-        width: `${props.size || 25}px`,
-        filter: i >= props.rank ? 'brightness(50%)' : ''
-      }"
-    />
+    >
+      <img
+        class="rank-star"
+        v-if="i < maxRank"
+        :draggable="false"
+        :src="RankPicture"
+        :style="{
+          width: `${size || 25}px`,
+          filter: i >= rank ? 'brightness(50%)' : ''
+        }"
+      />
+    </template>
   </div>
 </template>

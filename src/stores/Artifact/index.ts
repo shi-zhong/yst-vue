@@ -8,37 +8,37 @@ import { ArtifactSuitGetAll } from '@/api/ArtifactSuit';
 
 interface ArtifactStore {
   artifactSuits: Map<number, ArtifactSuitModel>;
-  uuidMapId: Map<number, number>;
 }
 
 const emptyArtifactSuit: ArtifactSuitModel = {
   id: 0,
-  name: '',
+  uuid: 0,
+  name: '圣遗物',
   rarity: 1,
   slots: {
     FlowerOfLife: {
       imgUrl: '',
-      name: '',
+      name: '圣遗物',
       describe: ''
     },
     PlumnOfDeath: {
       imgUrl: '',
-      name: '',
+      name: '圣遗物',
       describe: ''
     },
     SandsOfEon: {
       imgUrl: '',
-      name: '',
+      name: '圣遗物',
       describe: ''
     },
     GobletOfEonothem: {
       imgUrl: '',
-      name: '',
+      name: '圣遗物',
       describe: ''
     },
     CircletOfLogos: {
       imgUrl: '',
-      name: '',
+      name: '圣遗物',
       describe: ''
     }
   },
@@ -48,8 +48,7 @@ const emptyArtifactSuit: ArtifactSuitModel = {
 export const useArtifactStore = defineStore('artifact', {
   state: () =>
     ({
-      artifactSuits: new Map(),
-      uuidMapId: new Map()
+      artifactSuits: new Map()
     } as ArtifactStore),
   getters: {
     ArtifactSuitById(state) {
@@ -62,18 +61,13 @@ export const useArtifactStore = defineStore('artifact', {
   actions: {
     async GenerateArtifactSuits() {
       const sutis = await ArtifactSuitGetAll();
-
       const map = new Map<number, ArtifactSuitModel>();
-      const map2 = new Map<number, number>();
-
       if (sutis.msg === 'OK') {
         sutis.data.artifacts.map((i) => {
-          map.set(i.artifact.id, i.artifact);
-          map2.set(i.artifact.id, i.id);
+          map.set(i.id, i);
         });
       }
       this.$state.artifactSuits = map;
-      this.$state.uuidMapId = map2;
     }
   }
 });

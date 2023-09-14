@@ -3,9 +3,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import NotFound from '@/pages/NotFound.vue';
 import Character from '@/pages/Character/index.vue';
 import Test from '@/pages/test/test.vue';
+import Test2 from '@/pages/test/test2.vue';
 
-import {useArtifactStore} from '@/stores/Artifact'
-
+import { useArtifactStore } from '@/stores/Artifact';
 
 const Manage = () => import(/* webpackChunkName: "manage" */ '@/pages/management/index.vue');
 const ManageArtifact = () =>
@@ -29,6 +29,19 @@ const router = createRouter({
             title: 'test'
           },
           component: Test
+        },
+        {
+          path: '/test2',
+          meta: {
+            title: 'test2'
+          },
+          component: Test2,
+          beforeEnter: () => {
+            const store = useArtifactStore();
+            if (store.artifactSuits.size === 0) {
+              store.GenerateArtifactSuits();
+            }
+          }
         },
         {
           path: '/character',

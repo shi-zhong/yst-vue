@@ -1,4 +1,4 @@
-import type { WeaponsTypes } from '@/components/Weapon';
+import type { WeaponTypes } from '@/components/Weapon';
 import { get } from './Request';
 import { type ArtifactSlots } from '@/components/Artifact';
 
@@ -7,11 +7,13 @@ type Mapper = {
     base: number;
   };
   artifact: {
-    [key in ArtifactSlots | 'base']: number;
+    base: number;
+    slots: Record<ArtifactSlots, number>;
   };
   weapon: {
-    [key in WeaponsTypes | 'base']: number;
+    base: number;
+    types: Record<WeaponTypes, number>;
   };
 };
 
-export const mapper = () => get<Mapper>('/mapper');
+export const getMapperApi = () => get<Mapper>('/mapper');

@@ -1,32 +1,18 @@
 import { Elements, type ElementsChinese, ElementPicture } from '@/interface';
+import { Transformer } from './tools';
 
 export const GetElementPicture = (element: ElementsChinese) => {
   return ElementPicture[ElementReflect(element)];
 };
 
-const ElementsMapper = (() => {
-  const map = new Map<string, string>();
+export const ElementReflect = Transformer<ElementsChinese, Elements>({
+  风: Elements.Anemo,
+  雷: Elements.Electro,
+  水: Elements.Hydro,
+  火: Elements.Pyro,
+  冰: Elements.Cryo,
+  草: Elements.Dendro,
+  岩: Elements.Geo
+} as const);
 
-  map.set('风', Elements.Anemo);
-  map.set('雷', Elements.Electro);
-  map.set('水', Elements.Hydro);
-  map.set('火', Elements.Pyro);
-  map.set('冰', Elements.Cryo);
-  map.set('草', Elements.Dendro);
-  map.set('岩', Elements.Geo);
-
-  map.set(Elements.Anemo, '风');
-  map.set(Elements.Electro, '雷');
-  map.set(Elements.Hydro, '水');
-  map.set(Elements.Pyro, '火');
-  map.set(Elements.Cryo, '冰');
-  map.set(Elements.Dendro, '草');
-  map.set(Elements.Geo, '岩');
-  return map;
-})();
-
-export function ElementReflect(element: ElementsChinese): Elements;
-export function ElementReflect(element: Elements): ElementsChinese;
-export function ElementReflect(element: ElementsChinese | Elements) {
-  return ElementsMapper.get(element);
-}
+// 当 一个对象 没有被定义为 const常量时， typeof 无法锁定对象的值类型，而是会推导成 string 类型

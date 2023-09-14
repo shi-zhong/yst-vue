@@ -5,12 +5,12 @@
  * @returns 防抖函数
  */
 export const useDebounce = (wait?: number) => {
-  let timeout: number = 0;
+  let timeout = setTimeout(() => {}, 0);
 
-  return (callback: () => void) => {
+  return <T extends (...argu: any[]) => void>(callback: T, ...rest: Parameters<T>) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-      callback();
+      callback(...rest);
     }, wait || 250);
   };
 };
@@ -21,9 +21,12 @@ export const useDebounce = (wait?: number) => {
  * @param wait 防抖触发阈值
  * @returns 防抖函数
  */
-export const useDebounceFn = (callback: () => void, wait: number = 25) => {
+export const useDebounceFn = <T extends (...args: any[]) => void>(
+  callback: T,
+  wait: number = 25
+) => {
   const debounce = useDebounce(wait);
-  return () => debounce(callback);
+  return (...rest: Parameters<T>) => debounce(callback, ...rest);
 };
 
 /**
@@ -34,16 +37,16 @@ export const useDebounceFn = (callback: () => void, wait: number = 25) => {
  */
 export const useThrettle = (gap: number) => {
   let waiting = false;
-  let fn: number;
+  let fn = setTimeout(() => {}, 0);
 
-  return (callback: () => void) => {
+  return <T extends (...args: any[]) => void>(callback: T, ...rest: Parameters<T>) => {
     if (waiting) {
       clearTimeout(fn);
       fn = setTimeout(() => {
-        callback();
+        callback(...rest);
       }, gap || 100);
     } else {
-      callback();
+      callback(...rest);
       waiting = true;
       clearTimeout(fn);
       setTimeout(() => {
@@ -59,7 +62,10 @@ export const useThrettle = (gap: number) => {
  * @param gap 节流间隔
  * @returns 节流函数
  */
-export const useThrettleFn = (callback: () => void, gap: number = 100) => {
+export const useThrettleFn = <T extends (...args: any[]) => void>(
+  callback: T,
+  gap: number = 100
+) => {
   const threttle = useThrettle(gap);
-  return () => threttle(callback);
+  return (...rest: Parameters<T>) => threttle(callback, ...rest);
 };
