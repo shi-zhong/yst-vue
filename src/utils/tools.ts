@@ -56,11 +56,18 @@ export const EventDispatch = <T = { [key: string]: string }>(
 /**
  * 正反映射函数
  * 提供一个对象，返回一个提供正反向映射的函数，需要一一对应
+ * 使用exclu
  * @param TtoP
+ * @param exclude 取消反向映射的键值，用于值有重复的时候
  * @returns
  */
-export const Transformer = <T extends string | number, P extends string | number>(
-  TtoP: Readonly<Record<T, P>>
+export const Transformer = <
+  R extends { [key: string | number | symbol]: string | number | symbol },
+  T extends string | number | symbol = keyof R,
+  P extends string | number | symbol = R[keyof R]
+>(
+  TtoP: Readonly<Record<T, P>>,
+  exclude?: T[]
 ) => {
   if (!(TtoP instanceof Object)) {
     console.warn('Transformer TtoP Error.', TtoP);
@@ -70,7 +77,9 @@ export const Transformer = <T extends string | number, P extends string | number
   const M: Record<T, P> & Record<P, T> = { ...TtoP } as any;
 
   (Object.keys(TtoP) as T[]).map((key) => {
-    M[TtoP[key]] = key as any;
+    if (!exclude || !exclude.includes(key)) {
+      M[TtoP[key]] = key as any;
+    }
   });
 
   function Transform(o: T): P;
@@ -98,3 +107,30 @@ export const fileExt = (filename: string) => {
   }
   return ext;
 };
+
+/**
+ * 将数字或字符串编码成百分比格式或从百分比格式还原
+ * 字符串转换需要匹配 /^\d+.?\d+%?$/ => 10.54% | 10 | 10.54
+ * 因为精度问题，会调用toPrecision(15)
+ * @param data
+ */
+export function DataDecoder(data: string): number;
+export function DataDecoder(data: number): string;
+export function DataDecoder(data: number | string) {
+  if (typeof data === 'number') {
+    if (data > 1) {
+      return data + '';
+    } else {
+      return data * 100 + '%';
+    }
+  } else if (/^\d+.?\d?%?$/.test(data)) {
+    // 成功匹配字符串
+    if (data.includes('%')) {
+      return Number((0.01 * Number(data.slice(0, -1))).toPrecision(15));
+    } else {
+      return Number(data);
+    }
+  } else {
+    return 0;
+  }
+}

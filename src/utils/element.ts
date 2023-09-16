@@ -5,7 +5,7 @@ export const GetElementPicture = (element: ElementsChinese) => {
   return ElementPicture[ElementReflect(element)];
 };
 
-export const ElementReflect = Transformer<ElementsChinese, Elements>({
+export const ElementReflect = Transformer<Record<ElementsChinese, Elements>>({
   风: Elements.Anemo,
   雷: Elements.Electro,
   水: Elements.Hydro,
