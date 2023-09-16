@@ -1,7 +1,7 @@
 import { Transformer } from '@/utils';
 import type { ArtifactMainArrtibutes, ArtifactSlots, ArtifactSlotsChinese } from '../interface';
 
-export const AttributeseTransform = Transformer({
+const AttributesMapper = {
   ATK: '攻击力',
   ATKPercentage: '攻击力',
   DEF: '防御力',
@@ -21,7 +21,13 @@ export const AttributeseTransform = Transformer({
   AnemoDMGBonus: '风元素伤害加成',
   CryoDMGBonus: '冰元素伤害加成',
   GeoDMGBonus: '岩元素伤加成'
-} as const);
+} as const;
+
+export const AttributesTransform = Transformer<typeof AttributesMapper>(AttributesMapper, [
+  'ATK',
+  'DEF',
+  'HP'
+]);
 
 const ArtifactSlotMainAttributes = {
   FlowerOfLife: ['HP'],
@@ -71,7 +77,7 @@ export const ArtifactSlotMainAttributesCheck = (
   return ArtifactSlotMainAttributes[slot].includes(main);
 };
 
-export const ArtifactSlotsNameTransform = Transformer<ArtifactSlots, ArtifactSlotsChinese>({
+export const ArtifactSlotsNameTransform = Transformer<Record<ArtifactSlots, ArtifactSlotsChinese>>({
   FlowerOfLife: '生之花',
   PlumnOfDeath: '死之羽',
   SandsOfEon: '时之沙',

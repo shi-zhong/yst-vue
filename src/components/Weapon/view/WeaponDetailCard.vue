@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Lock, RankBar, Refine } from '@/components/Tags';
 import { BasicDetailCard } from '@/components/DetailCard';
-import { ClassNameFactor, TypeNameToBackendCode } from '@/utils';
+import { ClassNameFactor, DataDecoder, TypeNameToBackendCode } from '@/utils';
 import {
   WeaponTypesTransform,
   type WeaponTypeModel,
@@ -12,6 +12,7 @@ import { reactive, toRefs, watch } from 'vue';
 import { merge } from '@/utils';
 import WeaponDescribe from './WeaponDescribe.vue';
 import { computed } from 'vue';
+import { AttributesTransform } from '@/components/Artifact';
 
 const props = withDefaults(
   defineProps<WeaponsInstanceModel & { weapon_type?: WeaponTypeModel; size?: number }>(),
@@ -20,10 +21,11 @@ const props = withDefaults(
   }
 );
 
-const { id, rank, lvl, refine } = toRefs(props);
+const { rank, lvl, refine } = toRefs(props);
 
 const data = reactive<WeaponTypeModel>({
   id: 0,
+  uuid: 0,
   basic: {
     name: '',
     star: 1,
@@ -34,7 +36,7 @@ const data = reactive<WeaponTypeModel>({
   data: {
     main: [],
     sub: {
-      key: 'string',
+      key: 'ATKPercentage',
       start: 0,
       growth: 0
     }
@@ -50,11 +52,22 @@ const data = reactive<WeaponTypeModel>({
 const S = ClassNameFactor('weapon-detail-card-');
 
 const mainValue = computed(() => {
-  return 1;
+  /**
+   * 等级和阶级不一致时，优先处理等级
+   * main [1, 20, 20+, 40, 40+, 50, 50+, 60, 60+, 70, 70+, 80, 80+, 90]
+   */
+  const lvls = [1, 20, 20, 40, 40, 50, 50, 60, 60, 70, 70, 80, 80, 90];
+  const ranks = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6];
+  for (let i = 0; i < data.data.main.length; i++) {
+    if (lvls[i] === lvl.value && ranks[i] === rank.value) {
+      return data.data.main[i];
+    }
+  }
+  return data.data.main[lvls.findIndex((j) => j === lvl.value)] ?? 0;
 });
 
 watch(
-  () => props.type_id,
+  [() => props.type_id, () => props.weapon_type],
   () => {
     if (props.type_id === 0 && props.weapon_type !== undefined) {
       merge(data, props.weapon_type);
@@ -71,8 +84,11 @@ watch(
   <BasicDetailCard
     :title="data.basic.name"
     :rarity="data.basic.star"
-    :main="{ key: '基础攻击力', value: '454' }"
-    :sub="{ key: '攻击力', value: '55.1.%' }"
+    :main="{ key: '基础攻击力', value: DataDecoder(mainValue) }"
+    :sub="{
+      key: AttributesTransform(data.data.sub.key),
+      value: DataDecoder(lvl * data.data.sub.growth + data.data.sub.start)
+    }"
     :imgurl="data.basic.imgurl"
     :type="
       WeaponTypesTransform(TypeNameToBackendCode({ name: 'weapon', code: data.basic.type })[1])
@@ -98,7 +114,7 @@ watch(
       />
     </div>
     <Refine
-      v-if="refine !== 0"
+      v-if="refine !== 0 && data.effects.$.length !== 0"
       :refine="refine"
       :refine-end="refine === data.effects.$[0].length"
       :size="23"

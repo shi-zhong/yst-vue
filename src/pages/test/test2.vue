@@ -2,6 +2,9 @@
 import ArtifactDetailCard from '@/components/Artifact/views/ArtifactDetailCard.vue';
 import WeaponDetailCard from '@/components/Weapon/view/WeaponDetailCard.vue';
 import I from '@/assets/wolfs_gravestone.webp';
+import Table from '@/components/commons/Table/index.vue';
+import { Message } from '@/components/commons/Message/index';
+import { ref } from 'vue';
 
 const a = {
   id: 1,
@@ -33,6 +36,7 @@ const a = {
     }
   ]
 };
+const af = ref(0);
 </script>
 
 <template>
@@ -68,6 +72,19 @@ const a = {
       v-bind="a"
     />
   </div>
+  <Table></Table>
+  <button
+    @click="
+      () => {
+        Message.success(af);
+        Message.info(af);
+        Message.error(af);
+        af++;
+      }
+    "
+  >
+    cl9ic
+  </button>
 </template>
 
 <style scoped lang="less">

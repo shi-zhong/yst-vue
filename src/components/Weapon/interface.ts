@@ -1,11 +1,19 @@
 export type WeaponTypes = 'Sword' | 'Catalyst' | 'Claymore' | 'Bow' | 'Polearm';
 export type WeaponTypesChinese = '单手剑' | '法器' | '双手剑' | '弓箭' | '长柄武器';
 
-/**
- *
- */
+export type WeaponSubArrtibutes =
+  | 'ATKPercentage'
+  | 'DEFPercentage'
+  | 'HPPercentage'
+  | 'ElementalMastery'
+  | 'EnergyRecharge'
+  | 'PhysicalDMGBonus'
+  | 'CRITRate'
+  | 'CRITDMG'
+
 export interface WeaponTypeModel {
   id: number;
+  uuid: number;
   basic: {
     name: string;
     star: 1 | 2 | 3 | 4 | 5;
@@ -16,7 +24,7 @@ export interface WeaponTypeModel {
   data: {
     main: number[];
     sub: {
-      key: string;
+      key: WeaponSubArrtibutes;
       start: number;
       growth: number;
     };
@@ -25,7 +33,7 @@ export interface WeaponTypeModel {
   effects: {
     name: string;
     describe: string;
-    $: (string | number)[][];
+    $: number[][];
   };
 }
 

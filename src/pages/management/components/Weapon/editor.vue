@@ -5,6 +5,7 @@ import { Rarity, Icon, ScrollView, DropImage, DropFile } from '@/components';
 import {
   WeaponTypesTransform,
   type WeaponTypesChinese,
+  type WeaponTypeModel,
   WeaponDetailCard
 } from '@/components/Weapon';
 
@@ -12,7 +13,10 @@ import { Upload } from '@/api/Request';
 import ArrowPng from '@/assets/icons/arrow.png';
 import WeaponPng from '@/assets/icons/weapon.png';
 
-import { merge, TypeNameToBackendCode, fileExt } from '@/utils';
+import { DataDecoder, merge, TypeNameToBackendCode } from '@/utils';
+import { VerifyType } from '@/utils/types';
+
+const { vDrop } = Drop();
 
 const props = defineProps<{ active: number }>();
 const emits = defineEmits<{ (e: 'change', id: number): void }>();
@@ -33,6 +37,15 @@ const basic = reactive<{
 });
 const weaponImgFile = ref<File>();
 const describe = ref('');
+const effect = reactive<{
+  name: string;
+  describe: string;
+  $: number[][];
+}>({
+  name: '',
+  describe: '',
+  $: []
+});
 const weaponData = reactive<{
   main: number[];
   sub: {
@@ -49,18 +62,9 @@ const weaponData = reactive<{
   }
 });
 
-const story = ref([]);
+const story = ref<string[]>([]);
 
 /**-------------------------------------------------- */
-
-const editorState = computed(() => {
-  if (id.value !== 0) {
-    return 'edit';
-  }
-  return 'none';
-});
-
-const previewArtifactCard = () => {};
 
 const stopPropation = (e: Event) => {
   if ((e.target! as any).nodeName === 'TEXTAREA' || (e.target! as any).nodeName === 'INPUT') {
@@ -119,90 +123,132 @@ const buildSave = async () => {
   };
 };
 
-const buildPreview: any = computed(() => {
-  return {
-    id: 0,
-    basic: basic,
-    describe: describe.value,
-    data: weaponData,
-    story: story.value,
-    effects: {
-      name: '如狼般狩猎者',
-      describe:
-        ' · 攻击力提高$1；攻击命中生命值低于30%的敌人时队伍中所有成员的攻击力提高$2，持续12秒。该效果30秒只能触发一次。',
-      $: [
-        ['20%', '25%', '30%', '35%', '40%'],
-        ['40%', '50%', '60%', '70%', '80%']
-      ]
-    }
-  };
-});
-
-const { vDrop } = Drop();
-
-watchEffect(() => {});
+const buildPreview: any = computed(() => ({
+  id: 0,
+  basic: basic,
+  describe: describe.value,
+  data: weaponData,
+  story: story.value,
+  effects: effect
+}));
 
 /**--------------------------------- */
-const handleRarity = (dire: boolean) => {
-  if (dire && basic.star < 5) {
-    basic.star++;
-  } else if (!dire && basic.star > 1) {
-    basic.star--;
-  }
+const TransformMiYouSheData = () => {
+  // basic.name = data.basic.name;
+  // basic.star = data.basic.star;
+  // basic.type = TypeNameToBackendCode({
+  //   type: WeaponTypesTransform(data.basic.type as WeaponTypesChinese),
+  //   name: 'weapon'
+  // })[1];
+  // basic.imgurl = data.basic.imgurl;
+  // const main = [] as string[];
+  // const sub = {
+  //   key: '',
+  //   group: [] as string[]
+  // };
+  // if (data.lvldata instanceof Array) {
+  //   data.lvldata.map((lvl: any, index: number) => {
+  //     if (lvl.basic instanceof Array) {
+  //       if (index === 0 || index === data.lvldata.length - 1) {
+  //         main.push(lvl.basic[0]?.value ?? '');
+  //       } else {
+  //         main.push(lvl.basic[0]?.value ?? '');
+  //         main.push(lvl.basic[1]?.value ?? '');
+  //       }
+  //       sub.group.push(lvl.basic[lvl.basic.length - 1].value);
+  //     }
+  //   });
+  // } else {
+  //   console.error('lvldata');
+  // }
+  // const effectData = {
+  //   name: data.describe.name,
+  //   describe: data.describe.effect,
+  //   $: [] as number[][]
+  // };
+  // for (let i = 1; i <= Object.keys(data.describe).length - 3; i++) {
+  //   if (data.describe[`$${i}`] !== undefined) {
+  //     effectData.$.push(data.describe[`$${i}`].map((i: string) => DataDecoder(i)));
+  //   } else {
+  //     break;
+  //   }
+  // }
 };
+
 const handleJsonDrop = (text: string) => {
   const data = JSON.parse(text);
 
-  // handle basic
-  id.value = data.id;
-
-  basic.name = data.basic.name;
-  basic.star = data.basic.star;
-  basic.type = TypeNameToBackendCode({
-    type: WeaponTypesTransform(data.basic.type as WeaponTypesChinese),
-    name: 'weapon'
-  })[1];
-  basic.imgurl = data.basic.imgurl;
-
-  describe.value = data.describe.describe;
-
-  const main = [] as string[];
-  const sub = {
-    key: '',
-    group: [] as string[]
-  };
-  if (data.lvldata instanceof Array) {
-    data.lvldata.map((lvl: any, index: number) => {
-      if (lvl.basic instanceof Array) {
-        if (index === 0 || index === data.lvldata.length - 1) {
-          main.push(lvl.basic[0]?.value ?? '');
-        } else {
-          main.push(lvl.basic[0]?.value ?? '');
-          main.push(lvl.basic[1]?.value ?? '');
-        }
-        sub.group.push(lvl.basic[lvl.basic.length - 1].value);
-      }
-    });
-  } else {
-    console.error('lvldata');
+  if (
+    VerifyType<WeaponTypeModel>(
+      {
+        type: 'object',
+        items: [
+          { type: 'number', name: 'id' },
+          { type: 'number', name: 'uuid' },
+          {
+            type: 'object',
+            name: 'basic',
+            items: [
+              { type: 'string', name: 'name' },
+              { type: 'number', name: 'star' },
+              { type: 'number', name: 'type' },
+              { type: 'number', name: 'imgurl' }
+            ]
+          },
+          { type: 'string', name: 'describe' },
+          {
+            type: 'object',
+            name: 'effects',
+            items: [
+              { type: 'string', name: 'name' },
+              { type: 'string', name: 'describe' },
+              {
+                type: 'array',
+                name: '$',
+                each: {
+                  type: 'array',
+                  each: {
+                    type: 'number'
+                  }
+                }
+              }
+            ]
+          },
+          {
+            type: 'object',
+            name: 'data',
+            items: [
+              { type: 'array', name: 'main', each: { type: 'number' } },
+              {
+                type: 'object',
+                name: 'sub',
+                items: [
+                  { type: 'string', name: 'key' },
+                  { type: 'number', name: 'start' },
+                  { type: 'number', name: 'growth' }
+                ]
+              }
+            ]
+          },
+          {
+            type: 'array',
+            name: 'story',
+            each: { type: 'string' }
+          }
+        ]
+      },
+      data
+    )
+  ) {
+    uuid.value = data.uuid;
+    merge(basic, data.basic);
+    describe.value = data.describe;
+    merge(effect, data.effects);
+    merge(weaponData, data.data);
+    story.value = data.story || ([] as string[]);
   }
-
-  const effect = {
-    name: data.describe.name,
-    describe: data.describe.effect,
-    $: [] as any[]
-  };
-
-  for (let i = 1; i <= Object.keys(data.describe).length - 3; i++) {
-    if (data.describe[`$${i}`] !== undefined) {
-      effect.$.push(data.describe[`$${i}`]);
-    } else {
-      break;
-    }
-  }
-
-  story.value = data.story || [];
 };
+
 const handleDrop = (text: string, file: File) => {
   if (file.type === 'application/json') return handleJsonDrop(text);
   else if (file.type.startsWith('image')) {
@@ -210,6 +256,8 @@ const handleDrop = (text: string, file: File) => {
     basic.imgurl = text;
   }
 };
+
+const download = () => {};
 </script>
 
 <template>
@@ -223,8 +271,12 @@ const handleDrop = (text: string, file: File) => {
           >编辑器·{{ props.active !== -1 ? '修改' : '新建'
           }}{{ willdrop.willdrop ? '·释放新建' : '' }}</span
         >
+        {{ id ? `${id}-${uuid}` : '' }}
         <div>
           <button @click="() => emits('change', -1)">关闭</button>
+          <button @click="download">
+            下载{{ props.active !== -1 || uuid !== 0 ? '数据' : '模板' }}
+          </button>
           <button
             @click="
               async () => {
@@ -249,50 +301,13 @@ const handleDrop = (text: string, file: File) => {
       </div>
 
       <div
-        v-if="editorState === 'edit'"
+        v-if="props.active !== -1 || uuid !== 0"
         class="weapon-edit"
       >
         <ScrollView
           class="weapon-scroll"
           scroll-behavior="hidden"
         >
-          <div class="weapon-basic">
-            <input
-              type="number"
-              class="inputtext"
-              v-model="uuid"
-              placeholder="ID"
-              min="0"
-              max="9999"
-            />
-            <input
-              type="text"
-              class="inputtext"
-              v-model="basic.name"
-              placeholder="武器名称"
-            />
-            <div class="weapon-rarity">
-              <Icon
-                type="projection"
-                color="rgb(72, 85, 103)"
-                :src="ArrowPng"
-                :size="30"
-                @click="() => handleRarity(false)"
-              />
-              <Rarity
-                :rarity="basic.star"
-                :size="30"
-              />
-              <Icon
-                type="projection"
-                color="rgb(72, 85, 103)"
-                :src="ArrowPng"
-                :size="30"
-                @click="() => handleRarity(true)"
-                style="transform: rotate(180deg)"
-              />
-            </div>
-          </div>
         </ScrollView>
         <ScrollView style="width: 420px">
           <WeaponDetailCard
@@ -301,16 +316,15 @@ const handleDrop = (text: string, file: File) => {
             :type_id="0"
             :rank="6"
             :lvl="90"
-            :refine="5"
+            :refine="0"
             :lock="true"
             :weapon_type="buildPreview"
           />
         </ScrollView>
       </div>
-
       <div
-        v-else
         class="weapon-blank"
+        v-else
       >
         <Icon
           :src="WeaponPng"

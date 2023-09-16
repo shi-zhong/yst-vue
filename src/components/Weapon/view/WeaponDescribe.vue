@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { DataDecoder } from '@/utils';
 interface WeaponDescribeProps {
   refine: number;
   effect: {
     name: string;
     describe: string;
-    $: (number | string)[][];
+    $: number[][];
   };
 }
 
@@ -58,12 +59,12 @@ const valueDecoder = (value: string) => {
     data.forEach((v, i) => {
       group.push({
         type: 'value',
-        value: '' + v
+        value: DataDecoder(v)
       });
       if (i !== data.length - 1) {
         group.push({
           type: 'text',
-          value: ' , '
+          value: ' / '
         });
       }
     });
@@ -76,7 +77,7 @@ const valueDecoder = (value: string) => {
     return [
       {
         type: 'value',
-        value: data[props.refine - 1]
+        value: DataDecoder(data[props.refine - 1])
       }
     ];
   }

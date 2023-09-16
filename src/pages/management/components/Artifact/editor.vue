@@ -397,16 +397,7 @@ const download = () => {
         >
         {{ basic.uuid ? `${basic.id}-${basic.uuid}` : '' }}
         <div>
-          <button
-            @click="
-              () => {
-                clear();
-                emits('change', -1);
-              }
-            "
-          >
-            关闭
-          </button>
+          <button @click="() => emits('change', -1)">关闭</button>
           <button @click="download">
             下载{{ props.active !== -1 || basic.uuid !== 0 ? '数据' : '模板' }}
           </button>
@@ -452,7 +443,7 @@ const download = () => {
         </ScrollView>
       </ScrollView>
       <div
-        class="artifact-content"
+        class="artifact-blank"
         v-else
       >
         <Icon
@@ -527,7 +518,7 @@ const download = () => {
     }
   }
 
-  &-content {
+  &-blank {
     display: flex;
     justify-content: center;
     align-items: center;
