@@ -115,13 +115,15 @@ export const fileExt = (filename: string) => {
  * @param data
  */
 export function DataDecoder(data: string): number;
-export function DataDecoder(data: number): string;
-export function DataDecoder(data: number | string) {
+export function DataDecoder(data: number, fix?: number): string;
+export function DataDecoder(data: number | string, fix?: number) {
   if (typeof data === 'number') {
     if (data > 1) {
-      return data + '';
+      return fix === undefined ? data + '' : data.toFixed(fix);
     } else {
-      return data * 100 + '%';
+      return fix === undefined
+        ? Number((data * 100).toPrecision(15)) + '%'
+        : Number((data * 100).toFixed(15)).toFixed(fix) + '%';
     }
   } else if (/^\d+.?\d?%?$/.test(data)) {
     // 成功匹配字符串
@@ -134,3 +136,19 @@ export function DataDecoder(data: number | string) {
     return 0;
   }
 }
+
+export const DownLoadJson = (origin: object, file_name: string) => {
+  const tmpLink = document.createElement('a');
+
+  const blob = new File([JSON.stringify(origin, null, 2)], file_name, {
+    type: 'text/plain'
+  });
+
+  const objectUrl = URL.createObjectURL(blob);
+  tmpLink.href = objectUrl;
+
+  tmpLink.download = file_name;
+
+  tmpLink.click();
+  URL.revokeObjectURL(objectUrl);
+};

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ClassNameFactor, EventDispatch, merge, useMockScrollDrag } from '@/utils';
+import { ClassNameFactor, EventDispatch, merge } from '@/utils';
+import { useMockScrollDrag } from '@/utils/hooks';
 
 import { computed, onMounted, reactive, ref, toRaw, toRefs, watch } from 'vue';
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import LockedImage from './assets/lock.png';
 import UnLockedImage from './assets/unlock.png';
 
@@ -6,18 +7,27 @@ interface LockProps {
   lock?: boolean;
   border?: boolean;
   size?: 'small' | 'middle' | 'large' | number;
+  modelValue?: boolean;
 }
 
 const props = defineProps<LockProps>();
+const emits = defineEmits<{
+  (e: 'update:modelValue', v: boolean): void;
+}>();
+
+const isLock = computed(() => props.lock || props.modelValue);
 </script>
 
 <template>
-  <div :class="['lock-container', props.lock ? 'locked' : 'unlock']">
+  <div
+    :class="['lock-container', isLock ? 'locked' : 'unlock']"
+    @click="() => emits('update:modelValue', !isLock)"
+  >
     <img
       class="lock"
-      :src="props.lock ? LockedImage : UnLockedImage"
-      :alt="props.lock ? 'locked' : 'unlock'"
-      :style="{ width: `${props.size || 15}px` }"
+      :src="isLock ? LockedImage : UnLockedImage"
+      :alt="isLock ? 'locked' : 'unlock'"
+      :style="{ width: `${size || 15}px` }"
       :draggable="false"
     />
   </div>

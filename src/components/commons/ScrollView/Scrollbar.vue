@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { useMockScrollDrag } from '@/utils/hooks';
+import { useMockScrollDrag } from '@/utils/hooks/elementEventRegister/mockScrollDrag';
 
 interface ScrollbarProps {
   by: 'x' | 'y';

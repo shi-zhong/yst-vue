@@ -5,7 +5,7 @@ export const ArtifactSuitAdd = (data: ArtifactSuitModel) =>
   post<{ id: number }>('/artifact/suit/add', { data });
 
 export const ArtifactSuitGet = (data: number) =>
-  get<{ artifacts: ArtifactSuitModel[] }>(`/artifact/suit/get/${data}`);
+  get<{ artifacts: ArtifactSuitModel[] }>(`/artifact/suit/${data}`);
 
 export const ArtifactSuitGetAll = () =>
   get<{ artifacts: ArtifactSuitModel[] }>('/artifact/suit/all');

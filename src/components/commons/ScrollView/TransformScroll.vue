@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useDebounceFn, useMockScrollDrag, useThrettleFn, Animate, cubicBezier } from '@/utils';
+import { Animate, cubicBezier } from '@/utils';
+import { useDebounceFn, useMockScrollDrag, useThrettleFn } from '@/utils/hooks';
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue';
 import Scrollbar from './Scrollbar.vue';
 

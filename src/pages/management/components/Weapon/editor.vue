@@ -1,27 +1,42 @@
 <script setup lang="ts">
-import { computed, reactive, ref, toRaw, watchEffect } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { Drop } from '@/utils/directive';
-import { Rarity, Icon, ScrollView, DropImage, DropFile } from '@/components';
+import { Icon, ScrollView, DropFile, Refine, Lock } from '@/components';
 import {
   WeaponTypesTransform,
-  type WeaponTypesChinese,
+  WeaponCard,
   type WeaponTypeModel,
-  WeaponDetailCard
-} from '@/components/Weapon';
-
-import { Upload } from '@/api/Request';
-import ArrowPng from '@/assets/icons/arrow.png';
+  WeaponDetailCard,
+  type WeaponSubArrtibutes,
+  RankFromVerify,
+  LevelFromVerify,
+  VerifyRankAndLevel,
+  StarToMaxRank,
+  StarToMaxLevel
+} from '@@/Weapon';
+import { Upload, WeaponTypeAdd, WeaponTypeModify } from '@/api';
 import WeaponPng from '@/assets/icons/weapon.png';
-
-import { DataDecoder, merge, TypeNameToBackendCode } from '@/utils';
-import { VerifyType } from '@/utils/types';
+import {
+  DataDecoder,
+  DownLoadJson,
+  fileExt,
+  merge,
+  TypeNameToBackendCode,
+  VerifyType,
+  ReadTypeFrom,
+  TypeTransfer
+} from '@/utils';
+import { Message } from '@/components/commons/Message';
+import { AttributesTransform } from '@@/Artifact';
+import { template } from './temp';
+import ArrowCount from '@@/ArrowCount/index.vue';
 
 const { vDrop } = Drop();
 
 const props = defineProps<{ active: number }>();
 const emits = defineEmits<{ (e: 'change', id: number): void }>();
 
-const id = ref(1);
+const id = ref(0);
 const uuid = ref(0);
 
 const basic = reactive<{
@@ -49,14 +64,14 @@ const effect = reactive<{
 const weaponData = reactive<{
   main: number[];
   sub: {
-    key: string;
+    key: WeaponSubArrtibutes;
     start: number;
     growth: number;
   };
 }>({
   main: [],
   sub: {
-    key: 'string',
+    key: 'ATKPercentage',
     start: 0,
     growth: 0
   }
@@ -64,64 +79,73 @@ const weaponData = reactive<{
 
 const story = ref<string[]>([]);
 
-/**-------------------------------------------------- */
+const rankwithlevel = ref(0);
 
-const stopPropation = (e: Event) => {
-  if ((e.target! as any).nodeName === 'TEXTAREA' || (e.target! as any).nodeName === 'INPUT') {
-    e.stopPropagation();
+const rank = computed(() => RankFromVerify(rankwithlevel.value));
+const level = computed(() => LevelFromVerify(rankwithlevel.value));
+const lock = ref(true);
+const refine = ref(0);
+
+// const clear = async () => {
+//   id.value = 1;
+//   uuid.value = 0;
+//   merge(basic, {
+//     name: '',
+//     star: 1,
+//     type: 0,
+//     imgurl: ''
+//   });
+
+//   weaponImgFile.value = undefined;
+//   describe.value = '';
+//   merge(effect, {
+//     name: '',
+//     describe: '',
+//     $: []
+//   });
+
+//   merge(weaponData, {
+//     main: [],
+//     sub: {
+//       key: 'ATKPercentage',
+//       start: 0,
+//       growth: 0
+//     }
+//   });
+// };
+
+/**-------------------------------------------------- */
+const UploadImg = async () => {
+  if (weaponImgFile.value) {
+    const formData = new FormData();
+    formData.append(
+      'imgfile',
+      weaponImgFile.value,
+      `${uuid.value}${
+        TypeNameToBackendCode({
+          name: 'weapon',
+          type: 'Bow'
+        })[0]
+      }${basic.type}_${fileExt(weaponImgFile.value.name)}`
+    );
+    const { msg, data } = await Upload(formData);
+    if (msg === 'OK') {
+      basic.imgurl = data.url;
+    } else {
+      Message.info('上传图片失败.');
+    }
   }
 };
 
-const buildSave = async () => {
-  // const { uuid, name } = toRaw(basic);
-  // const filePath = await Promise.all(
-  //   Object.entries(slotImageFile).map(([k, f]) => {
-  //     if (f === undefined) return Promise.resolve('');
-  //     else {
-  //       const formData = new FormData();
-  //       formData.append(
-  //         'imgfile',
-  //         f,
-  //         `${uuid}` +
-  //           mapper({
-  //             name: 'weapon',
-  //             slot: k as ArtifactSlots
-  //           }).join('') +
-  //           '_' +
-  //           fileExt(f.name)
-  //       );
-  //       return Upload(formData).then((data) => {
-  //         if (data.msg === 'OK') {
-  //           return data.data.url;
-  //         }
-  //         return '';
-  //       });
-  //     }
-  //   })
-  // );
-  // Object.values(slots).forEach((slot, index) => {
-  //   if (filePath[index] !== '') {
-  //     slot.imgUrl = filePath[index];
-  //   }
-  // });
-  return {
-    id: 0,
-    basic: { name: '狼的末日', star: 5, type: 3, imgurl: 'I' },
-    describe:
-      '狼的骑士所使的大剑。原本只是城中铁匠赠予的厚重的铁片，却在他与狼的情谊中，获得神话般的力量。',
-    data: { main: [], sub: { key: 'string', start: 0, growth: 0 } },
-    story: [],
-    effects: {
-      name: '如狼般狩猎者',
-      describe:
-        ' · 攻击力提高$1；攻击命中生命值低于30%的敌人时队伍中所有成员的攻击力提高$2，持续12秒。该效果30秒只能触发一次。',
-      $: [
-        ['20%', '25%', '30%', '35%', '40%'],
-        ['40%', '50%', '60%', '70%', '80%']
-      ]
-    }
-  };
-};
+const buildSave = (): WeaponTypeModel => ({
+  id: id.value,
+  uuid: uuid.value,
+  basic,
+  describe: describe.value,
+  data: weaponData,
+  story: story.value,
+  effects: effect
+});
 
 const buildPreview: any = computed(() => ({
   id: 0,
@@ -133,48 +157,6 @@ const buildPreview: any = computed(() => ({
 }));
 
 /**--------------------------------- */
-const TransformMiYouSheData = () => {
-  // basic.name = data.basic.name;
-  // basic.star = data.basic.star;
-  // basic.type = TypeNameToBackendCode({
-  //   type: WeaponTypesTransform(data.basic.type as WeaponTypesChinese),
-  //   name: 'weapon'
-  // })[1];
-  // basic.imgurl = data.basic.imgurl;
-  // const main = [] as string[];
-  // const sub = {
-  //   key: '',
-  //   group: [] as string[]
-  // };
-  // if (data.lvldata instanceof Array) {
-  //   data.lvldata.map((lvl: any, index: number) => {
-  //     if (lvl.basic instanceof Array) {
-  //       if (index === 0 || index === data.lvldata.length - 1) {
-  //         main.push(lvl.basic[0]?.value ?? '');
-  //       } else {
-  //         main.push(lvl.basic[0]?.value ?? '');
-  //         main.push(lvl.basic[1]?.value ?? '');
-  //       }
-  //       sub.group.push(lvl.basic[lvl.basic.length - 1].value);
-  //     }
-  //   });
-  // } else {
-  //   console.error('lvldata');
-  // }
-  // const effectData = {
-  //   name: data.describe.name,
-  //   describe: data.describe.effect,
-  //   $: [] as number[][]
-  // };
-  // for (let i = 1; i <= Object.keys(data.describe).length - 3; i++) {
-  //   if (data.describe[`$${i}`] !== undefined) {
-  //     effectData.$.push(data.describe[`$${i}`].map((i: string) => DataDecoder(i)));
-  //   } else {
-  //     break;
-  //   }
-  // }
-};
-
 const handleJsonDrop = (text: string) => {
   const data = JSON.parse(text);
 
@@ -192,7 +174,7 @@ const handleJsonDrop = (text: string) => {
               { type: 'string', name: 'name' },
               { type: 'number', name: 'star' },
               { type: 'number', name: 'type' },
-              { type: 'number', name: 'imgurl' }
+              { type: 'string', name: 'imgurl' }
             ]
           },
           { type: 'string', name: 'describe' },
@@ -246,6 +228,143 @@ const handleJsonDrop = (text: string) => {
     merge(effect, data.effects);
     merge(weaponData, data.data);
     story.value = data.story || ([] as string[]);
+    Message.success('原神工具格式.');
+  } else if (
+    VerifyType(
+      ReadTypeFrom({
+        id: 5887,
+        basic: { name: '裁萃光', star: 5, type: '' },
+        describe: {
+          describe: '',
+          name: '',
+          effect: '',
+          $: [['4%', '5%', '6%', '7%', '8%']]
+        },
+        lvldata: [
+          {
+            name: '',
+            basic: [{ value: '' }, { value: '' }]
+          }
+        ],
+        story: ['']
+      }),
+      data
+    )
+  ) {
+    const res = TypeTransfer<WeaponTypeModel>(
+      {
+        type: 'object',
+        items: [
+          {
+            name: 'uuid',
+            path: 'id',
+            type: 'direct'
+          },
+          {
+            name: 'basic',
+            path: 'basic',
+            type: 'object',
+            items: [
+              {
+                name: 'name',
+                type: 'direct'
+              },
+              {
+                name: 'star',
+                type: 'direct'
+              },
+              {
+                name: 'type',
+                type: 'direct',
+                mapper: (type) =>
+                  TypeNameToBackendCode({
+                    name: 'weapon',
+                    type: WeaponTypesTransform(type) as any
+                  })[1]
+              }
+            ]
+          },
+          {
+            name: 'describe',
+            type: 'direct',
+            path: 'describe.describe'
+          },
+          {
+            name: 'effects',
+            path: 'describe',
+            type: 'object',
+            items: [
+              {
+                name: 'describe',
+                path: 'describe.effect',
+                type: 'direct'
+              },
+              {
+                name: 'name',
+                type: 'direct'
+              },
+              {
+                name: '$',
+                type: 'direct',
+                mapper: ($: string[][]) => $.map((c: string[]) => c.map((i) => DataDecoder(i)))
+              }
+            ]
+          },
+          {
+            name: 'data',
+            path: 'lvldata',
+            type: 'direct',
+            mapper: (i) => {
+              const data = {
+                main: [] as number[],
+                sub: {
+                  key: '',
+                  start: 0,
+                  growth: 0
+                }
+              };
+              i.map((lvl: any, index: number) => {
+                lvl.basic.map(({ value }: { value: string }) => {
+                  if (/基础攻击力/.test(value)) {
+                    data.main.push(Number(value.split(':')[1]));
+                  } else {
+                    if (index === 0) {
+                      const pair: any[] = value.split(':').map((j) => j.trim());
+                      data.sub.key = AttributesTransform(pair[0] as any);
+                      data.sub.start = DataDecoder(pair[1]);
+                    } else if (index === i.length - 1) {
+                      const pair: any[] = value.split(':').map((j) => j.trim());
+                      data.sub.growth = DataDecoder(pair[1]);
+                    }
+                  }
+                });
+                if (index === i.length - 1) {
+                  const maxlevel = Number(lvl.name.slice(0, -1));
+                  data.sub.growth = (data.sub.growth - data.sub.start) / (maxlevel - 1);
+                }
+              });
+              return data;
+            }
+          },
+          {
+            name: 'story',
+            type: 'direct'
+          }
+        ]
+      },
+      data as object
+    );
+
+    uuid.value = res.uuid;
+    merge(basic, res.basic);
+    describe.value = res.describe;
+    merge(effect, res.effects);
+    merge(weaponData, res.data);
+    story.value = res.story || ([] as string[]);
+
+    Message.success('米游社文件格式.');
+  } else {
+    Message.success('文件格式不符!');
   }
 };
 
@@ -257,7 +376,11 @@ const handleDrop = (text: string, file: File) => {
   }
 };
 
-const download = () => {};
+const download = () => {
+  if (props.active !== -1 || uuid.value !== 0) {
+    DownLoadJson(buildSave(), `${basic.name ?? 'weapon'}.json`);
+  } else DownLoadJson(template, 'weapon_template.json');
+};
 </script>
 
 <template>
@@ -280,16 +403,17 @@ const download = () => {};
           <button
             @click="
               async () => {
-                // const data = await buildSave();
-                // let res: any;
-                // if (props.active === -1) {
-                //   res = await ArtifactSuitAdd(data);
-                //   if (res.msg === 'OK') {
-                //     basic.id = res.data.id;
-                //   }
-                // } else {
-                //   res = await ArtifactSuitModify(basic.id, data);
-                // }
+                await UploadImg();
+                const willupload = buildSave();
+                let res: any;
+                if (props.active === -1) {
+                  res = await WeaponTypeAdd(willupload);
+                  if (res.msg === 'OK') {
+                    id = res.data.id;
+                  }
+                } else {
+                  res = await WeaponTypeModify(id, willupload);
+                }
                 // if (res.msg === 'OK') store.GenerateArtifactSuits();
                 // else console.error('error');
               }
@@ -307,17 +431,65 @@ const download = () => {};
         <ScrollView
           class="weapon-scroll"
           scroll-behavior="hidden"
+          transformBoxClass="left-controler"
         >
+          <Lock
+            v-model="lock"
+            :size="40"
+          />
+          <ArrowCount
+            class="arrow"
+            :min="0"
+            :max="VerifyRankAndLevel(StarToMaxRank(basic.star), StarToMaxLevel(basic.star))"
+            v-model="rankwithlevel"
+          >
+            {{
+              [
+                '1',
+                '20',
+                '20+',
+                '40',
+                '40+',
+                '50',
+                '50+',
+                '60',
+                '60+',
+                '70',
+                '70+',
+                '80',
+                '80+',
+                '90'
+              ][rankwithlevel]
+            }}
+          </ArrowCount>
+          <ArrowCount
+            class="arrow"
+            :min="0"
+            :max="effect.$[0]?.length ?? 0"
+            v-model="refine"
+          >
+            <Refine
+              :refine="refine"
+              text
+              :refineEnd="refine === effect.$[0]?.length ?? 0"
+            />
+          </ArrowCount>
         </ScrollView>
+        <WeaponCard
+          :imgurl="basic.imgurl"
+          :lvl="level"
+          :locked="lock"
+          :rarity="basic.star"
+        />
         <ScrollView style="width: 420px">
           <WeaponDetailCard
             :size="40"
-            :id="0"
-            :type_id="0"
-            :rank="6"
-            :lvl="90"
-            :refine="0"
-            :lock="true"
+            :id="id"
+            :type_id="uuid"
+            :rank="(rank as any)"
+            :lvl="(level as any)"
+            :refine="(refine as any)"
+            :lock="lock"
             :weapon_type="buildPreview"
           />
         </ScrollView>
@@ -362,6 +534,14 @@ const download = () => {};
   display: inline-flex;
   justify-content: start;
   white-space: pre-wrap;
+}
+
+:deep(.left-controler) {
+  display: flex;
+}
+
+.arrow {
+  width: 200px;
 }
 .weapon {
   &-editor {
@@ -485,3 +665,4 @@ const download = () => {};
   }
 }
 </style>
+./temp

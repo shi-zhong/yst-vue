@@ -5,13 +5,14 @@ import { ClassNameFactor, DataDecoder, TypeNameToBackendCode } from '@/utils';
 import {
   WeaponTypesTransform,
   type WeaponTypeModel,
-  type WeaponsInstanceModel
+  type WeaponsInstanceModel,
+  VerifyRankAndLevel,
+  StarToMaxRank
 } from '@/components/Weapon';
 
 import { reactive, toRefs, watch } from 'vue';
 import { merge } from '@/utils';
 import WeaponDescribe from './WeaponDescribe.vue';
-import { computed } from 'vue';
 import { AttributesTransform } from '@/components/Artifact';
 
 const props = withDefaults(
@@ -51,21 +52,6 @@ const data = reactive<WeaponTypeModel>({
 
 const S = ClassNameFactor('weapon-detail-card-');
 
-const mainValue = computed(() => {
-  /**
-   * 等级和阶级不一致时，优先处理等级
-   * main [1, 20, 20+, 40, 40+, 50, 50+, 60, 60+, 70, 70+, 80, 80+, 90]
-   */
-  const lvls = [1, 20, 20, 40, 40, 50, 50, 60, 60, 70, 70, 80, 80, 90];
-  const ranks = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6];
-  for (let i = 0; i < data.data.main.length; i++) {
-    if (lvls[i] === lvl.value && ranks[i] === rank.value) {
-      return data.data.main[i];
-    }
-  }
-  return data.data.main[lvls.findIndex((j) => j === lvl.value)] ?? 0;
-});
-
 watch(
   [() => props.type_id, () => props.weapon_type],
   () => {
@@ -84,14 +70,17 @@ watch(
   <BasicDetailCard
     :title="data.basic.name"
     :rarity="data.basic.star"
-    :main="{ key: '基础攻击力', value: DataDecoder(mainValue) }"
+    :main="{
+      key: '基础攻击力',
+      value: DataDecoder(data.data.main[VerifyRankAndLevel(rank, lvl)])
+    }"
     :sub="{
       key: AttributesTransform(data.data.sub.key),
-      value: DataDecoder(lvl * data.data.sub.growth + data.data.sub.start)
+      value: DataDecoder((lvl - 1) * data.data.sub.growth + data.data.sub.start, 1)
     }"
     :imgurl="data.basic.imgurl"
     :type="
-      WeaponTypesTransform(TypeNameToBackendCode({ name: 'weapon', code: data.basic.type })[1])
+      WeaponTypesTransform(TypeNameToBackendCode({ name: 'weapon', code: data.basic.type })[1]) ?? '单手剑'
     "
     :size="size"
   >
@@ -105,6 +94,7 @@ watch(
         &nbsp;
         <RankBar
           :rank="rank"
+          :max-rank="StarToMaxRank(data.basic.star)"
           :size="21"
         />
       </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useThrettleFn } from '@/utils';
+import { useThrettleFn } from '@/utils/hooks';
 import { ref } from 'vue';
 
 const props = defineProps<{

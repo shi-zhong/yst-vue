@@ -11,7 +11,7 @@ const view = ref();
 
 const { close, vLazy } = LazyImage(view.value);
 
-const activeData = ref(0);
+const activeData = ref(-1);
 
 onUnmounted(() => {
   close();

@@ -17,7 +17,7 @@ const props = defineProps<WeaponCardProps>();
     v-bind="props"
   >
     <Lock
-      v-if="props.locked"
+      v-if="locked"
       lock
     />
   </BasicCard>

@@ -13,7 +13,7 @@ import { useArtifactStore } from '@/stores/Artifact';
 import { Upload } from '@/api/Request';
 import ArtifactPng from '@/assets/icons/artifact.png';
 
-import { merge, TypeNameToBackendCode, fileExt } from '@/utils';
+import { merge, TypeNameToBackendCode, fileExt, DownLoadJson } from '@/utils';
 import { ArtifactSuitAdd, ArtifactSuitModify } from '@/api/ArtifactSuit';
 import { template } from './template';
 
@@ -340,22 +340,6 @@ const handleDropFiles = (files: { file: any; origin: File }[]) => {
   });
 };
 
-const downLoadTemplate = (origin: object) => {
-  const tmpLink = document.createElement('a');
-
-  const blob = new File([JSON.stringify(origin, null, 2)], 'artifat_template.json', {
-    type: 'text/plain'
-  });
-
-  const objectUrl = URL.createObjectURL(blob);
-  tmpLink.href = objectUrl;
-
-  tmpLink.download = 'artifat_template.json';
-
-  tmpLink.click();
-  URL.revokeObjectURL(objectUrl);
-};
-
 watchEffect(() => {
   if (store.artifactSuits.has(props.active)) {
     syncArtifact(store.ArtifactSuitById(props.active)!);
@@ -378,8 +362,8 @@ const download = () => {
         }))
         .filter((i) => i.describe !== '')
     };
-    downLoadTemplate(preDownload);
-  } else downLoadTemplate(template);
+    DownLoadJson(preDownload, `${basic.name ?? 'artifact'}.json`);
+  } else DownLoadJson(template, 'artifact_template.json');
 };
 </script>
 
