@@ -60,10 +60,10 @@ export const useArtifactStore = defineStore('artifact', {
   },
   actions: {
     async GenerateArtifactSuits() {
-      const sutis = await ArtifactSuitGetAll();
+      const suits = await ArtifactSuitGetAll();
       const map = new Map<number, ArtifactSuitModel>();
-      if (sutis.msg === 'OK') {
-        sutis.data.artifacts.map((i) => {
+      if (suits.code === 20000) {
+        suits.data.artifacts.map((i) => {
           map.set(i.id, i);
         });
       }

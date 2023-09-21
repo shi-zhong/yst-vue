@@ -50,12 +50,7 @@ watch(
     if (props.id === 0 && props.suit) {
       merge(data, props.suit);
     } else {
-      const willmerge = store.ArtifactSuitById(props.id);
-      if (willmerge.id === 0) {
-        console.error('Artifact Id Error.');
-      }
-
-      merge(data, willmerge);
+      merge(data, store.ArtifactSuitById(props.id));
     }
   },
   { immediate: true }
@@ -67,7 +62,7 @@ watch(
     :title="data.slots[type]!.name"
     :rarity="data.rarity"
     :main="main"
-    :imgurl="data.slots[type]!.imgUrl"
+    :imgUrl="data.slots[type]!.imgUrl"
     :type="ArtifactSlotsNameTransform(type)"
     :size="size"
   >

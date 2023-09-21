@@ -1,6 +1,7 @@
 import { type FunctionalComponent } from 'vue';
 import { type CardProps } from './interface';
 import { Rarity, RarityToColor } from '@/components/Tags';
+import Image from '@/components/commons/Image/index.vue';
 
 import type { CharacterCardProps, BasicCardProps } from './interface';
 import { GetElementPicture, ClassNameWithCSSModuleFactor } from '@/utils';
@@ -30,27 +31,26 @@ const CharacterCard: FunctionalComponent<CharacterCardProps, any, any> = (props,
 // 处理透传
 CharacterCard.props = ['selected', 'element'];
 
-const BasicCard: FunctionalComponent<CardProps, {}, { default: any }> = (props, { slots }) => {
-  return (
-    <div class={S('outer')}>
-      <div class={S(['photo-container', `photo-container-${RarityToColor(props.rarity)}`])}>
-        <img
-          draggable={false}
-          src={props.imgurl}
-          width="120"
-        />
-      </div>
-      <div class={S('lvl')}>
-        {props.type === 'artifact' ? '+' : 'Lv.'}
-        {props.lvl}
-      </div>
-
-      <div class={S('mask')}>
-        <div class={Style['star-offset']}>{slots.default()}</div>
-        {props.type != 'character' && <Rarity rarity={props.rarity} />}
-      </div>
+const BasicCard: FunctionalComponent<CardProps, {}, { default: any }> = (props, { slots }) => (
+  <div class={S('outer')}>
+    <div class={S(['photo-container', `photo-container-${RarityToColor(props.rarity)}`])}>
+      <Image
+        draggable={false}
+        src={props.imgUrl}
+        width="120"
+      />
     </div>
-  );
-};
+    <div class={S('lvl')}>
+      {props.type === 'artifact' ? '+' : 'Lv.'}
+      {props.lvl}
+    </div>
+
+    <div class={S('mask')}>
+      <div class={Style['star-offset']}>{slots.default()}</div>
+      {props.type != 'character' && <Rarity rarity={props.rarity} />}
+    </div>
+  </div>
+);
+BasicCard.props = ['type', 'rarity', 'imgUrl', 'lvl'];
 
 export { CharacterCard, BasicCard };

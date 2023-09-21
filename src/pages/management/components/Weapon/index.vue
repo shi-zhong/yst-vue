@@ -1,21 +1,14 @@
 <script setup lang="ts">
-import { LazyImage } from '@/utils/directive/lazyImage';
-import { Rarity, RarityToColor, ScrollView } from '@/components';
-import { WeaponCard, WeaponDetailCard } from '@/components/Weapon';
-import { onUnmounted, ref } from 'vue';
+import { ScrollView } from '@/components';
+import { StarToMaxLevel, WeaponCard } from '@/components/Weapon';
+import { ref } from 'vue';
 import Editor from './editor.vue';
 import { EventDispatch } from '@/utils';
-import I from '@/assets/wolfs_gravestone.webp';
+import { useWeaponStore } from '@/stores/Weapon';
 
-const view = ref();
-
-const { close, vLazy } = LazyImage(view.value);
+const store = useWeaponStore();
 
 const activeData = ref(-1);
-
-onUnmounted(() => {
-  close();
-});
 
 const handleActive = (e: Event) => {
   EventDispatch(e, {
@@ -31,16 +24,19 @@ const handleActive = (e: Event) => {
   <div class="content">
     <ScrollView
       class="weapon-list"
-      ref="view"
       scroll-behavior="scroll"
       data-type="top"
       @click="handleActive"
     >
       <WeaponCard
-        :imgurl="I"
-        :lvl="90"
+        v-for="weapon of store.weaponTypes.values()"
+        :key="weapon.id"
+        data-type="weapon-card"
+        :data-key="weapon.id"
+        :imgUrl="weapon.basic.imgUrl"
+        :lvl="StarToMaxLevel(weapon.basic.star)"
         :locked="true"
-        :rarity="5"
+        :rarity="weapon.basic.star"
       />
     </ScrollView>
     <Editor

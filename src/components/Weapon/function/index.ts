@@ -5,7 +5,7 @@ export const WeaponTypesTransform = Transformer<Record<WeaponTypes, WeaponTypesC
   Sword: '单手剑',
   Catalyst: '法器',
   Claymore: '双手剑',
-  Bow: '弓箭',
+  Bow: '弓',
   Polearm: '长柄武器'
 } as const);
 

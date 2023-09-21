@@ -27,6 +27,10 @@ export default defineConfig({
       '/api/v1': {
         target: 'http://localhost:8000',
         changeOrigin: true
+      },
+      '/static': {
+        target: 'http://localhost:8000',
+        changeOrigin: true
       }
     }
   },

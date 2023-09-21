@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useArtifactStore } from '@/stores/Artifact';
 import { LazyImage } from '@/utils/directive/lazyImage';
-import { Rarity, RarityToColor, ScrollView } from '@/components';
+import { Image, Rarity, RarityToColor, ScrollView } from '@/components';
 import { onUnmounted, ref } from 'vue';
 import Editor from './editor.vue';
 import { EventDispatch } from '@/utils';
@@ -53,12 +53,12 @@ const handleActive = (e: Event) => {
           <Rarity :rarity="art.rarity" />
         </div>
         <div>
-          <img
+          <Image
             v-for="(value, key) in art.slots"
             :key="key"
             v-show="value.imgUrl"
             v-lazy="value.imgUrl"
-            draggable="false"
+            :draggable="false"
           />
         </div>
       </div>

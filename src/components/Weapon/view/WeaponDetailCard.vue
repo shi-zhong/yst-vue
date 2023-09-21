@@ -11,9 +11,10 @@ import {
 } from '@/components/Weapon';
 
 import { reactive, toRefs, watch } from 'vue';
-import { merge } from '@/utils';
+import { merge } from '@/utils/tools';
 import WeaponDescribe from './WeaponDescribe.vue';
 import { AttributesTransform } from '@/components/Artifact';
+import { useWeaponStore } from '@/stores/Weapon';
 
 const props = withDefaults(
   defineProps<WeaponsInstanceModel & { weapon_type?: WeaponTypeModel; size?: number }>(),
@@ -21,6 +22,8 @@ const props = withDefaults(
     size: 50
   }
 );
+
+const store = useWeaponStore();
 
 const { rank, lvl, refine } = toRefs(props);
 
@@ -31,7 +34,7 @@ const data = reactive<WeaponTypeModel>({
     name: '',
     star: 1,
     type: 1,
-    imgurl: ''
+    imgUrl: ''
   },
   describe: '',
   data: {
@@ -43,7 +46,7 @@ const data = reactive<WeaponTypeModel>({
     }
   },
   story: [],
-  effects: {
+  effect: {
     name: '',
     describe: '',
     $: []
@@ -58,7 +61,8 @@ watch(
     if (props.type_id === 0 && props.weapon_type !== undefined) {
       merge(data, props.weapon_type);
     } else {
-      merge(data, {});
+      const weapon = store.WeaponTypeById(props.type_id);
+      merge(data, weapon);
     }
   },
   { immediate: true }
@@ -78,9 +82,10 @@ watch(
       key: AttributesTransform(data.data.sub.key),
       value: DataDecoder((lvl - 1) * data.data.sub.growth + data.data.sub.start, 1)
     }"
-    :imgurl="data.basic.imgurl"
+    :imgUrl="data.basic.imgUrl"
     :type="
-      WeaponTypesTransform(TypeNameToBackendCode({ name: 'weapon', code: data.basic.type })[1]) ?? '单手剑'
+      WeaponTypesTransform(TypeNameToBackendCode({ name: 'weapon', code: data.basic.type })[1]) ??
+      '单手剑'
     "
     :size="size"
   >
@@ -104,16 +109,16 @@ watch(
       />
     </div>
     <Refine
-      v-if="refine !== 0 && data.effects.$.length !== 0"
+      v-if="refine !== 0 && data.effect.$.length !== 0"
       :refine="refine"
-      :refine-end="refine === data.effects.$[0].length"
+      :refine-end="refine === data.effect.$[0].length"
       :size="23"
       :text="true"
     />
     <WeaponDescribe
       :class="S('effect-describe')"
       :refine="refine"
-      :effect="data.effects"
+      :effect="data.effect"
     />
     <div :class="S('txt-describe')">{{ data.describe }}</div>
   </BasicDetailCard>

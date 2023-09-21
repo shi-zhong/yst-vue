@@ -55,7 +55,7 @@ const { team, sidebar } = storeToRefs(stateStore);
         <CharacterCard
           v-bind="i"
           selected
-          :imgurl="i.avatar"
+          :imgUrl="i.avatar"
         />
       </template>
 
@@ -65,7 +65,7 @@ const { team, sidebar } = storeToRefs(stateStore);
       >
         <CharacterCard
           v-bind="i"
-          :imgurl="i.avatar"
+          :imgUrl="i.avatar"
         />
       </template>
     </ScrollView>

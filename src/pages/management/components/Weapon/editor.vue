@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { Drop } from '@/utils/directive';
 import { Icon, ScrollView, DropFile, Refine, Lock } from '@/components';
 import {
@@ -14,7 +14,7 @@ import {
   StarToMaxRank,
   StarToMaxLevel
 } from '@@/Weapon';
-import { Upload, WeaponTypeAdd, WeaponTypeModify } from '@/api';
+import { UploadImg, WeaponTypeAdd, WeaponTypeModify } from '@/api';
 import WeaponPng from '@/assets/icons/weapon.png';
 import {
   DataDecoder,
@@ -28,13 +28,16 @@ import {
 } from '@/utils';
 import { Message } from '@/components/commons/Message';
 import { AttributesTransform } from '@@/Artifact';
-import { template } from './temp';
 import ArrowCount from '@@/ArrowCount/index.vue';
+import { useWeaponStore, emptyWeaponTypes as template } from '@/stores/Weapon';
+import { emit } from 'process';
 
 const { vDrop } = Drop();
 
 const props = defineProps<{ active: number }>();
 const emits = defineEmits<{ (e: 'change', id: number): void }>();
+
+const store = useWeaponStore();
 
 const id = ref(0);
 const uuid = ref(0);
@@ -43,12 +46,12 @@ const basic = reactive<{
   name: string;
   star: 1 | 2 | 3 | 4 | 5;
   type: number;
-  imgurl: string;
+  imgUrl: string;
 }>({
   name: '',
   star: 1,
   type: 0,
-  imgurl: ''
+  imgUrl: ''
 });
 const weaponImgFile = ref<File>();
 const describe = ref('');
@@ -86,36 +89,7 @@ const level = computed(() => LevelFromVerify(rankwithlevel.value));
 const lock = ref(true);
 const refine = ref(0);
 
-// const clear = async () => {
-//   id.value = 1;
-//   uuid.value = 0;
-//   merge(basic, {
-//     name: '',
-//     star: 1,
-//     type: 0,
-//     imgurl: ''
-//   });
-
-//   weaponImgFile.value = undefined;
-//   describe.value = '';
-//   merge(effect, {
-//     name: '',
-//     describe: '',
-//     $: []
-//   });
-
-//   merge(weaponData, {
-//     main: [],
-//     sub: {
-//       key: 'ATKPercentage',
-//       start: 0,
-//       growth: 0
-//     }
-//   });
-// };
-
-/**-------------------------------------------------- */
-const UploadImg = async () => {
+const UploadWeaponImg = async () => {
   if (weaponImgFile.value) {
     const formData = new FormData();
     formData.append(
@@ -128,12 +102,39 @@ const UploadImg = async () => {
         })[0]
       }${basic.type}_${fileExt(weaponImgFile.value.name)}`
     );
-    const { msg, data } = await Upload(formData);
-    if (msg === 'OK') {
-      basic.imgurl = data.url;
+
+    const { code, data } = await UploadImg(formData);
+    if (code === 20000) {
+      basic.imgUrl = data.url;
+      return true;
     } else {
       Message.info('上传图片失败.');
     }
+  }
+  return false;
+};
+
+const UploadWeaponInfo = async () => {
+  // 有文件必须先上传
+  if (weaponImgFile.value) {
+    const uploaded = await UploadWeaponImg();
+    if (!uploaded) return;
+  } else if (!basic.imgUrl.startsWith('http')) {
+    return;
+  }
+
+  const willupload = buildSave();
+  let res: any;
+  if (props.active === -1) {
+    res = await WeaponTypeAdd(willupload);
+    if (res.msg === 'OK') {
+      await store.GenerateWeaponTypes();
+      id.value = res.data.id;
+      emits('change', res.data.id);
+    }
+  } else {
+    res = await WeaponTypeModify(props.active, willupload);
+    store.GenerateWeaponTypes();
   }
 };
 
@@ -144,7 +145,7 @@ const buildSave = (): WeaponTypeModel => ({
   describe: describe.value,
   data: weaponData,
   story: story.value,
-  effects: effect
+  effect: effect
 });
 
 const buildPreview: any = computed(() => ({
@@ -153,12 +154,15 @@ const buildPreview: any = computed(() => ({
   describe: describe.value,
   data: weaponData,
   story: story.value,
-  effects: effect
+  effect: effect
 }));
 
 /**--------------------------------- */
 const handleJsonDrop = (text: string) => {
   const data = JSON.parse(text);
+
+  weaponImgFile.value = undefined;
+  basic.imgUrl = '';
 
   if (
     VerifyType<WeaponTypeModel>(
@@ -174,13 +178,13 @@ const handleJsonDrop = (text: string) => {
               { type: 'string', name: 'name' },
               { type: 'number', name: 'star' },
               { type: 'number', name: 'type' },
-              { type: 'string', name: 'imgurl' }
+              { type: 'string', name: 'imgUrl' }
             ]
           },
           { type: 'string', name: 'describe' },
           {
             type: 'object',
-            name: 'effects',
+            name: 'effect',
             items: [
               { type: 'string', name: 'name' },
               { type: 'string', name: 'describe' },
@@ -222,10 +226,12 @@ const handleJsonDrop = (text: string) => {
       data
     )
   ) {
+    emits('change', -1);
+    id.value = 0;
     uuid.value = data.uuid;
     merge(basic, data.basic);
     describe.value = data.describe;
-    merge(effect, data.effects);
+    merge(effect, data.effect);
     merge(weaponData, data.data);
     story.value = data.story || ([] as string[]);
     Message.success('原神工具格式.');
@@ -290,7 +296,7 @@ const handleJsonDrop = (text: string) => {
             path: 'describe.describe'
           },
           {
-            name: 'effects',
+            name: 'effect',
             path: 'describe',
             type: 'object',
             items: [
@@ -354,11 +360,13 @@ const handleJsonDrop = (text: string) => {
       },
       data as object
     );
+    emits('change', -1);
 
+    id.value = 0;
     uuid.value = res.uuid;
     merge(basic, res.basic);
     describe.value = res.describe;
-    merge(effect, res.effects);
+    merge(effect, res.effect);
     merge(weaponData, res.data);
     story.value = res.story || ([] as string[]);
 
@@ -372,7 +380,7 @@ const handleDrop = (text: string, file: File) => {
   if (file.type === 'application/json') return handleJsonDrop(text);
   else if (file.type.startsWith('image')) {
     weaponImgFile.value = file;
-    basic.imgurl = text;
+    basic.imgUrl = text;
   }
 };
 
@@ -381,6 +389,26 @@ const download = () => {
     DownLoadJson(buildSave(), `${basic.name ?? 'weapon'}.json`);
   } else DownLoadJson(template, 'weapon_template.json');
 };
+
+watch(
+  () => props.active,
+  () => {
+    if (props.active !== -1) {
+      const weapon = store.WeaponTypeById(props.active);
+      if (weapon.id === 0) {
+        Message.error('ID 错误.');
+      } else {
+        uuid.value = weapon.uuid;
+        merge(basic, weapon.basic);
+        describe.value = weapon.describe;
+        merge(effect, weapon.effect);
+        merge(weaponData, weapon.data);
+        story.value = weapon.story || ([] as string[]);
+      }
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -396,31 +424,21 @@ const download = () => {
         >
         {{ id ? `${id}-${uuid}` : '' }}
         <div>
-          <button @click="() => emits('change', -1)">关闭</button>
-          <button @click="download">
-            下载{{ props.active !== -1 || uuid !== 0 ? '数据' : '模板' }}
-          </button>
           <button
             @click="
-              async () => {
-                await UploadImg();
-                const willupload = buildSave();
-                let res: any;
-                if (props.active === -1) {
-                  res = await WeaponTypeAdd(willupload);
-                  if (res.msg === 'OK') {
-                    id = res.data.id;
-                  }
-                } else {
-                  res = await WeaponTypeModify(id, willupload);
-                }
-                // if (res.msg === 'OK') store.GenerateArtifactSuits();
-                // else console.error('error');
+              () => {
+                emits('change', -1);
+                id = 0;
+                uuid = 0;
               }
             "
           >
-            保存
+            关闭
           </button>
+          <button @click="download">
+            下载{{ props.active !== -1 || uuid !== 0 ? '数据' : '模板' }}
+          </button>
+          <button @click="UploadWeaponInfo">保存</button>
         </div>
       </div>
 
@@ -431,61 +449,83 @@ const download = () => {
         <ScrollView
           class="weapon-scroll"
           scroll-behavior="hidden"
-          transformBoxClass="left-controler"
         >
-          <Lock
-            v-model="lock"
-            :size="40"
-          />
-          <ArrowCount
-            class="arrow"
-            :min="0"
-            :max="VerifyRankAndLevel(StarToMaxRank(basic.star), StarToMaxLevel(basic.star))"
-            v-model="rankwithlevel"
-          >
-            {{
-              [
-                '1',
-                '20',
-                '20+',
-                '40',
-                '40+',
-                '50',
-                '50+',
-                '60',
-                '60+',
-                '70',
-                '70+',
-                '80',
-                '80+',
-                '90'
-              ][rankwithlevel]
-            }}
-          </ArrowCount>
-          <ArrowCount
-            class="arrow"
-            :min="0"
-            :max="effect.$[0]?.length ?? 0"
-            v-model="refine"
-          >
-            <Refine
-              :refine="refine"
-              text
-              :refineEnd="refine === effect.$[0]?.length ?? 0"
-            />
-          </ArrowCount>
+          <table class="display-modify">
+            <tr>
+              <td>状态锁定</td>
+              <td>
+                <Lock
+                  v-model="lock"
+                  :size="40"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>修改等级</td>
+              <td>
+                <ArrowCount
+                  class="arrow"
+                  :min="0"
+                  :max="VerifyRankAndLevel(StarToMaxRank(basic.star), StarToMaxLevel(basic.star))"
+                  v-model="rankwithlevel"
+                >
+                  {{
+                    [
+                      '1',
+                      '20',
+                      '20+',
+                      '40',
+                      '40+',
+                      '50',
+                      '50+',
+                      '60',
+                      '60+',
+                      '70',
+                      '70+',
+                      '80',
+                      '80+',
+                      '90'
+                    ][rankwithlevel]
+                  }}
+                </ArrowCount>
+              </td>
+            </tr>
+            <tr>
+              <td>修改精炼</td>
+              <td>
+                <ArrowCount
+                  class="arrow"
+                  :min="0"
+                  :max="effect.$[0]?.length ?? 0"
+                  v-model="refine"
+                >
+                  <Refine
+                    :refine="refine"
+                    text
+                    :refineEnd="refine === effect.$[0]?.length ?? 0"
+                  />
+                </ArrowCount>
+              </td>
+            </tr>
+            <tr>
+              <td>小卡片预览</td>
+              <td>
+                <WeaponCard
+                  :imgUrl="basic.imgUrl"
+                  :lvl="level"
+                  :locked="lock"
+                  :rarity="basic.star"
+                />
+              </td>
+            </tr>
+          </table>
         </ScrollView>
-        <WeaponCard
-          :imgurl="basic.imgurl"
-          :lvl="level"
-          :locked="lock"
-          :rarity="basic.star"
-        />
-        <ScrollView style="width: 420px">
+
+        <ScrollView style="width: 420px;max-height: 700px;">
           <WeaponDetailCard
             :size="40"
-            :id="id"
-            :type_id="uuid"
+            :id="0"
+            :type_id="id"
             :rank="(rank as any)"
             :lvl="(level as any)"
             :refine="(refine as any)"
@@ -536,8 +576,14 @@ const download = () => {
   white-space: pre-wrap;
 }
 
-:deep(.left-controler) {
-  display: flex;
+.display-modify {
+  color: @fontlightgray;
+
+  & > tr > td {
+    width: 50%;
+    min-height: 100px;
+    padding: 10px;
+  }
 }
 
 .arrow {
@@ -558,6 +604,7 @@ const download = () => {
     box-shadow: 0 0 10px @fontlightgray;
     display: flex;
     flex-flow: column;
+    overflow: hidden;
   }
 
   &-edit {
@@ -646,23 +693,8 @@ const download = () => {
 
   &-scroll {
     flex-shrink: 1;
+    flex-grow: 1;
     padding: 3px;
   }
 }
-
-.effects {
-  width: 300px;
-  height: 200px;
-  font-size: 20px;
-  color: @fontdarkgray;
-  resize: none;
-  border: none;
-  box-shadow: @shadow2;
-
-  &-box {
-    display: flex;
-    justify-content: space-between;
-  }
-}
 </style>
-./temp

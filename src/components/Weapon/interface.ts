@@ -1,5 +1,5 @@
 export type WeaponTypes = 'Sword' | 'Catalyst' | 'Claymore' | 'Bow' | 'Polearm';
-export type WeaponTypesChinese = '单手剑' | '法器' | '双手剑' | '弓箭' | '长柄武器';
+export type WeaponTypesChinese = '单手剑' | '法器' | '双手剑' | '弓' | '长柄武器';
 
 export type WeaponSubArrtibutes =
   | 'ATKPercentage'
@@ -18,7 +18,7 @@ export interface WeaponTypeModel {
     name: string;
     star: 1 | 2 | 3 | 4 | 5;
     type: number;
-    imgurl: string;
+    imgUrl: string;
   };
   describe: string;
   data: {
@@ -30,7 +30,7 @@ export interface WeaponTypeModel {
     };
   };
   story: string[];
-  effects: {
+  effect: {
     name: string;
     describe: string;
     $: number[][];

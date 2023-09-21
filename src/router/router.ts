@@ -6,6 +6,7 @@ import Test from '@/pages/test/test.vue';
 import Test2 from '@/pages/test/test2.vue';
 
 import { useArtifactStore } from '@/stores/Artifact';
+import { useWeaponStore } from '@/stores/Weapon';
 
 const Manage = () => import(/* webpackChunkName: "manage" */ '@/pages/management/index.vue');
 const ManageArtifact = () =>
@@ -36,12 +37,12 @@ const router = createRouter({
             title: 'test2'
           },
           component: Test2,
-          beforeEnter: () => {
-            const store = useArtifactStore();
-            if (store.artifactSuits.size === 0) {
-              store.GenerateArtifactSuits();
-            }
-          }
+          // beforeEnter: () => {
+          //   const store = useArtifactStore();
+          //   if (store.artifactSuits.size === 0) {
+          //     store.GenerateArtifactSuits();
+          //   }
+          // }
         },
         {
           path: '/character',
@@ -73,7 +74,13 @@ const router = createRouter({
             },
             {
               path: 'weapon',
-              component: ManageWeapon
+              component: ManageWeapon,
+              beforeEnter: () => {
+                const store = useWeaponStore();
+                if (store.weaponTypes.size === 0) {
+                  store.GenerateWeaponTypes();
+                }
+              }
             },
             {
               path: '',

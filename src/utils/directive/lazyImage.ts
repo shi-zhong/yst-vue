@@ -1,20 +1,36 @@
 import { type Directive } from 'vue';
 
+const handleSrc = (src?: string) => {
+  if (src === undefined) {
+    return '';
+  } else if (src.startsWith('data:image')) {
+    return src;
+  } else {
+    return 'http://localhost:8000/static/' + src;
+  }
+};
+
 /**
  * 懒加载图片
  */
 
 export const LazyImage = (root?: Element): { close: () => void; vLazy: Directive } => {
-  const observe = new IntersectionObserver((entrys) => {
-    entrys.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.setAttribute('src', entry.target.getAttribute('data-src') || '');
-        observe.unobserve(entry.target);
-      }
-    });
-  }, {
-    root
-  });
+  const observe = new IntersectionObserver(
+    (entrys) => {
+      entrys.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.setAttribute(
+            'src',
+            handleSrc(entry.target.getAttribute('data-src') || undefined) || ''
+          );
+          observe.unobserve(entry.target);
+        }
+      });
+    },
+    {
+      root
+    }
+  );
 
   return {
     vLazy: {

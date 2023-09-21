@@ -51,12 +51,12 @@ const af = ref(0);
       :lock="true"
       :weapon_type="{
         id: 0,
-        basic: { name: '狼的末日', star: 5, type: 3, imgurl: I },
+        basic: { name: '狼的末日', star: 5, type: 3, imgUrl: I },
         describe:
           '狼的骑士所使的大剑。原本只是城中铁匠赠予的厚重的铁片，却在他与狼的情谊中，获得神话般的力量。',
         data: { main: [], sub: { key: 'string', start: 0, growth: 0 } },
         story: [],
-        effects: {
+        effect: {
           name: '如狼般狩猎者',
           describe:
             ' · 攻击力提高$1；攻击命中生命值低于30%的敌人时队伍中所有成员的攻击力提高$2，持续12秒。该效果30秒只能触发一次。',

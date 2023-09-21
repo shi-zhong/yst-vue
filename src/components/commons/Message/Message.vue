@@ -28,7 +28,8 @@ import { Queue } from './index';
 }
 
 .error {
-  color: @blank-white;
+  // color: @blank-white;
+  color: @lock-color;
 }
 
 .msg-move, /* 对移动中的元素应用的过渡 */

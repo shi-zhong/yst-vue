@@ -10,7 +10,7 @@ import {
   ArtifactDetailCard
 } from '@/components/Artifact';
 import { useArtifactStore } from '@/stores/Artifact';
-import { Upload } from '@/api/Request';
+import { UploadImg } from '@/api/common';
 import ArtifactPng from '@/assets/icons/artifact.png';
 
 import { merge, TypeNameToBackendCode, fileExt, DownLoadJson } from '@/utils';
@@ -184,7 +184,7 @@ const buildSave = async (): Promise<ArtifactSuitModel> => {
             fileExt(f.name)
         );
 
-        return Upload(formData).then((data) => {
+        return UploadImg(formData).then((data) => {
           if (data.msg === 'OK') {
             return data.data.url;
           }

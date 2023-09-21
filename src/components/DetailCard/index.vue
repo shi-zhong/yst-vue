@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Image from '@/components/commons/Image/index.vue';
 import { Rarity, RarityToColor } from '@/components/Tags';
 import { ClassNameFactor } from '@/utils/className';
 import { toRefs } from 'vue';
@@ -8,7 +9,7 @@ const props = withDefaults(defineProps<BasicDetailCardProps & { size?: number }>
   size: 50
 });
 
-const { title, type, sub, main, rarity, imgurl } = toRefs(props);
+const { title, type, sub, main, rarity, imgUrl } = toRefs(props);
 
 const S = ClassNameFactor('common-detail-card');
 </script>
@@ -36,9 +37,9 @@ const S = ClassNameFactor('common-detail-card');
           :size="(30 / 50) * props.size"
         />
       </div>
-      <img
+      <Image
         :draggable="false"
-        :src="imgurl"
+        :src="imgUrl"
         alt="img"
       />
     </div>
@@ -101,6 +102,7 @@ const S = ClassNameFactor('common-detail-card');
 
   &-attribute {
     height: var(--4-title-height);
+    overflow: hidden;
 
     &-golden {
       background: @rank-golden-gradient-box;

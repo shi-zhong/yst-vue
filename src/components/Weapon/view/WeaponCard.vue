@@ -8,7 +8,6 @@ interface WeaponCardProps extends BasicCardProps {
 }
 
 const props = defineProps<WeaponCardProps>();
-
 </script>
 
 <template>

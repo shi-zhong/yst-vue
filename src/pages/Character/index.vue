@@ -46,7 +46,7 @@ const data = {
           <ArtifactCard
             :locked="false"
             :rarity="5"
-            :imgurl="Artifact"
+            :imgUrl="Artifact"
             :lvl="20"
           />
           <ArtifactDetailCard

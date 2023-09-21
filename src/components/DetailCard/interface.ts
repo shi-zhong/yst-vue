@@ -12,5 +12,5 @@ export interface BasicDetailCardProps {
     [key: string]: any;
   };
   rarity: 1 | 2 | 3 | 4 | 5;
-  imgurl: string;
+  imgUrl: string;
 }

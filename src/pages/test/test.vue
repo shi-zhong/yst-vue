@@ -4,6 +4,7 @@ import { ScrollView } from '@/components';
 import { ref } from 'vue';
 
 import { DropFile, DropImage } from '@/components';
+import { Login } from '@/api';
 
 const visible = ref(0);
 const visible1 = ref(0);
@@ -61,6 +62,7 @@ const visible2 = ref(0);
       </ScrollView>
     </div>
   </ScrollView>
+  <button @click="Login">Get Token</button>
 </template>
 
 <style scoped lang="less">
