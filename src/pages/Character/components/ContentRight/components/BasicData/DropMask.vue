@@ -2,6 +2,7 @@
 import { Icon } from '@/components';
 import Close from '@/assets/icons/close.png';
 import { ref } from 'vue';
+import { Sound } from '@/utils/sound';
 
 const props = withDefaults(defineProps<{ autoClose?: boolean; visible: boolean }>(), {
   autoClose: false
@@ -36,7 +37,12 @@ const handleClose = () => {
             :src="Close"
             color="white"
             :size="40"
-            @click="emits('close')"
+            @click="
+              () => {
+                emits('close');
+                Sound.DDing.once();
+              }
+            "
           />
         </div>
         <slot></slot>

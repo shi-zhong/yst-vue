@@ -9,6 +9,7 @@ import EMaster from '@/assets/icons/elementMaster.png';
 import { ArtifactDescribe } from '@/components/Artifact';
 
 import DetailData from './BasicData/DetailData.vue';
+import { Sound } from '@/utils/sound';
 
 const buttonSelect = ref(false);
 
@@ -104,7 +105,12 @@ const data = {
       </div>
       <button
         class="c-detail"
-        @click="() => (detailVisible = true)"
+        @click="
+          () => {
+            Sound.DDing.replay();
+            detailVisible = true;
+          }
+        "
       >
         圣遗物详情
       </button>
@@ -128,6 +134,7 @@ const data = {
     <Button
       type="shrink"
       class="button-line"
+      sound="dong"
     >
       替换
     </Button>

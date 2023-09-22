@@ -4,6 +4,7 @@ import { ClassNameFactor } from '@/utils/className';
 import Icon from './Icon.vue';
 import { type ButtonProps, type ButtonEmit } from './interface';
 import AttentionDecoration from './AttentionDecoration.vue';
+import { Sound } from '@/utils/sound';
 
 const props = withDefaults(defineProps<ButtonProps>(), { theme: 'light' });
 
@@ -35,11 +36,33 @@ const decideExtraButtonStyle = () => {
   }
   return button;
 };
+
+const handleClick = () => {
+  switch (props.sound) {
+    case 'open':
+      Sound.winOpen.replay();
+      break;
+    case 'close':
+      Sound.winClose.replay();
+      break;
+    case 'ding':
+      Sound.Ding.replay();
+      break;
+    case 'dding':
+      Sound.DDing.replay();
+      break;
+    case 'dong':
+      Sound.Dong.replay();
+      break;
+  }
+
+  emit('click');
+};
 </script>
 <template>
   <button
     :class="[S({ button: true, ['theme-' + theme]: type === 'shrink' }), decideExtraButtonStyle()]"
-    @click="emit('click')"
+    @click="handleClick"
     :disabled="disable"
   >
     <!-- 这里可以用span包裹，但是不知道有啥用 -->

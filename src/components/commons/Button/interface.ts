@@ -8,13 +8,9 @@ export interface ButtonProps {
   size?: number;
   attention?: boolean;
   theme?: 'dark' | 'light';
+  sound?: 'ding' | 'dding' | 'dong' | 'open' | 'close';
 }
 
 export interface ButtonEmit {
   (event: 'click'): void;
 }
-
-// interface IconProps {
-//   icon: 'round' | 'fork' | string
-//   size: number | undefined
-// }

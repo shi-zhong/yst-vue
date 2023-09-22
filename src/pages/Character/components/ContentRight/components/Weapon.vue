@@ -15,7 +15,7 @@ const data = {
 
 <template>
   <div class="basiw-data-container">
-    <ScrollView style="flex-grow: 1;">
+    <ScrollView style="flex-grow: 1">
       <div class="w-name">天空之翼</div>
       <div class="w-type">
         <span>{{ data.type }}</span>
@@ -52,12 +52,14 @@ const data = {
       <Button
         type="shrink"
         class="button-line"
+        sound="dong"
       >
         替换
       </Button>
       <Button
         type="shrink"
         class="button-line"
+        sound="dong"
       >
         强化
       </Button>

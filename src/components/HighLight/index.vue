@@ -6,8 +6,9 @@ const props = defineProps<{ text: string }>();
 
 const S = ClassNameFactor('highlight-');
 
-const PreDecode = computed(
-  () => props.text.trim()
+const PreDecode = computed(() =>
+  props.text
+    .trim()
     .split('\n')
     .map((i) => i.trim())
     .map((i) => Decode(i))
@@ -23,8 +24,8 @@ const staticDecodeMapper: { [key: string]: string } = {
   '5': S('grass'),
   '6': S('wind'),
   '7': S('stone'),
-  '8': S('italic'),
-}
+  '8': S('italic')
+};
 
 const Decode = (str: string) => [
   ...str
@@ -33,20 +34,24 @@ const Decode = (str: string) => [
     .map((str) => {
       const className = staticDecodeMapper[str[0]];
       if (className !== undefined) {
-        return <span class={className}>{str.slice(1)}</span>
+        return <span class={className}>{str.slice(1)}</span>;
       } else {
-        return <>{str}</>
+        return <>{str}</>;
       }
     }),
-  <br />,
+  <br />
 ];
-
 </script>
 
 <template>
-  <template v-for="(node, index) in PreDecode" :key="index">
-    <component :is="node"></component>
-  </template>
+  <div>
+    <template
+      v-for="(node, index) in PreDecode"
+      :key="index"
+    >
+      <component :is="node"></component>
+    </template>
+  </div>
 </template>
 
 <style scoped lang="less">

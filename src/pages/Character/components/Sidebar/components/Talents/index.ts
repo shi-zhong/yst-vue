@@ -1,7 +1,4 @@
-<script setup lang="ts">
-import { TabPane, Tabs } from '@/components/commons/Tabs/index';
-
-const talentAttris = [
+export const talentAttris = [
   {
     label: '一段伤害',
     value: '59.9%*2'
@@ -43,7 +40,7 @@ const talentAttris = [
     value: '209%/261%'
   }
 ];
-const text = `$0普通攻击
+export const text = `$0普通攻击
 进行至多五段的连续弓箭射击
     
 $0重击
@@ -55,15 +52,3 @@ $0重击
 $0下落攻击
 从空中射出箭雨，并迅速下坠冲击地面，在落地时造成范围伤害。
 `;
-</script>
-
-<template>
-  <Tabs default="3" :disable="['']">
-    <TabPane tabKey="1" title="">1</TabPane>
-    <TabPane tabKey="2" title="">2</TabPane>
-    <TabPane tabKey="3" title="">3</TabPane>
-    <TabPane tabKey="4" title="">4</TabPane>
-  </Tabs>
-</template>
-
-<style scoped lang="less"></style>

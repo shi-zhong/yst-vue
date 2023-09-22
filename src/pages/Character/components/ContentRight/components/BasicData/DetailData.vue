@@ -17,6 +17,7 @@ import Electro from '@/assets/element/png/electro.png';
 import Geo from '@/assets/element/png/geo.png';
 import Hydro from '@/assets/element/png/hydro.png';
 import Pyro from '@/assets/element/png/pyro.png';
+import { Sound } from '@/utils/sound';
 
 const basicAttri = [
   { icon: LifeMax, txt: '生命值上限' },
@@ -80,6 +81,7 @@ const Line = (prop: {
       class={'d-line ' + (query.includes(txt) ? 'd-query' : '')}
       data-type="dataline"
       data-txt={txt}
+      onClick={() => Sound.DDing.once()}
     >
       <Icon
         src={icon}

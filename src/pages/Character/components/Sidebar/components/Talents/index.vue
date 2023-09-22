@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Button, Line } from '@/components';
+import { Button, Line, Tabs, TabPane, HighLight } from '@/components';
 
 import TalentA from '@/assets/skills/bow_attack.png';
 
 import { ClassNameFactor } from '@/utils/className';
+import { talentAttris, text } from './index';
 
-import Tabs from './Tabs.vue';
+// import Tabs from './Tabs.vue';
 
 const S = ClassNameFactor('skills-');
 
@@ -34,12 +35,36 @@ const Talent = {
       </div>
       <div :class="S('talent-lvl')">Lv.{{ Talent.lvl }}</div>
     </div>
-    <Tabs />
-    <Line :style="{margin: '0 25px'}" />
+    <Tabs :class="S('tabs-con')">
+      <TabPane
+        tabKey="intro"
+        title="天赋介绍"
+      >
+        <HighLight
+          :class="S('tabs-intro')"
+          :text="text"
+        />
+      </TabPane>
+      <TabPane
+        tabKey="attri"
+        title="详细属性"
+      >
+        <div
+          v-for="i in talentAttris"
+          :key="i.value"
+          :class="S('tabs-cell')"
+        >
+          <span>{{ i.label }}</span>
+          <span>{{ i.value }}</span>
+        </div>
+      </TabPane>
+    </Tabs>
+    <Line :style="{ margin: '0 25px' }" />
     <div :class="S('button-con')">
       <Button
         type="shrink"
         icon="fork"
+        sound="dong"
         balance
         >降级
       </Button>
@@ -47,6 +72,7 @@ const Talent = {
       <Button
         type="shrink"
         icon="round"
+        sound="dong"
         balance
         >升级
       </Button>
@@ -79,6 +105,33 @@ const Talent = {
     flex-shrink: 0;
   }
 
+  &-tabs {
+    &-con {
+      flex-shrink: 1;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+    &-intro {
+      padding: 0 20px;
+    }
+
+    &-cell {
+      display: flex;
+      justify-content: space-between;
+      background-color: rgba(44, 52, 64, 0.697);
+      margin: 7px 5px;
+      padding: 0 20px;
+      height: 50px;
+      line-height: 50px;
+      border-radius: 3px;
+      overflow: hidden;
+
+      & :first-child {
+        color: @fontgold;
+      }
+    }
+  }
+
   &-talent {
     &-type {
       color: @highlight-spe;
@@ -102,6 +155,7 @@ const Talent = {
     display: flex;
     flex-shrink: 0;
   }
+
   &-gap {
     width: 20px;
   }

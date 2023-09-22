@@ -1,3 +1,5 @@
+import type { ComponentInternalInstance } from 'vue';
+
 /**
  * 合并 data 到 reactive 对象
  * data 被 target原始对象的类型约束
@@ -152,3 +154,24 @@ export const DownLoadJson = (origin: object, file_name: string) => {
   tmpLink.click();
   URL.revokeObjectURL(objectUrl);
 };
+
+/**
+ * 获取最近的父组件实例, 为了避免重名，需要在父组件中暴露类型为 symbol 的 type 属性
+ * @param current getCurrentInstance
+ * @param parentSymbol parentSymbol
+ * @returns
+ */
+export function GetParentInstance(
+  current: ComponentInternalInstance | null,
+  parentSymbol: symbol
+): ComponentInternalInstance | null {
+  let cur = current;
+
+  while (cur !== null) {
+    if (cur.exposed && cur.exposed.type === parentSymbol) {
+      return cur;
+    }
+    cur = cur.parent;
+  }
+  return cur;
+}

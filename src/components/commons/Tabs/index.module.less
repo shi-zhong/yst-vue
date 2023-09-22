@@ -1,0 +1,52 @@
+@import '@@/HighLight/index.less';
+
+.tabs {
+  &-nav {
+    width: 90%;
+    display: flex;
+    margin: 0 auto;
+    & > button {
+      flex-grow: 1;
+
+      height: 40px;
+      font-size: 20px;
+      line-height: 40px;
+      text-align: center;
+      user-select: none;
+
+      border: none;
+    }
+    & :first-child {
+      border-radius: 30px 0 0 30px;
+    }
+    & :last-child {
+      border-radius: 0 30px 30px 0;
+    }
+  }
+  &-active {
+    background: @blank-white;
+    color: @fontdarkgray;
+  }
+
+  &-not-active {
+    background: @fontlightgray;
+    color: @blank-white;
+    &:active {
+      background-color: rgb(192, 165, 146);
+    }
+  }
+
+  &-disable:active {
+    background: @fontlightgray;
+    color: @blank-white;
+  }
+
+  &-item {
+    height: calc(100% - 60px);
+    margin: 20px;
+    font-size: 18px;
+    font-size: 21px;
+    user-select: none;
+    color: @blank-white;
+  }
+}

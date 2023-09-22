@@ -43,23 +43,7 @@ const data = {
       <Headers />
       <div :class="S('content')">
         <div :class="S('content-left')">
-          <ArtifactCard
-            :locked="false"
-            :rarity="5"
-            :imgUrl="Artifact"
-            :lvl="20"
-          />
-          <ArtifactDetailCard
-            type="PlumnOfDeath"
-            :subs="data.subs"
-            :id="1638"
-            :main="data.main"
-            :sub="data.main"
-            :suitCount="2"
-            :lock="false"
-            :rarity="5"
-            :lvl="20"
-          />
+        
         </div>
         <div :class="S('content-right')">
           <ContentRight />

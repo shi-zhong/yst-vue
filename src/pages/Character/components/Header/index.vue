@@ -4,7 +4,7 @@ import { Button } from '@/components';
 
 import Back from '@/assets/icons/back.png';
 import Close from '@/assets/icons/close.png';
-
+import { Sound } from '@/utils/sound';
 import { useCharacterStateStore } from '@/stores/Character/CharacterState';
 
 const S = ClassNameFactor('character-page-header-');
@@ -22,6 +22,7 @@ const store = useCharacterStateStore();
         @click="
           () => {
             store.sidebar.next('back');
+            Sound.winClose.replay();
           }
         "
       ></Button>
@@ -29,7 +30,11 @@ const store = useCharacterStateStore();
         v-if="store.sidebarCurrent === 'folding'"
         type="spread"
         :icon="Close"
-        @click="() => {}"
+        @click="
+          () => {
+            Sound.winClose.replay();
+          }
+        "
       ></Button>
     </div>
   </div>

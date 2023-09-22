@@ -10,6 +10,7 @@ import EMaster from '@/assets/icons/elementMaster.png';
 import Power from '@/assets/icons/power.png';
 
 import DetailData from './DetailData.vue';
+import { Sound } from '@/utils/sound';
 
 const buttonSelect = ref(false);
 
@@ -162,7 +163,12 @@ const data = {
       </div>
       <button
         class="c-detail"
-        @click="() => (detailVisible = true)"
+        @click="
+          () => {
+            Sound.DDing.replay();
+            detailVisible = true;
+          }
+        "
       >
         详细信息
       </button>
@@ -178,6 +184,7 @@ const data = {
     <div class="button">
       <Button
         type="shrink"
+        sound="dong"
         :disable="lvl === 1"
         :class="!buttonSelect ? 'button-round' : 'button-line'"
         @click="
@@ -192,6 +199,7 @@ const data = {
         "
         v-long:1000="(window: Window) => {
           let timeout = 0;
+          Sound.Dong.replay()
           const next = () => {
               lvlDec();
               timeout = window.setTimeout(() => {
@@ -208,6 +216,7 @@ const data = {
       </Button>
       <Button
         type="shrink"
+        sound="dong"
         :disable="lvl === 90"
         :class="buttonSelect ? 'button-round' : 'button-line'"
         @click="
@@ -225,6 +234,7 @@ const data = {
         "
         v-long:1000="(window: Window) => {
           let timeout = 0;
+          Sound.Dong.replay()
           const next = () => {
               lvlAdd();
               timeout = window.setTimeout(() => {
