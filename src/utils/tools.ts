@@ -127,12 +127,13 @@ export function DataDecoder(data: number | string, fix?: number) {
         ? Number((data * 100).toPrecision(15)) + '%'
         : Number((data * 100).toFixed(15)).toFixed(fix) + '%';
     }
-  } else if (/^\d+.?\d?%?$/.test(data)) {
+  } else if (/^(\d|,)+(.\d+)?%?$/.test(data)) {
     // 成功匹配字符串
-    if (data.includes('%')) {
-      return Number((0.01 * Number(data.slice(0, -1))).toPrecision(15));
+    const nData = data.split('').filter(s => s !== ',').join('');
+    if (nData.includes('%')) {
+      return Number((0.01 * Number(nData.slice(0, -1))).toPrecision(15));
     } else {
-      return Number(data);
+      return Number(nData);
     }
   } else {
     return 0;

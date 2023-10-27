@@ -1,0 +1,275 @@
+{
+  "type": "object",
+  "items": [
+    {
+      "name": "uuid",
+      "type": "number"
+    },
+    {
+      "name": "basic",
+      "type": "object",
+      "items": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "star",
+          "type": "number"
+        },
+        {
+          "name": "attr",
+          "type": "object",
+          "items": [
+            {
+              "name": "birth",
+              "type": "string"
+            },
+            {
+              "name": "belong",
+              "type": "string"
+            },
+            {
+              "name": "weapon",
+              "type": "string"
+            },
+            {
+              "name": "life",
+              "type": "string"
+            },
+            {
+              "name": "honor",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "lvls",
+      "type": "object",
+      "items": [
+        {
+          "name": "attr",
+          "type": "object",
+          "items": [
+            {
+              "name": "1",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "20",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "40",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "50",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "60",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "70",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "80",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "90",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "20+",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "40+",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "50+",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "60+",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "70+",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "name": "80+",
+              "type": "array",
+              "each": [
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "breakthrough",
+          "type": "string"
+        },
+        {
+          "name": "material",
+          "type": "object",
+          "items": [
+            {
+              "name": "ele",
+              "type": "string"
+            },
+            {
+              "name": "boss",
+              "type": "string"
+            },
+            {
+              "name": "specialty",
+              "type": "string"
+            },
+            {
+              "name": "drops",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "talent",
+      "type": "object",
+      "items": [
+        {
+          "name": "skills",
+          "type": "array",
+          "each": [
+            {
+              "type": "object",
+              "items": [
+                {
+                  "name": "detail",
+                  "type": "array",
+                  "each": [
+                    {
+                      "type": "array",
+                      "each": [
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "type",
+                  "type": "string"
+                },
+                {
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "name": "intro",
+                  "type": "string"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "life",
+      "type": "array",
+      "each": [
+        {
+          "type": "object",
+          "items": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "desc",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

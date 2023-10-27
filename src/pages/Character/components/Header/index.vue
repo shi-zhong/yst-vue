@@ -42,15 +42,6 @@ const store = useCharacterStateStore();
 
 <style scoped lang="less">
 .character-page-header {
-  &- {
-    width: 100%;
-    height: 100px;
-    display: flex;
-    flex-direction: row-reverse;
-  }
 
-  &-back-buttons {
-    margin: 18px;
-  }
 }
 </style>

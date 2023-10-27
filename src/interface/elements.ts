@@ -6,38 +6,63 @@ import CryoPicture from '@/assets/element/cryo.webp';
 import DendroPicture from '@/assets/element/dendro.webp';
 import GeoPicture from '@/assets/element/geo.webp';
 
+import AnemoPng from '@/assets/element/png/anemo.png';
+import ElectroPng from '@/assets/element/png/electro.png';
+import HydroPng from '@/assets/element/png/hydro.png';
+import PyroPng from '@/assets/element/png/pyro.png';
+import CryoPng from '@/assets/element/png/cryo.png';
+import DendroPng from '@/assets/element/png/dendro.png';
+import GeoPng from '@/assets/element/png/geo.png';
+
 export enum Elements {
+  // 火
+  Pyro = 'pyro',
+  // 水
+  Hydro = 'hydro',
   // 风
   Anemo = 'anemo',
   // 雷
   Electro = 'electro',
-  // 水
-  Hydro = 'hydro',
-  // 火
-  Pyro = 'pyro',
-  // 冰
-  Cryo = 'cryo',
   // 草
   Dendro = 'dendro',
+  // 冰
+  Cryo = 'cryo',
   // 岩
-  Geo = 'geo',
+  Geo = 'geo'
 }
 
-export type ElementsChinese = '风' | '雷' | '水' | '火' | '冰' | '草' | '岩';
+export type ElementsChinese = '火' | '水' | '风' | '雷' | '草' | '冰' | '岩';
 
 export const ElementPicture = {
+  // 火
+  pyro: PyroPicture,
+  // 水
+  hydro: HydroPicture,
   // 风
   anemo: AnemoPicture,
   // 雷
   electro: ElectroPicture,
-  // 水
-  hydro: HydroPicture,
-  // 火
-  pyro: PyroPicture,
-  // 冰
-  cryo: CryoPicture,
   // 草
   dendro: DendroPicture,
+  // 冰
+  cryo: CryoPicture,
   // 岩
-  geo: GeoPicture,
-};
+  geo: GeoPicture
+} as const;
+
+export const ElementPng = {
+  // 火
+  pyro: PyroPng,
+  // 水
+  hydro: HydroPng,
+  // 风
+  anemo: AnemoPng,
+  // 雷
+  electro: ElectroPng,
+  // 草
+  dendro: DendroPng,
+  // 冰
+  cryo: CryoPng,
+  // 岩
+  geo: GeoPng
+} as const;

@@ -19,5 +19,6 @@ export * from './DetailCard';
 import HighLight from './HighLight/index.vue';
 export * from './Tags';
 export * from './Weapon';
+import SwitchAnimate from './SwitchAnimate/index.vue';
 
-export { ArrowCount, HighLight };
+export { ArrowCount, HighLight, SwitchAnimate };

@@ -26,6 +26,7 @@ interface SelectOptionProps {
 const S = ClassNameFactor('select');
 
 const props = defineProps<SelectProps>();
+
 const emits = defineEmits<{
   (event: 'update:modelValue', aft: string): void;
   (

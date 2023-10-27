@@ -1,13 +1,12 @@
 import { defineStore } from 'pinia';
 import { list } from '@/pages/Character/temp';
 
-import { type CharacterCardProps, type BasicCardProps } from '@/components/Cards/interface';
-
-type c = CharacterCardProps & BasicCardProps & { avatar: string; id: number; name: string };
+import type { CharacterModel, CharacterInstanceBasicModel } from '@/interface/characters';
 
 export const useCharacterDataStore = defineStore('character', {
   state: () => ({
-    list: list as unknown as c[],
+    list: list as unknown as CharacterInstanceBasicModel[],
+    clist: [] as CharacterModel[],
     filter: {
       element: [] as string[],
       weapon: [] as string[]

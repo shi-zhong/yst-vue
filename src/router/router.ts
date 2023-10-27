@@ -4,6 +4,7 @@ import NotFound from '@/pages/NotFound.vue';
 import Character from '@/pages/Character/index.vue';
 import Test from '@/pages/test/test.vue';
 import Test2 from '@/pages/test/test2.vue';
+import Layout from '@/pages/test/layout.vue';
 
 import { useArtifactStore } from '@/stores/Artifact';
 import { useWeaponStore } from '@/stores/Weapon';
@@ -37,12 +38,13 @@ const router = createRouter({
             title: 'test2'
           },
           component: Test2,
-          // beforeEnter: () => {
-          //   const store = useArtifactStore();
-          //   if (store.artifactSuits.size === 0) {
-          //     store.GenerateArtifactSuits();
-          //   }
-          // }
+        },
+        {
+          path: '/layout',
+          meta: {
+            title: 'layout'
+          },
+          component: Layout,
         },
         {
           path: '/character',

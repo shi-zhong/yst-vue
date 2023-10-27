@@ -29,7 +29,8 @@ export const TypeNameToBackendCode = await (async () => {
   const { data, msg } = await getMapperApi();
 
   if (msg !== 'OK') {
-    throw new Error('Can not get mapper.');
+    // throw new Error('Can not get mapper.');
+    return console.log('Can not get mapper.');
   }
 
   // const character = Transformer(data.character);

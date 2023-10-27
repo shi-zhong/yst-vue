@@ -30,7 +30,6 @@ import { Message } from '@/components/commons/Message';
 import { AttributesTransform } from '@@/Artifact';
 import ArrowCount from '@@/ArrowCount/index.vue';
 import { useWeaponStore, emptyWeaponTypes as template } from '@/stores/Weapon';
-import { emit } from 'process';
 
 const { vDrop } = Drop();
 

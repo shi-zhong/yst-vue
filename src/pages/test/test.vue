@@ -6,6 +6,8 @@ import { ref } from 'vue';
 import { DropFile, DropImage } from '@/components';
 import { Login } from '@/api';
 
+import Loading from '@@/Loading/index.vue';
+
 const visible = ref(0);
 const visible1 = ref(0);
 const visible2 = ref(0);
@@ -55,14 +57,12 @@ const visible2 = ref(0);
     <div></div>
     <template #dropover> dropover </template>
   </DropFile>
-  <ScrollView style="height: 500px; border: 1px solid black">
-    <div style="background-color: rebeccapurple; height: 700px; overflow: hidden">
-      <ScrollView style="height: 100px; border: 1px solid black; margin-top: 100px">
-        <div style="background-color: red; height: 200px">123</div>
-      </ScrollView>
-    </div>
-  </ScrollView>
+
   <button @click="Login">Get Token</button>
+
+  <div style="display: flex; justify-content: center;">
+    <Loading :progress="93" />
+  </div>
 </template>
 
 <style scoped lang="less">
