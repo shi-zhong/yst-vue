@@ -1,52 +1,12 @@
 <script setup lang="ts">
 import TalentA from '@/assets/skills/bow_attack.png';
-import TalentB from '@/assets/skills/yoimiya/lives/constellation_3.png';
-import TalentC from '@/assets/skills/yoimiya/lives/constellation_5.png';
-import TalentD from '@/assets/skills/yoimiya/talent_4.png';
-import TalentE from '@/assets/skills/yoimiya/talent_5.png';
-import TalentF from '@/assets/skills/yoimiya/talent_6.png';
 
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 
 import { ClassNameFactor, EventDispatch } from '@/utils';
-import { ref } from 'vue';
+
 
 const S = ClassNameFactor('talents-');
-
-const talents = [
-  {
-    name: '普通攻击·烟火打杨',
-    lvl: 9,
-    icon: TalentA
-  },
-  {
-    name: '焰硝庭火舞',
-    lvl: 9,
-    icon: TalentB
-  },
-  {
-    name: '琉金云间草',
-    lvl: 6,
-    icon: TalentC
-  },
-  {
-    name: '袖火百景图',
-    lvl: 1,
-    icon: TalentD
-  },
-  {
-    name: '炎昼风物诗',
-    lvl: 1,
-    icon: TalentE
-  },
-  {
-    name: '炎色配比法',
-    lvl: 1,
-    icon: TalentF
-  }
-];
-
-const select = ref(-1);
 
 const store = useCharacterLayoutStore();
 
@@ -55,18 +15,18 @@ const clickOutsideToClose = () => {
     store.popSidebar();
   }
   document.removeEventListener('click', clickOutsideToClose);
-  select.value = -1;
+  store.setTalent(-1)
 };
 
 const handleClick = (e: Event) => {
   EventDispatch(e, {
     skill: (dataset) => {
       e.stopPropagation();
-      if (select.value === -1 && dataset.index) {
+      if (store.talent === -1) {
         document.addEventListener('click', clickOutsideToClose);
         store.pushSidebar('talents');
       }
-      select.value = parseInt(dataset.index || '-1');
+      store.setTalent(parseInt(dataset.index || '-1'))
     }
   });
 };
@@ -80,12 +40,12 @@ const handleClick = (e: Event) => {
   >
     <div :class="S('box')">
       <button
-        v-for="(i, index) in talents"
+        v-for="(i, index) in store.characterStatic?.talents"
         :key="index"
         :class="
           S({
             cell: true,
-            select: index === select
+            select: index === store.talent
           })
         "
         data-type="skill"
@@ -95,19 +55,19 @@ const handleClick = (e: Event) => {
           <div :class="S('text')">
             {{ i.name }}
             <br />
-            Lv.{{ i.lvl }}
+            Lv.{{ store.character?.talents[index] || 1 }}
           </div>
           <img
             :draggable="false"
             :class="S('icon')"
-            :src="i.icon"
+            :src="TalentA"
             alt=""
           />
         </div>
       </button>
     </div>
     <div
-      v-show="select === -1"
+      v-show="store.talent === -1"
       :class="S('extra')"
     >
       选中战斗天赋以升级

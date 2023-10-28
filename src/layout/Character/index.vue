@@ -26,10 +26,16 @@ const props = withDefaults(
     title?: string;
     menu: Menu[];
     right: Record<string, any>;
+    content?: {
+      left?: string[];
+      right?: string[];
+      fc: any;
+    }[];
   }>(),
   {
     title: '角色配置',
-    right: () => ({})
+    right: () => ({}),
+    content: () => []
   }
 );
 
@@ -37,6 +43,7 @@ const builtInLeft: Record<string, any> = {
   talents: TalentsLeft,
   lives: LivesLeft
 };
+
 const builtInRight: Record<string, any> = {
   talents: TalentsRight,
   lives: LivesRight
@@ -46,6 +53,16 @@ watchEffect(() => {
   document.title = props.title;
 });
 
+const cContent = computed(() => {
+  const find = props.content.find((f) => {
+    return (
+      (!f.left || !f.left.length || f.left.includes(store.sidebar)) &&
+      (!f.right || !f.right.length || f.right.includes(store.cRight))
+    );
+  });
+
+  return find?.fc;
+});
 const cLeft = computed(() => builtInLeft[store.sidebar] || TeamChoose);
 const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cRight]);
 </script>
@@ -61,7 +78,6 @@ const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cR
         />
       </KeepAlive>
     </Transition>
-
     <div :class="S('sidecontent')">
       <div :class="S('header-')">
         <div :class="S('header-back-buttons')">
@@ -78,7 +94,16 @@ const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cR
         </div>
       </div>
       <div :class="S('content')">
-        <div :class="S('content-left')"></div>
+        <div :class="S('content-left')">
+          <Transition name="switchD">
+            <KeepAlive>
+              <component
+                :is="cContent"
+                @click.stop="() => {}"
+              />
+            </KeepAlive>
+          </Transition>
+        </div>
         <div :class="S('content-right')">
           <Transition name="switchR">
             <KeepAlive>

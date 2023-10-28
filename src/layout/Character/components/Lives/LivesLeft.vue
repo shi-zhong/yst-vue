@@ -1,28 +1,26 @@
 <script setup lang="ts">
 import { ClassNameFactor } from '@/utils/className';
 import { Button, HighLight, Line } from '@/components';
-import TalentA from '@/assets/skills/yoimiya/talent_4.png';
 import { ScrollView } from '@/components';
 import Life1 from '@/assets/skills/yoimiya/lives/constellation_1.png';
 
 import ConstellaionIcon from './ConstellaionIcon.vue';
 
+import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
+import { computed } from 'vue';
+
 const S = ClassNameFactor('constellation-');
 
-const Talent = {
-  title: '出预留金',
-  index: 3,
-  icon: TalentA,
-  name: '普通攻击·烟火打杨',
-  lvl: 9
-};
+const store = useCharacterLayoutStore();
+
+const live = computed(() => store.characterStatic?.life[store.lives] || { name: '', desc: '' });
 </script>
 
 <template>
   <div :class="S()">
     <ConstellaionIcon
       :class="S('icon')"
-      element="fire"
+      :element="store.characterStatic?.basic.element!"
       :lock="false"
       :icon="Life1"
     />
@@ -32,12 +30,12 @@ const Talent = {
       slide
     >
       <div :class="S('content')">
-        <div :class="S('title')">出预留金</div>
+        <div :class="S('title')">{{ live.name }}</div>
         <div :class="S('sub-title')">
-          命之座 第<span :class="S('number')"> {{ 1 }} </span>层
+          命之座 第<span :class="S('number')"> {{ store.lives + 1 }} </span>层
         </div>
         <div :class="S({ lock: true })">
-          <HighLight text="$0琉金云间草$的鎏金火花持续时间延长至4秒。" />
+          <HighLight :text="live.desc" />
         </div>
       </div>
     </ScrollView>
@@ -61,13 +59,13 @@ const Talent = {
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-between;
-     width: 500px;
+    width: 500px;
     height: 100vh;
     max-height: 100vh;
     position: absolute;
 
     overflow: hidden;
-    top: 0;;
+    top: 0;
   }
 
   &-icon {

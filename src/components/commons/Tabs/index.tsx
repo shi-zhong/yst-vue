@@ -1,7 +1,17 @@
 import { ScrollView } from '@/components';
 import { EventDispatch, ClassNameWithCSSModuleFactor } from '@/utils';
 
-import { onMounted, defineComponent, reactive, ref, provide, inject, type Ref } from 'vue';
+import {
+  onMounted,
+  defineComponent,
+  reactive,
+  ref,
+  provide,
+  inject,
+  type Ref,
+  computed,
+  watch
+} from 'vue';
 
 import Style from './index.module.less';
 
@@ -13,6 +23,14 @@ interface TabPaneProps {
   tabKey: string;
   title?: string;
 }
+
+/**
+ * Tab 使用一个symbol作为键名，向下方的 TabPane 组件传递当前的激活键和一个键的收集函数
+ *
+ * TabPane在挂载时向Tab注册键名用以创建视图，使用传递的activeKey来处理自身的视图
+ *
+ * 可以成为外部受控组件
+ */
 
 export const TabPane = defineComponent<TabPaneProps>(
   (props, { slots }) => {
@@ -36,9 +54,10 @@ export const TabPane = defineComponent<TabPaneProps>(
 );
 
 export const Tabs = defineComponent<
-  { default?: string; disable?: string[] },
+  { default?: string; disable?: string[]; active?: string },
   {
     click: (tab: string) => void;
+    // 点击不同项时触发
     change: (tab: string) => void;
   }
 >(
@@ -56,6 +75,15 @@ export const Tabs = defineComponent<
         tab.value = key.tabKey;
       }
     };
+
+    watch(
+      () => props.active,
+      () => {
+        if (props.active !== undefined) {
+          tab.value = props.active;
+        }
+      }
+    );
 
     provide(TabsSymbol, {
       tab,
@@ -92,6 +120,7 @@ export const Tabs = defineComponent<
                 'not-active': tab.value !== k.tabKey,
                 disable: (props.disable ?? []).includes(k.tabKey)
               })}
+              style={`min-width: ${100 / Keys.length}%;`}
             >
               {k.title ?? k.tabKey}
             </button>
@@ -111,6 +140,6 @@ export const Tabs = defineComponent<
   {
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Tabs',
-    props: ['default', 'disable']
+    props: ['default', 'disable', 'active']
   }
 );

@@ -33,7 +33,7 @@ CharacterCard.props = ['selected', 'element'];
 
 const BasicCard: FunctionalComponent<CardProps, {}, { default: any }> = (props, { slots }) => (
   <div class={S('outer')}>
-    <div class={S(['photo-container', `photo-container-${RarityToColor(props.rarity)}`])}>
+    <div class={S(['photo-container', `photo-container-${RarityToColor(props.star)}`])}>
       <Image
         draggable={false}
         src={props.imgUrl}
@@ -47,10 +47,10 @@ const BasicCard: FunctionalComponent<CardProps, {}, { default: any }> = (props, 
 
     <div class={S('mask')}>
       <div class={Style['star-offset']}>{slots.default()}</div>
-      {props.type != 'character' && <Rarity rarity={props.rarity} />}
+      {props.type != 'character' && <Rarity rarity={props.star} />}
     </div>
   </div>
 );
-BasicCard.props = ['type', 'rarity', 'imgUrl', 'lvl'];
+BasicCard.props = ['type', 'star', 'imgUrl', 'lvl'];
 
 export { CharacterCard, BasicCard };

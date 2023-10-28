@@ -11,7 +11,7 @@ import Filter from './filter.vue';
 import FilterLine from './filterLine.vue';
 
 const store = useCharacterLayoutStore();
-const { select, list, team } = storeToRefs(store);
+const { select, list, team, clist } = storeToRefs(store);
 
 defineProps<{
   menu: Menu[];
@@ -28,9 +28,27 @@ const weaponFilter = ref<string[]>([]);
 
 const tempElementFilter = ref<string[]>([]);
 const tempWeaponFilter = ref<string[]>([]);
+
+// list preOperation
+const preList = computed(() =>
+  list.value.map((l) => {
+    const staD = clist.value.find((s) => s.uuid === l.character_id);
+
+    if (!staD) return {} as any;
+
+    return {
+      ...l,
+      avatar: staD.basic.avatar,
+      star: staD.basic.star,
+      name: staD.basic.name,
+      element: staD.basic.element
+    };
+  })
+);
+
 // team
-const inTeam = computed(() => list.value.filter((i) => team.value.find((j) => i.id === j)));
-const otTeam = computed(() => list.value.filter((i) => !team.value.find((j) => i.id === j)));
+const inTeam = computed(() => preList.value.filter((i) => team.value.find((j) => i.id === j)));
+const otTeam = computed(() => preList.value.filter((i) => !team.value.find((j) => i.id === j)));
 
 const active = computed(() => {
   const iTeam = inTeam.value.findIndex((i) => i.id === select.value);
@@ -40,7 +58,7 @@ const active = computed(() => {
 });
 
 const current = computed(() => {
-  const c = list.value.find((l) => l.id === select.value) as any;
+  const c = preList.value.find((l) => l.id === select.value) as any;
 
   return {
     element: c?.element || '风',

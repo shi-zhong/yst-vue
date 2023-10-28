@@ -12,11 +12,21 @@ interface ConstellationIconProps {
 const S = ClassNameFactor('constellation-');
 
 defineProps<ConstellationIconProps>();
+
+const elementMap: Record<string, string> = {
+  火: 'fire',
+  水: 'water',
+  雷: 'elec',
+  冰: 'ice',
+  草: 'grass',
+  岩: 'stone',
+  风: 'wind',
+};
 </script>
 
 <template>
   <div
-    :class="S(['icon ', element])"
+    :class="S(['icon ', elementMap[element] || 'fire'])"
     data-type="active"
     :data-index="index || 0"
   >
