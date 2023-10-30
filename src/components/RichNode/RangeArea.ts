@@ -4,89 +4,52 @@ import RichNode from './RichNode';
  * 和 offset 有关的转换
  */
 class RangeArea {
-  constructor(length: number) {
-    this.maxLen = length;
-  }
-
-  private maxLen: number;
-
-
-  /**
-   * 朴素的分片， 将原长度根据from to 分割成三部分， 切片长度为0时会被舍去。
-   * @param from 
-   * @param to 
-   * @returns 
-   */
-  public getRanges(
-    from: number,
-    to: number,
-  ): { type: string; range: [number, number] }[] {
+  static getArea(max: number, [from, to]: [number, number]) {
     if (from > to) {
       [from, to] = [to, from];
     }
 
     from = from <= 0 ? 0 : Math.floor(from);
-    to = to >= this.maxLen ? this.maxLen : Math.floor(to);
+    to = to >= max ? max : Math.floor(to);
 
     // 获得合法range pre aft 用于分割字符串
     return [
-      { type: 'pre', range: [0, from] },
-      { type: 'crt', range: [from, to] },
-      { type: 'aft', range: [to, this.maxLen] },
-    ].filter((i) => i.range[0] < i.range[1]) as {
-      type: string;
-      range: [number, number];
-    }[];
+      [0, from],
+      [from, to],
+      [to, max]
+    ] as [number, number][];
   }
 
   /**
    * @param list 子元素长度集合
    * @param range 分割范围
-   * 
+   *
    * child_index 对子元素进行一次递归切割
    */
-  public getSlicePlan(list: number[], range: [number, number]) {
+  static getSlicePlan(list: number[], range: [number, number]) {
     let total = 0;
 
     const plan = {
-      preSplit: { child_index: -1, range: [-1, -1] },
-      midrange: [0, list.length - 1],
-      aftSplit: { child_index: list.length, range: [-1, -1] },
+      preSplit: { child_index: -1, range: [-1, -1] as [number, number] },
+      aftSplit: { child_index: -1, range: [-1, -1] as [number, number] }
     };
 
-    list.forEach((i, index) => {
+    list.some((i, index) => {
       if (total <= range[0] && range[0] < total + i) {
         plan.preSplit.child_index = index;
         plan.preSplit.range = [range[0] - total, i];
-
-        if (plan.preSplit.range[0] === 0) {
-          plan.midrange[0] = index;
-          // 标记为取消
-          plan.preSplit.child_index = -1;
-        } else {
-          plan.midrange[0] = index + 1;
-        }
       }
 
-      if (total <= range[1] && range[1] < total + i) {
+      if (total < range[1] && range[1] <= total + i) {
         plan.aftSplit.child_index = index;
         plan.aftSplit.range = [0, range[1] - total];
-
-        if (plan.aftSplit.range[1] === 0) {
-          // 标记为取消
-          plan.aftSplit.child_index = list.length;
-        }
-        plan.midrange[1] = index - 1;
       }
 
       total += i;
+      return total > range[1];
     });
 
-    return {
-      preSplit: plan.preSplit.child_index != -1 ? plan.preSplit : null,
-      midrange: plan.midrange[0] <= plan.midrange[1] ? plan.midrange : null,
-      aftSplit: plan.aftSplit.child_index != list.length ? plan.aftSplit : null,
-    };
+    return plan;
   }
 
   static convertOffsetInParent(that: RichNode, offset: number) {

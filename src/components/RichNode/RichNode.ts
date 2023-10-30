@@ -1,4 +1,4 @@
-import { ToEqual } from '@/utils';
+import { ToEqual } from '@/utils/variable';
 import type { RichNodeMap } from '.';
 
 class RichNode {
@@ -144,19 +144,45 @@ class RichNode {
     }
   }
 
+  public styleWillChange(style: Record<string, string>) {
+    /**
+     * 1. 添加新样式，与当前样式不同
+     * 2. 当前为group 且 有清除样式
+     */
+    return Object.entries(style).some(([k, v]) => {
+      return (
+        (v !== '' && this.style[k] !== v) ||
+        (v === '' && this.type === 'group') ||
+        (v === '' && this.style[k] !== undefined)
+      );
+    });
+  }
+
+  // 对于一个样式来说，当当前节点未匹配到该样式时，需要交由后继节点继续处理
+  // 若当前未发生实际样式变化，免去后继节点的调用执行
   public appendStyle(style: Record<string, string>) {
     const newStyle: string[] = [];
 
-    Object.entries(style).forEach(([k, v]) => {
-      if (this.style[k] === undefined) newStyle.push(k);
+    // 样式不存在更新则不执行后续逻辑
+    if (!this.styleWillChange(style)) return;
 
-      if (v === '') {
+    Object.entries(style).forEach(([k, v]) => {
+      // 新样式，子节点可能包含，需要移除
+      if (this.style[k] === undefined && v !== '') {
         newStyle.push(k);
+        this.style[k] = v;
+      }
+
+      // 更新样式
+      if (v === '') {
+        // 自身不存在这个样式，代表后继子孙可能存在
+        if (this.style[k] === undefined) newStyle.push(k);
         delete this.style[k];
       } else {
         this.style[k] = v;
       }
     });
+
     [...this.children].forEach((c) => c.removeStyle(newStyle));
 
     this.merge();
@@ -250,6 +276,9 @@ class RichNode {
       this.appendChildren(node);
       node.removeStyle(Object.keys(node.style), 0);
     }
+
+    this.updateLength();
+
     return true;
   }
 
@@ -271,7 +300,7 @@ class RichNode {
     const targetNode = left?.mergeRight() ? left : this;
 
     // merge parent
-    targetNode.mergeStyleToParent();
+    targetNode.parent?.mergeChildrenCommonStyle();
 
     // 检查当前兄弟节点数量，判断是否需要把当前节点合并至父节点
     if (targetNode.parent!.children.length === 1) {
@@ -282,20 +311,20 @@ class RichNode {
 
       targetNode.destory();
     }
+
+    targetNode.updateLength();
   }
 
-  // 提取公共样式到父节点
-  public mergeStyleToParent() {
-    if (this.parent === null) return;
+  // 提取子元素公共节点
+  public mergeChildrenCommonStyle() {
+    if (this.children.length <= 1) return;
 
-    const brothers = this.parent.children;
+    const children = [...this.children];
 
-    if (brothers.length <= 1) return;
-
-    const commonStyle = { ...brothers[0].style };
+    const commonStyle = { ...children[0].style };
 
     // 提取子元素公共样式
-    brothers.forEach((child, i) => {
+    children.forEach((child, i) => {
       const styleName = Object.keys(commonStyle);
       if (i !== 0 && styleName.length) {
         styleName.forEach((s) => {
@@ -308,9 +337,9 @@ class RichNode {
 
     const commonStyleNames = Object.keys(commonStyle);
 
-    brothers.forEach((c) => c.removeStyle(commonStyleNames));
+    children.forEach((c) => c.removeStyle(commonStyleNames));
 
-    this.parent.appendStyle(commonStyle);
+    this.appendStyle(commonStyle);
   }
 
   /**
@@ -339,6 +368,8 @@ class RichNode {
     const preNode = this._children[index - 1] || null;
 
     preNode?.mergeRight();
+
+    this.updateLength();
   }
 
   /**
@@ -368,6 +399,8 @@ class RichNode {
     const preNode = this._children[index - 1] || null;
 
     preNode?.mergeRight();
+
+    this.updateLength();
   }
 
   public appendChildren(children: RichNode | RichNode[]) {
@@ -380,10 +413,16 @@ class RichNode {
 
     // 数组合并后，交界处进行merge
     list[0].findLeft()?.mergeRight();
+
+    this.updateLength();
   }
 
   public removeChild(key: string) {
     this.replaceChild(key, []);
+  }
+
+  public updateLength() {
+    this.length = this.text.length;
   }
 
   public destory(from: RichNode | null = null) {
