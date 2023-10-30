@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CharacterLayout from '@/layout/Character/index.vue';
+import Stainer from './stainer.vue';
 
 const options = [
   { txt: '属性', url: 'attr' },
@@ -10,7 +11,16 @@ const options = [
 </script>
 
 <template>
-  <CharacterLayout :menu="options"/>
+  <CharacterLayout
+    :menu="options"
+    :content="[
+      {
+        left: ['talents', 'lives'],
+        right: ['talents', 'lives'],
+        fc: Stainer
+      }
+    ]"
+  />
 </template>
 
 <style scoped lang="less"></style>

@@ -94,44 +94,46 @@ const updateFilter = (
 </script>
 
 <template>
-  <Transition name="switchL">
-    <Folding
-      v-if="store.sidebar === ''"
-      :menu="menu"
-      :current="current"
-      :active="active"
-      :team="inTeam"
-      :list="otTeam"
-      @toExpand="() => store.pushSidebar('expand')"
-    />
-  </Transition>
-  <Transition name="switchL">
-    <Expand
-      v-if="store.sidebar === 'expand'"
-      :team="inTeam"
-      :list="otTeam"
-      @toFilter="() => store.pushSidebar('filter')"
-    />
-  </Transition>
-  <Transition name="switchL">
-    <Filter
-      v-if="store.sidebar === 'filter'"
-      :tempElementFilter="tempElementFilter"
-      :tempWeaponFilter="tempWeaponFilter"
-      @update="updateFilter"
-    />
-  </Transition>
-  <Transition name="switchD">
-    <FilterLine
-      v-if="
-        (store.sidebar === 'filter' || store.sidebar === 'expand') &&
-        (tempElementFilter.length || tempWeaponFilter.length)
-      "
-      :elementSelect="tempElementFilter"
-      :weaponSelect="tempWeaponFilter"
-      @reset="() => updateFilter('update', [], [])"
-    />
-  </Transition>
+  <div>
+    <Transition name="switchL">
+      <Folding
+        v-if="store.sidebar === ''"
+        :menu="menu"
+        :current="current"
+        :active="active"
+        :team="inTeam"
+        :list="otTeam"
+        @toExpand="() => store.pushSidebar('expand')"
+      />
+    </Transition>
+    <Transition name="switchL">
+      <Expand
+        v-if="store.sidebar === 'expand'"
+        :team="inTeam"
+        :list="otTeam"
+        @toFilter="() => store.pushSidebar('filter')"
+      />
+    </Transition>
+    <Transition name="switchL">
+      <Filter
+        v-if="store.sidebar === 'filter'"
+        :tempElementFilter="tempElementFilter"
+        :tempWeaponFilter="tempWeaponFilter"
+        @update="updateFilter"
+      />
+    </Transition>
+    <Transition name="switchD">
+      <FilterLine
+        v-if="
+          (store.sidebar === 'filter' || store.sidebar === 'expand') &&
+          (tempElementFilter.length || tempWeaponFilter.length)
+        "
+        :elementSelect="tempElementFilter"
+        :weaponSelect="tempWeaponFilter"
+        @reset="() => updateFilter('update', [], [])"
+      />
+    </Transition>
+  </div>
 </template>
 
 <style scoped lang="less">

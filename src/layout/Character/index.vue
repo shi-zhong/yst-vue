@@ -25,7 +25,7 @@ const props = withDefaults(
   defineProps<{
     title?: string;
     menu: Menu[];
-    right: Record<string, any>;
+    right?: Record<string, any>;
     content?: {
       left?: string[];
       right?: string[];
@@ -120,6 +120,7 @@ const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cR
 </template>
 
 <style scoped lang="less">
+@import '@@@/transition.less';
 :deep(.blank-color) {
   color: rgb(237, 229, 216);
   height: 200px;
@@ -170,41 +171,7 @@ const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cR
     overflow: hidden;
     width: 500px;
     height: 100%;
-  }
-}
-
-.switchL {
-  &-enter-from,
-  &-leave-to {
-    transform: translateX(-500px);
-  }
-
-  &-enter-active {
-    transition: all 0.3s ease-in-out;
-    z-index: 2;
-  }
-
-  &-leave-active {
-    transition: all 0.3s ease-in-out;
-    z-index: 1;
-  }
-}
-
-.switchR {
-  &-enter-from,
-  &-leave-to {
-    transform: translateX(500px);
-    opacity: 0;
-  }
-
-  &-enter-active {
-    transition: all 0.3s ease-in-out;
-    z-index: 2;
-  }
-
-  &-leave-active {
-    transition: all 0.3s ease-in-out;
-    z-index: 1;
+    flex-shrink: 0;
   }
 }
 </style>

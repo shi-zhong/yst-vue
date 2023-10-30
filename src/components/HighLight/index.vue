@@ -6,15 +6,6 @@ const props = defineProps<{ text: string }>();
 
 const S = ClassNameFactor('highlight-');
 
-const PreDecode = computed(() =>
-  props.text
-    .trim()
-    .split('\n')
-    .map((i) => i.trim())
-    .map((i) => Decode(i))
-    .flat()
-);
-
 const staticDecodeMapper: { [key: string]: string } = {
   '0': S('spe'),
   '1': S('fire'),
@@ -27,70 +18,35 @@ const staticDecodeMapper: { [key: string]: string } = {
   '8': S('italic')
 };
 
-const Decode = (str: string) => [
-  ...str
+// 默认所有字符只有单个样式，采用最简单的编码方式
+const Decode = computed(() =>
+  props.text
+    .trim()
     .split('$')
     .filter((i) => i)
-    .map((str) => {
-      const className = staticDecodeMapper[str[0]];
-      if (className !== undefined) {
-        return <span class={className}>{str.slice(1)}</span>;
-      } else {
-        return <>{str}</>;
-      }
-    }),
-  <br />
-];
+    .map((str) => ({
+      style: staticDecodeMapper[str[0]],
+      text: staticDecodeMapper[str[0]] ? str.slice(1) : str
+    }))
+);
 </script>
 
 <template>
-  <div>
-    <template
-      v-for="(node, index) in PreDecode"
+  <div class="highlight">
+    <span
+      v-for="(node, index) in Decode"
       :key="index"
+      :class="node.style ?? ''"
     >
-      <component :is="node"></component>
-    </template>
+      {{ node.text }}
+    </span>
   </div>
 </template>
 
 <style scoped lang="less">
-@import url(./index.less);
+@import './index.less';
+
 .highlight {
-  &-spe {
-    color: @highlight-spe;
-  }
-
-  &-fire {
-    color: @highlight-fire;
-  }
-
-  &-water {
-    color: @highlight-water;
-  }
-
-  &-elec {
-    color: @highlight-elec;
-  }
-
-  &-ice {
-    color: @highlight-ice;
-  }
-
-  &-grass {
-    color: @highlight-grass;
-  }
-
-  &-wind {
-    color: @highlight-wind;
-  }
-
-  &-stone {
-    color: @highlight-stone;
-  }
-
-  &-italic {
-    font-style: italic;
-  }
+  white-space: pre-line;
 }
 </style>

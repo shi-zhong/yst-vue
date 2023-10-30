@@ -21,14 +21,19 @@ class RichNodeMap {
     const key = this._GetKey();
     node.key = key;
 
-    node.toBeControlled(this)
+    node.toBeControlled(this);
 
     this._Index.set(node.key, node);
     return true;
   }
 
-  public new(str?: string | undefined) {
+  public new(str?: string | undefined, style?: Record<string, string>) {
     const newNode = new RichNode(str || '');
+
+    if (style) {
+      newNode.style = style;
+    }
+
     this.set(newNode);
     return newNode;
   }
@@ -42,7 +47,7 @@ class RichNodeMap {
   }
 
   public destroy() {
-    this._Index.forEach((r) => r.destory())
+    this._Index.forEach((r) => r.destory());
   }
 }
 

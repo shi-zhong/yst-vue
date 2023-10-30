@@ -511,6 +511,13 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
             detail: []
           },
           {
+            type: '天赋5（固有天赋）',
+            name: '慧明缘觉智论',
+            intro:
+              '基于纳西妲元素精通超过200点的部分，每1点元素精通能使所闻遍计的灭净三业造成的伤害提升0.1%，暴击率提升0.03%。\n通过这种方式，至多使灭净三业造成的伤害提升80%，暴击率提升24%。',
+            detail: []
+          },
+          {
             type: '天赋6（固有天赋）',
             name: '诸相随念净行',
             intro:
@@ -521,11 +528,11 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
         life: [
           {
             name: '心识蕴藏之种',
-            desc: '展开摩耶之殿计算队伍中特定元素类型的角色数量时，额外计入火元素、雷元素、水元素的角色各1名。'
+            desc: '展开$0摩耶之殿$计算队伍中特定元素类型的角色数量时，额外计入火元素、雷元素、水元素的角色各1名。'
           },
           {
             name: '正等善见之根',
-            desc: '处于纳西妲自身施加的蕴种印状态下的敌人，将受到以下效果影响：·燃烧、绽放、超绽放、烈绽放反应伤害能够造成暴击，暴击率固定为20%，暴击伤害固定为100%；·受到原激化、超激化、蔓激化反应影响后的8秒内，防御力降低30%。'
+            desc: '处于纳西妲自身施加的蕴种印状态下的敌人，将受到以下效果影响：\n·受到的燃烧、绽放、超绽放、烈绽放反应伤害能够造成暴击，暴击率固定为20%，暴击伤害固定为100%；\n·受到原激化、超激化、蔓激化反应影响后的8秒内，防御力降低30%。'
           },
           {
             name: '熏习成就之芽',
@@ -600,6 +607,19 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
     },
     popSidebar() {
       this.sidebarStack.pop();
+    },
+    updateCurrentStainText(text: string) {
+      // 全部使用引用类型，保持同一个引用，内部通过proxy更新，不知道是否会存在问题
+      // 或许是react思维在作祟，从表现上看没问题
+      const staticState = this.characterStatic;
+
+      if (!staticState) return;
+
+      if (this.cRight === 'lives' && this.lives !== -1) {
+        staticState.life[this.lives].desc = text;
+      } else if (this.cRight === 'talents' && this.talent !== -1) {
+        staticState.talents[this.talent].intro = text;
+      }
     }
   }
 });
