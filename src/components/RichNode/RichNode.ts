@@ -348,28 +348,7 @@ class RichNode {
    * @param list 替换的列表
    */
   public replaceChild(key: string, list: RichNode[]) {
-    const index = this._children.findIndex((i) => key === i.key);
-
-    if (index === -1) return;
-
-    this._children.splice(
-      index,
-      1,
-      ...list.map((i) => {
-        i.parent = this;
-        return i;
-      })
-    );
-
-    const aftNode = this._children[index + list.length] || null;
-
-    aftNode && aftNode.findLeft()?.mergeRight();
-
-    const preNode = this._children[index - 1] || null;
-
-    preNode?.mergeRight();
-
-    this.updateLength();
+    this.replaceChildren(key, 1, list);
   }
 
   /**
@@ -383,7 +362,10 @@ class RichNode {
 
     if (index === -1) return;
 
-    this._children.splice(
+    const aftNode = this._children[index + len] || null;
+    const preNode = this._children[index - 1] || null;
+
+    const remove = this._children.splice(
       index,
       len,
       ...list.map((i) => {
@@ -392,11 +374,9 @@ class RichNode {
       })
     );
 
-    const aftNode = this._children[index - len + list.length] || null;
+    remove.forEach((n) => n.destory());
 
     aftNode && aftNode.findLeft()?.mergeRight();
-
-    const preNode = this._children[index - 1] || null;
 
     preNode?.mergeRight();
 

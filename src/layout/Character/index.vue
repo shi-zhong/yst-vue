@@ -39,6 +39,10 @@ const props = withDefaults(
   }
 );
 
+const emits = defineEmits<{
+  (e: 'quit'): void;
+}>();
+
 const builtInLeft: Record<string, any> = {
   talents: TalentsLeft,
   lives: LivesLeft
@@ -82,12 +86,17 @@ const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cR
       <div :class="S('header-')">
         <div :class="S('header-back-buttons')">
           <Button
+            v-if="!['talents', 'lives'].includes(store.sidebar)"
             type="spread"
-            :icon="Back"
+            :icon="store.sidebar === '' ? Close : Back"
             @click="
               () => {
                 Sound.winClose.replay();
-                store.popSidebar();
+                if (store.sidebar) {
+                  store.popSidebar();
+                } else {
+                  emits('quit');
+                }
               }
             "
           ></Button>

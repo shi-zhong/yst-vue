@@ -232,6 +232,8 @@ const S = ClassNameFactor('modal-');
   &-content {
     margin: 0 30px;
     min-height: 350px;
+    // maybe cource problem
+    // height: 350px;
   }
   &-foot {
     display: flex;

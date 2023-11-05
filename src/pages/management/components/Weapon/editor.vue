@@ -21,7 +21,6 @@ import {
   DownLoadJson,
   fileExt,
   merge,
-  TypeNameToBackendCode,
   VerifyType,
   ReadTypeFrom,
   TypeTransfer
@@ -30,6 +29,7 @@ import { Message } from '@/components/commons/Message';
 import { AttributesTransform } from '@@/Artifact';
 import ArrowCount from '@@/ArrowCount/index.vue';
 import { useWeaponStore, emptyWeaponTypes as template } from '@/stores/Weapon';
+import { useConfig } from '@/stores/config';
 
 const { vDrop } = Drop();
 
@@ -37,6 +37,7 @@ const props = defineProps<{ active: number }>();
 const emits = defineEmits<{ (e: 'change', id: number): void }>();
 
 const store = useWeaponStore();
+const config = useConfig();
 
 const id = ref(0);
 const uuid = ref(0);
@@ -94,12 +95,7 @@ const UploadWeaponImg = async () => {
     formData.append(
       'imgfile',
       weaponImgFile.value,
-      `${uuid.value}${
-        TypeNameToBackendCode({
-          name: 'weapon',
-          type: 'Bow'
-        })[0]
-      }${basic.type}_${fileExt(weaponImgFile.value.name)}`
+      `${uuid.value}${config.weaponCode}${basic.type}_${fileExt(weaponImgFile.value.name)}`
     );
 
     const { code, data } = await UploadImg(formData);
@@ -281,11 +277,7 @@ const handleJsonDrop = (text: string) => {
               {
                 name: 'type',
                 type: 'direct',
-                mapper: (type) =>
-                  TypeNameToBackendCode({
-                    name: 'weapon',
-                    type: WeaponTypesTransform(type) as any
-                  })[1]
+                mapper: (type) => config.weaponTypeCode(WeaponTypesTransform(type) as any)
               }
             ]
           },
@@ -520,7 +512,7 @@ watch(
           </table>
         </ScrollView>
 
-        <ScrollView style="width: 420px;max-height: 700px;">
+        <ScrollView style="width: 420px; max-height: 700px">
           <WeaponDetailCard
             :size="40"
             :id="0"

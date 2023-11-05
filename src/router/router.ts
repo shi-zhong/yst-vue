@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
+import GlobalLayout from '@/layout/Global/index.vue';
+
 import NotFound from '@/pages/NotFound.vue';
 import Character from '@/pages/Character/index.vue';
 import Test from '@/pages/test/test.vue';
@@ -8,6 +10,7 @@ import Layout from '@/pages/test/layout.vue';
 
 import { useArtifactStore } from '@/stores/Artifact';
 import { useWeaponStore } from '@/stores/Weapon';
+import { useConfig } from '@/stores/config';
 
 const Manage = () => import(/* webpackChunkName: "manage" */ '@/pages/management/index.vue');
 const ManageArtifact = () =>
@@ -22,8 +25,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      // 引入layout组件
-      // component: App,
+      component: GlobalLayout,
+      beforeEnter() {
+        const config = useConfig();
+        config.RequestConfig();
+      },
       children: [
         {
           path: '/test',
@@ -37,14 +43,14 @@ const router = createRouter({
           meta: {
             title: 'test2'
           },
-          component: Test2,
+          component: Test2
         },
         {
           path: '/layout',
           meta: {
             title: 'layout'
           },
-          component: Layout,
+          component: Layout
         },
         {
           path: '/character',

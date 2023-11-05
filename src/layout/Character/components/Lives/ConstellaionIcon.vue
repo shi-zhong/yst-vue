@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { ClassNameFactor } from '@/utils';
 import Lock from '@/assets/icons/lock.png';
+import { ImageSrc } from '@/components';
+import { useConfig } from '@/stores/config';
 
 interface ConstellationIconProps {
   lock: boolean;
-  icon: string;
+  eName: string;
   element: string;
-  index?: number;
+  life: number;
 }
 
 const S = ClassNameFactor('constellation-');
+const config = useConfig();
 
 defineProps<ConstellationIconProps>();
 
@@ -20,7 +23,7 @@ const elementMap: Record<string, string> = {
   冰: 'ice',
   草: 'grass',
   岩: 'stone',
-  风: 'wind',
+  风: 'wind'
 };
 </script>
 
@@ -28,12 +31,12 @@ const elementMap: Record<string, string> = {
   <div
     :class="S(['icon ', elementMap[element] || 'fire'])"
     data-type="active"
-    :data-index="index || 0"
+    :data-index="life || 0"
   >
     <img
       :draggable="false"
       :class="S('life')"
-      :src="icon"
+      :src="ImageSrc(`${config.character.baseUrl}/${eName}/live${life}.png`)"
       alt=""
     />
     <div

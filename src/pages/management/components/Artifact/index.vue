@@ -5,12 +5,14 @@ import { Image, Rarity, RarityToColor, ScrollView } from '@/components';
 import { onUnmounted, ref } from 'vue';
 import Editor from './editor.vue';
 import { EventDispatch } from '@/utils';
+import { useConfig } from '@/stores/config';
 
 const view = ref();
 
 const { close, vLazy } = LazyImage(view.value);
 
 const store = useArtifactStore();
+const config = useConfig()
 
 const activeData = ref(-1);
 
@@ -57,7 +59,7 @@ const handleActive = (e: Event) => {
             v-for="(value, key) in art.slots"
             :key="key"
             v-show="value.imgUrl"
-            v-lazy="value.imgUrl"
+            v-lazy="config.artifactImage(value.imgUrl)"
             :draggable="false"
           />
         </div>

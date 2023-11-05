@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ScrollView, Select, Button, CharacterCard } from '@/components';
 import { ClassNameFactor } from '@/utils';
-import type { CharacterInstanceBasicModel } from '@/interface';
+import type { CharacterInstanceExpandModel } from '@/interface';
 
 import Character from '@/assets/icons/characters.webp';
 import Filter from '@/assets/icons/filter.svg';
 import Sort from '@/assets/icons/sort-line.svg';
 
 defineProps<{
-  team: CharacterInstanceBasicModel[];
-  list: CharacterInstanceBasicModel[];
+  team: CharacterInstanceExpandModel[];
+  list: CharacterInstanceExpandModel[];
+  selected: number;
 }>();
 
 const emits = defineEmits<{
@@ -49,26 +50,16 @@ const S = ClassNameFactor('expand-character-');
       scrollbar
       slide
     >
-      <template
-        v-for="(i, index) in team"
-        :key="i.avatar + index"
-      >
-        <CharacterCard
-          v-bind="i"
-          selected
-          :imgUrl="i.avatar"
-        />
-      </template>
-
-      <template
-        v-for="(i, index) in list"
-        :key="i.avatar + index"
-      >
-        <CharacterCard
-          v-bind="i"
-          :imgUrl="i.avatar"
-        />
-      </template>
+      <CharacterCard
+        v-for="(ch, index) in team.concat(list)"
+        :key="`${ch.character_id}/${ch.id}`"
+        :selected="selected === ch.id"
+        :element="ch.element"
+        :eName="ch.eName"
+        :star="ch.star"
+        :lvl="ch.lvl"
+        :inTeam="index < team.length"
+      />
     </ScrollView>
 
     <div :class="S('options')">

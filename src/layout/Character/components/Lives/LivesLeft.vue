@@ -2,10 +2,7 @@
 import { ClassNameFactor } from '@/utils/className';
 import { Button, HighLight, Line } from '@/components';
 import { ScrollView } from '@/components';
-import Life1 from '@/assets/skills/yoimiya/lives/constellation_1.png';
-
 import ConstellaionIcon from './ConstellaionIcon.vue';
-
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 import { computed } from 'vue';
 
@@ -13,7 +10,7 @@ const S = ClassNameFactor('constellation-');
 
 const store = useCharacterLayoutStore();
 
-const live = computed(() => store.characterStatic?.life[store.lives] || { name: '', desc: '' });
+const live = computed(() => store.characterStatic?.lives[store.lives] || { name: '', desc: '' });
 </script>
 
 <template>
@@ -22,7 +19,8 @@ const live = computed(() => store.characterStatic?.life[store.lives] || { name: 
       :class="S('icon')"
       :element="store.characterStatic?.basic.element!"
       :lock="false"
-      :icon="Life1"
+      :life="store.lives + 1"
+      :e-name="store.characterStatic?.basic.eName ?? ''"
     />
     <Line />
     <ScrollView

@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { Button, Line, Tabs, TabPane, HighLight } from '@/components';
+import { Button, Line, Tabs, TabPane, HighLight, ImageSrc } from '@/components';
 
-import TalentA from '@/assets/skills/bow_attack.png';
+import Bow from '@/assets/skills/bow.png';
+import Catalyst from '@/assets/skills/catalyst.webp';
+import Claymore from '@/assets/skills/caymore.png';
+import Polearm from '@/assets/skills/polearm.webp';
+import Sword from '@/assets/skills/sword.webp';
 
 import { ClassNameFactor } from '@/utils/className';
 import { computed, ref } from 'vue';
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
+import { useConfig } from '@/stores/config';
 
 const S = ClassNameFactor('skills-');
 
 const store = useCharacterLayoutStore();
+const config = useConfig()
 
 const talent = computed(
   () =>
@@ -19,6 +25,22 @@ const talent = computed(
       detail: []
     }
 );
+
+const handleRealImage = (index: number) => {
+  if (index === 0) {
+    const mapper = {
+      Bow: Bow,
+      Catalyst: Catalyst,
+      Claymore: Claymore,
+      Polearm: Polearm,
+      Sword: Sword
+    } as const;
+    return mapper[config.weaponTypeCode(store.characterStatic?.basic.weapon ?? 1)]
+  }
+  return ImageSrc(
+    `${config.character.baseUrl}/${store.characterStatic?.basic.eName}/talent${index + 1}.png`
+  );
+};
 
 const active = ref('intro');
 </script>
@@ -31,7 +53,7 @@ const active = ref('intro');
       </div>
       <img
         :class="S('talent-icon')"
-        :src="TalentA"
+        :src="handleRealImage(store.talent)"
         :draggable="false"
         alt=""
       />

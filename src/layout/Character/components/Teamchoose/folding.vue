@@ -1,19 +1,21 @@
 <script setup lang="tsx">
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 import { ClassNameFactor, EventDispatch, GetElementPicture } from '@/utils';
-import { Button, ScrollView } from '@/components';
+import { Button, ScrollView, ImageSrc } from '@/components';
 import CRightMenu from './cRightMenu.vue';
+import AvatarSideNone from '@/assets/icons/Side_None.png';
 import Menu from '@/assets/icons/menu.png';
 import RankPicture from './rank_star.png';
-import type { ElementsChinese, CharacterInstanceBasicModel } from '@/interface';
+import type { ElementsChinese, CharacterInstanceExpandModel } from '@/interface';
 import type { Menu as TMenu } from '../../interface';
+import { useConfig } from '@/stores/config';
 
 withDefaults(
   defineProps<{
     menu: TMenu[];
     current: { element: ElementsChinese; name: string };
-    team: CharacterInstanceBasicModel[];
-    list: CharacterInstanceBasicModel[];
+    team: CharacterInstanceExpandModel[];
+    list: CharacterInstanceExpandModel[];
     canExpand?: boolean;
     active: number;
   }>(),
@@ -34,6 +36,7 @@ interface CharacterBoxProps {
 }
 
 const store = useCharacterLayoutStore();
+const config = useConfig()
 
 const S = ClassNameFactor('folding-character-drawer-');
 
@@ -48,15 +51,8 @@ const CharacterBox = (props: CharacterBoxProps) => {
       data-type="character-box"
       data-key={dataKey}
       data-index={dataIndex}
-    >
-      <img
-        draggable={false}
-        class={S('character-image')}
-        key={avatar}
-        src={avatar}
-        alt=""
-      />
-    </div>
+      style={{ backgroundImage: `url(${avatar || AvatarSideNone})` }}
+    ></div>
   );
 };
 
@@ -66,6 +62,10 @@ const handleClickDispatch = (e: Event) => {
       store.setSelect(Number(dataset.key));
     }
   });
+};
+
+const handleAvatarUrl = (eName: string) => {
+  return ImageSrc(`${config.character.baseUrl}/${eName}/side_avatar.png`);
 };
 </script>
 
@@ -101,27 +101,21 @@ const handleClickDispatch = (e: Event) => {
           data-type="character-list"
           @click="handleClickDispatch"
         >
-          <template
+          <CharacterBox
             v-for="(i, index) in team"
-            :key="i.avatar + index + i.id"
-          >
-            <CharacterBox
-              inteam
-              :avatar="i.avatar"
-              :dataKey="i.id"
-              :dataIndex="index"
-            />
-          </template>
-          <template
+            :key="`${i.character_id}/${i.id}`"
+            inteam
+            :avatar="handleAvatarUrl(i.eName)"
+            :dataKey="i.id"
+            :dataIndex="index"
+          />
+          <CharacterBox
             v-for="(i, index) in list"
-            :key="i.avatar + (index + team.length) + i.id"
-          >
-            <CharacterBox
-              :avatar="i.avatar"
-              :dataKey="i.id"
-              :dataIndex="team.length + index"
-            />
-          </template>
+            :key="`${i.character_id}/${i.id}`"
+            :avatar="handleAvatarUrl(i.eName)"
+            :dataKey="i.id"
+            :dataIndex="team.length + index"
+          />
         </div>
       </ScrollView>
 
@@ -201,11 +195,11 @@ const handleClickDispatch = (e: Event) => {
     &-tag {
       overflow: visible;
       position: absolute;
-      width: 115px;
+      width: 130px;
       transition: 0.3s ease;
       z-index: 0;
 
-      height: 70px;
+      height: 64px;
       overflow: visible;
       border-radius: 0 32px 32px 0;
       background: @blank-white;
@@ -222,27 +216,37 @@ const handleClickDispatch = (e: Event) => {
 
   &-character {
     &-box {
-      width: 64px;
+      background: no-repeat center top -35px / 75%;
+
+      width: 130px;
       height: 64px;
-      margin: 30px auto;
-      border: 3px solid transparent;
-      box-sizing: content-box;
-      border-radius: 50%;
+      margin: 0 auto;
 
-      line-height: 64px;
-      text-align: center;
+      position: relative;
 
-      overflow: hidden;
-      background: @shadow;
+      &:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        aspect-ratio: 1;
+        width: 60px;
+
+        border: 3px solid transparent;
+        box-sizing: content-box;
+        border-radius: 50%;
+
+        line-height: 64px;
+        text-align: center;
+
+        overflow: hidden;
+        background: @shadow;
+      }
     }
 
-    &-box :deep(&-image) {
-      // width: 58px;
-      width: 100%;
-      vertical-align: bottom;
-    }
-
-    &-inteam {
+    &-inteam:after {
       background: @selected-bgc;
       border: 3px solid @selected-border;
       box-sizing: content-box;

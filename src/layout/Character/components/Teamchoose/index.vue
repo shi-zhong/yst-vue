@@ -32,29 +32,26 @@ const tempWeaponFilter = ref<string[]>([]);
 // list preOperation
 const preList = computed(() =>
   list.value.map((l) => {
-    const staD = clist.value.find((s) => s.uuid === l.character_id);
+    const staD = clist.value.find((s) => s.id === l.character_id);
 
     if (!staD) return {} as any;
 
     return {
       ...l,
-      avatar: staD.basic.avatar,
       star: staD.basic.star,
       name: staD.basic.name,
+      eName: staD.basic.eName,
       element: staD.basic.element
     };
   })
 );
 
-// team
-const inTeam = computed(() => preList.value.filter((i) => team.value.find((j) => i.id === j)));
-const otTeam = computed(() => preList.value.filter((i) => !team.value.find((j) => i.id === j)));
+// team 保证顺序
+const inTeam = computed(() => team.value.map(id => preList.value.find((p) => p.id === id)).filter(j => j));
+const otTeam = computed(() => preList.value.filter((i) => !team.value.includes(i.id)));
 
 const active = computed(() => {
-  const iTeam = inTeam.value.findIndex((i) => i.id === select.value);
-  const oTeam = otTeam.value.findIndex((i) => i.id === select.value);
-
-  return iTeam !== -1 ? iTeam : oTeam + inTeam.value.length;
+  return inTeam.value.concat(otTeam.value).findIndex((i) => i.id === select.value)
 });
 
 const current = computed(() => {
@@ -103,7 +100,7 @@ const updateFilter = (
         :active="active"
         :team="inTeam"
         :list="otTeam"
-        @toExpand="() => store.pushSidebar('expand')"
+        @toExpand="() => {store.pushSidebar('expand'); store.setRight('attr')}"
       />
     </Transition>
     <Transition name="switchL">
@@ -111,6 +108,7 @@ const updateFilter = (
         v-if="store.sidebar === 'expand'"
         :team="inTeam"
         :list="otTeam"
+        :selected="store.select"
         @toFilter="() => store.pushSidebar('filter')"
       />
     </Transition>

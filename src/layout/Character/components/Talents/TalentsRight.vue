@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import TalentA from '@/assets/skills/bow_attack.png';
+import Bow from '@/assets/skills/bow.png';
+import Catalyst from '@/assets/skills/catalyst.webp';
+import Claymore from '@/assets/skills/caymore.png';
+import Polearm from '@/assets/skills/polearm.webp';
+import Sword from '@/assets/skills/sword.webp';
+import { ImageSrc } from '@/components';
 
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
+import { useConfig } from '@/stores/config';
 
 import { ClassNameFactor, EventDispatch } from '@/utils';
 
@@ -9,13 +15,14 @@ import { ClassNameFactor, EventDispatch } from '@/utils';
 const S = ClassNameFactor('talents-');
 
 const store = useCharacterLayoutStore();
+const config = useConfig();
 
 const clickOutsideToClose = () => {
   if (store.sidebar === 'talents') {
     store.popSidebar();
   }
   document.removeEventListener('click', clickOutsideToClose);
-  store.setTalent(-1)
+  store.setTalent(-1);
 };
 
 const handleClick = (e: Event) => {
@@ -26,9 +33,25 @@ const handleClick = (e: Event) => {
         document.addEventListener('click', clickOutsideToClose);
         store.pushSidebar('talents');
       }
-      store.setTalent(parseInt(dataset.index || '-1'))
+      store.setTalent(parseInt(dataset.index || '-1'));
     }
   });
+};
+
+const handleRealImage = (index: number) => {
+  if (index === 0) {
+    const mapper = {
+      Bow: Bow,
+      Catalyst: Catalyst,
+      Claymore: Claymore,
+      Polearm: Polearm,
+      Sword: Sword
+    } as const;
+    return mapper[config.weaponTypeCode(store.characterStatic?.basic.weapon ?? 1)]
+  }
+  return ImageSrc(
+    `${config.character.baseUrl}/${store.characterStatic?.basic.eName}/talent${index + 1}.png`
+  );
 };
 </script>
 
@@ -41,7 +64,7 @@ const handleClick = (e: Event) => {
     <div :class="S('box')">
       <button
         v-for="(i, index) in store.characterStatic?.talents"
-        :key="index"
+        :key="i.name"
         :class="
           S({
             cell: true,
@@ -60,7 +83,7 @@ const handleClick = (e: Event) => {
           <img
             :draggable="false"
             :class="S('icon')"
-            :src="TalentA"
+            :src="handleRealImage(index)"
             alt=""
           />
         </div>

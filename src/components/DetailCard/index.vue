@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Image from '@/components/commons/Image/index.vue';
+import { Image } from '@/components/commons/Image';
 import { Rarity, RarityToColor } from '@/components/Tags';
 import { ClassNameFactor } from '@/utils/className';
 import { toRefs } from 'vue';

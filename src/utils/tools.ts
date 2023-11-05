@@ -1,4 +1,5 @@
 import type { ComponentInternalInstance } from 'vue';
+import type { DoubleSideMap, ReverseObj, StringOnly, ToString } from './typesHelper';
 
 /**
  * 合并 data 到 reactive 对象
@@ -56,41 +57,37 @@ export const EventDispatch = <T = { [key: string]: string }>(
 };
 
 /**
+ * 将一个对象的键值进行正反整合
+ */
+export const DoubleSideMapObject = <
+  R extends { [key: string]: string | number },
+  K extends string = StringOnly<keyof R>,
+  V extends R[K] = R[K]
+>(
+  o: Record<K, V>
+): DoubleSideMap<K, V> => {
+  const reverse: ReverseObj<K, V> = {} as any;
+  (Object.entries(o) as [K, V][]).forEach(([k, v]: [K, V]) => (reverse[`${v}` as ToString<V>] = k));
+  return { ...o, ...reverse };
+};
+
+/**
  * 正反映射函数
- * 提供一个对象，返回一个提供正反向映射的函数，需要一一对应
- * 使用exclu
- * @param TtoP
- * @param exclude 取消反向映射的键值，用于值有重复的时候
- * @returns
  */
 export const Transformer = <
-  R extends { [key: string | number | symbol]: string | number | symbol },
-  T extends string | number | symbol = keyof R,
-  P extends string | number | symbol = R[keyof R]
+  R extends { [key: string]: string | number },
+  K extends string = StringOnly<keyof R>,
+  V extends R[K] = R[K]
 >(
-  TtoP: Readonly<Record<T, P>>,
-  exclude?: T[]
+  o: Record<K, V>
 ) => {
-  if (!(TtoP instanceof Object)) {
-    console.warn('Transformer TtoP Error.', TtoP);
-    return ((o) => o) as { (o: T): P; (o: P): T };
+  const no = DoubleSideMapObject(o);
+  function anonymous(k: K): V;
+  function anonymous(k: V): K;
+  function anonymous(k: K | V) {
+    return no[k as K | ToString<V>];
   }
-
-  const M: Record<T, P> & Record<P, T> = { ...TtoP } as any;
-
-  (Object.keys(TtoP) as T[]).map((key) => {
-    if (!exclude || !exclude.includes(key)) {
-      M[TtoP[key]] = key as any;
-    }
-  });
-
-  function Transform(o: T): P;
-  function Transform(o: P): T;
-  function Transform(origin: T | P) {
-    return M[origin];
-  }
-
-  return Transform;
+  return anonymous;
 };
 
 /**
@@ -129,7 +126,10 @@ export function DataDecoder(data: number | string, fix?: number) {
     }
   } else if (/^(\d|,)+(.\d+)?%?$/.test(data)) {
     // 成功匹配字符串
-    const nData = data.split('').filter(s => s !== ',').join('');
+    const nData = data
+      .split('')
+      .filter((s) => s !== ',')
+      .join('');
     if (nData.includes('%')) {
       return Number((0.01 * Number(nData.slice(0, -1))).toPrecision(15));
     } else {

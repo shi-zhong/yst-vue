@@ -5,8 +5,6 @@ import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 
 import ConstellationIcon from './ConstellaionIcon.vue';
 
-import Life1 from '@/assets/skills/yoimiya/lives/constellation_1.png';
-
 const S = ClassNameFactor('constellation-');
 
 const store = useCharacterLayoutStore();
@@ -43,17 +41,17 @@ const handleConstellationClick = (e: Event) => {
     data-type="constellation-top"
   >
     <div
-      v-for="(i, index) in store.characterStatic?.life"
+      v-for="(i, index) in store.characterStatic?.lives"
       :key="index"
       :class="S('box')"
       data-type="constellation"
       :data-index="index"
     >
       <ConstellationIcon
-        :index="index + 1"
+        :life="index + 1"
         :element="store.characterStatic?.basic.element!"
         :lock="store.character?.lives! <= index"
-        :icon="Life1"
+        :e-name="store.characterStatic?.basic.eName ?? ''"
       >
       </ConstellationIcon>
       <div

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Lock, RankBar, Refine } from '@/components/Tags';
 import { BasicDetailCard } from '@/components/DetailCard';
-import { ClassNameFactor, DataDecoder, TypeNameToBackendCode } from '@/utils';
+import { ClassNameFactor, DataDecoder } from '@/utils';
 import {
   WeaponTypesTransform,
   type WeaponTypeModel,
@@ -15,6 +15,7 @@ import { merge } from '@/utils/tools';
 import WeaponDescribe from './WeaponDescribe.vue';
 import { AttributesTransform } from '@/components/Artifact';
 import { useWeaponStore } from '@/stores/Weapon';
+import { useConfig } from '@/stores/config';
 
 const props = withDefaults(
   defineProps<WeaponsInstanceModel & { weapon_type?: WeaponTypeModel; size?: number }>(),
@@ -24,6 +25,8 @@ const props = withDefaults(
 );
 
 const store = useWeaponStore();
+
+const config = useConfig();
 
 const { rank, lvl, refine } = toRefs(props);
 
@@ -83,10 +86,7 @@ watch(
       value: DataDecoder((lvl - 1) * data.data.sub.growth + data.data.sub.start, 1)
     }"
     :imgUrl="data.basic.imgUrl"
-    :type="
-      WeaponTypesTransform(TypeNameToBackendCode({ name: 'weapon', code: data.basic.type })[1]) ??
-      '单手剑'
-    "
+    :type="WeaponTypesTransform(config.weaponTypeCode(data.basic.type)) ?? '单手剑'"
     :size="size"
   >
     <div :class="S('lvl-container')">

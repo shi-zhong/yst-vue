@@ -104,9 +104,14 @@ watch(
       >
         {{ k }}
       </span>
-      <span @click="() => {
-        store.updateCurrentStainText(generateStainCode(rich.node))
-      }">提交</span>
+      <span
+        @click="
+          () => {
+            store.updateCurrentStainText(generateStainCode(rich.node));
+          }
+        "
+        >提交</span
+      >
     </div>
     <div class="stainer-scroll">
       <RichNodeRender

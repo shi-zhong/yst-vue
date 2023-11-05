@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import Naxida from '@/assets/avatar/sumeru/04007.png';
 
 import type { CharacterInstanceBasicModel } from '@/interface/characters';
 
@@ -17,14 +16,14 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
     // 已有角色列表，实例数据
     list: [
       {
-        id: 1,
-        character_id: 5111,
+        id: 0,
+        character_id: 1,
         lvl: 89,
         talents: [9, 9, 9],
         lives: 3
       }
     ] as unknown as CharacterInstanceBasicModel[],
-    team: [] as number[],
+    team: [0] as number[],
 
     // 角色静态类数据
     clist: [
@@ -33,41 +32,37 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
         uuid: 5111,
         basic: {
           name: '纳西妲',
+          eName: 'nahida',
           element: '草',
           star: 5,
-
+          weapon: 2,
           birth: '10月27日',
           belong: '须弥城',
-          weapon: 3,
           life: '智慧主座',
           honor: '白草净华',
-
-          avatar: Naxida
+          break_through: '元素精通',
+          intro: '深居净善宫的笼中之鸟，只能在梦中将世界尽收眼底。'
         },
-        lvls: {
-          attr: {
-            '1': ['24', '807', '49'],
-            '20': ['61', '2,092', '127'],
-            '40': ['120', '4,165', '253'],
-            '50': ['155', '5,357', '326'],
-            '60': ['194', '6,721', '409'],
-            '70': ['229', '7,926', '482'],
-            '80': ['264', '9,140', '556'],
-            '90': ['299', '10,360', '630'],
-            '20+': ['81', '2,784', '169'],
-            '40+': ['135', '4,656', '283'],
-            '50+': ['174', '6,012', '366'],
-            '60+': ['208', '7,212', '439'],
-            '70+': ['243', '8,418', '512'],
-            '80+': ['278', '9,632', '586']
-          },
-          breakthrough: '元素精通',
-          material: {
-            ele: '生长碧翡',
-            boss: '灭诤草蔓',
-            specialty: '劫波莲',
-            drops: '孢囊晶尘'
-          }
+        break_through_levels: [
+          [24, 807, 49],
+          [61, 2092, 127],
+          [81, 2784, 169],
+          [120, 4165, 253],
+          [135, 4656, 283],
+          [155, 5357, 326],
+          [174, 6012, 366],
+          [194, 6721, 409],
+          [208, 7212, 439],
+          [229, 7926, 482],
+          [243, 8418, 512],
+          [264, 9140, 556],
+          [278, 9632, 586],
+          [299, 10360, 630]
+        ],
+        material: {
+          boss: '灭诤草蔓',
+          specialty: '劫波莲',
+          drops: '孢囊晶尘'
         },
         talents: [
           {
@@ -511,13 +506,6 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
             detail: []
           },
           {
-            type: '天赋5（固有天赋）',
-            name: '慧明缘觉智论',
-            intro:
-              '基于纳西妲元素精通超过200点的部分，每1点元素精通能使所闻遍计的灭净三业造成的伤害提升0.1%，暴击率提升0.03%。\n通过这种方式，至多使灭净三业造成的伤害提升80%，暴击率提升24%。',
-            detail: []
-          },
-          {
             type: '天赋6（固有天赋）',
             name: '诸相随念净行',
             intro:
@@ -525,7 +513,7 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
             detail: []
           }
         ],
-        life: [
+        lives: [
           {
             name: '心识蕴藏之种',
             desc: '展开$0摩耶之殿$计算队伍中特定元素类型的角色数量时，额外计入火元素、雷元素、水元素的角色各1名。'
@@ -575,17 +563,25 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
 
       if (!cIns) return;
 
-      return state.clist.find((c) => c.uuid === cIns.character_id);
+      return state.clist.find((c) => c.id === cIns.character_id);
+    },
+    characterStaticByID(state) {
+      return (id: number) => {
+        return state.clist.find((c) => c.id === id);
+      };
     }
   },
   actions: {
     // 设置角色列表当前选中的id
     setSelect(select: number) {
-      const index = this.list.findIndex((l) => l.id === select);
-      if (index !== -1) {
-        this.select = select;
+      const has = this.list.find((l) => l.id === select);
+      if (has !== undefined) {
+        return (this.select = has.id);
       } else if (this.list.length && this.team.length) {
-        this.select = this.list.find((l) => l.id === this.team[0])?.id || -1;
+        const ch2 = this.list.find((l) => l.id === this.team[0]);
+        if (ch2 !== undefined) {
+          return (this.select = ch2.id);
+        }
       } else {
         this.select = this.list.length ? this.list[0].id : -1;
       }
@@ -616,10 +612,30 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
       if (!staticState) return;
 
       if (this.cRight === 'lives' && this.lives !== -1) {
-        staticState.life[this.lives].desc = text;
+        staticState.lives[this.lives].desc = text;
       } else if (this.cRight === 'talents' && this.talent !== -1) {
         staticState.talents[this.talent].intro = text;
       }
+    },
+    updateEName(text: string) {
+      // 全部使用引用类型，保持同一个引用，内部通过proxy更新，不知道是否会存在问题
+      // 或许是react思维在作祟，从表现上看没问题
+      const staticState = this.characterStatic;
+
+      if (!staticState) return;
+
+      staticState.basic.eName = text;
     }
   }
 });
+
+const breakthrough = {
+  主角: 6,
+  暴击率: [0, 4.8],
+  暴击伤害: [0, 9.6],
+  元素精通: [24, 28.8],
+  攻击力1生命值1元素: [6, 7.2],
+  物理伤害加成: [7.5, 0],
+  防御力: [7.5, 0],
+  元素充能效率: [6.67, 8.0]
+};

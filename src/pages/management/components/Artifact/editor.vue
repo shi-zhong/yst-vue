@@ -13,15 +13,17 @@ import { useArtifactStore } from '@/stores/Artifact';
 import { UploadImg } from '@/api/common';
 import ArtifactPng from '@/assets/icons/artifact.png';
 
-import { merge, TypeNameToBackendCode, fileExt, DownLoadJson } from '@/utils';
+import { merge, fileExt, DownLoadJson } from '@/utils';
 import { ArtifactSuitAdd, ArtifactSuitModify } from '@/api/ArtifactSuit';
 import { template } from './template';
+import { useConfig } from '@/stores/config';
 
 const { vDrop } = Drop();
 
 const props = defineProps<{ active: number }>();
 const emits = defineEmits<{ (e: 'change', id: number): void }>();
 const store = useArtifactStore();
+const config = useConfig();
 
 const basic = reactive({
   name: '',
@@ -176,10 +178,8 @@ const buildSave = async (): Promise<ArtifactSuitModel> => {
           'imgfile',
           f,
           `${uuid}` +
-            TypeNameToBackendCode({
-              name: 'artifact',
-              slot: k as ArtifactSlots
-            }).join('') +
+            config.artifactCode +
+            config.artifactTypeCode(k as ArtifactSlots) +
             '_' +
             fileExt(f.name)
         );

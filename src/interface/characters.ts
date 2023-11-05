@@ -9,6 +9,13 @@ export interface CharacterInstanceBasicModel {
   lives: number;
 }
 
+export interface CharacterInstanceExpandModel extends CharacterInstanceBasicModel {
+  name: string;
+  star: 1 | 2 | 3 | 4 | 5;
+  eName: string;
+  element: '风' | '雷' | '水' | '火' | '冰' | '草' | '岩';
+}
+
 // 角色(共性)信息
 export interface CharacterModel {
   id: number;
@@ -32,23 +39,23 @@ export interface CharacterBasicModel {
 }
 
 type Levels =
-| '1'
-| '20'
-| '20+'
-| '40'
-| '40+'
-| '50'
-| '50+'
-| '60'
-| '60+'
-| '70'
-| '70+'
-| '80'
-| '80+'
-| '90';
+  | '1'
+  | '20'
+  | '20+'
+  | '40'
+  | '40+'
+  | '50'
+  | '50+'
+  | '60'
+  | '60+'
+  | '70'
+  | '70+'
+  | '80'
+  | '80+'
+  | '90';
 // 角色属性信息(基础属性)
 export interface CharacterAttributeModel {
-  data:{ [key in Levels]: [number, number, number] };
+  data: { [key in Levels]: [number, number, number] };
   breakthrouth: string;
   specialty: string;
 }

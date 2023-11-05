@@ -68,23 +68,23 @@ onUnmounted(() => {
   stack.cancelMiddle(instance);
 });
 
-const okButtonProps = {
+const okButtonProps = computed(() => ({
   text: props.okText,
   icon: props.okIcon,
   disable: props.okDisable,
   ...props.ok
-};
+}));
 
 const okNotEmpty = computed(
   () => props.okText !== undefined || props.okIcon !== undefined || props.ok !== undefined
 );
 
-const cancelButtonProps = {
+const cancelButtonProps = computed(() => ({
   text: props.cancelText,
   icon: props.cancelIcon,
   disable: props.cancelDisable,
   ...props.cancel
-};
+}));
 
 const cancelNotEmpty = computed(
   () =>
@@ -131,6 +131,7 @@ const container = document.body;
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
 
   width: 100vw;
   height: 100vh;

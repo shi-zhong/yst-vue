@@ -3,21 +3,24 @@ import { get, post, Cookie, tokenName } from './Request';
 import { type ArtifactSlots } from '@/components/Artifact';
 import { Message } from '@/components';
 
-type Mapper = {
+type ConfigMapper = {
   character: {
     base: number;
+    baseUrl: string;
   };
   artifact: {
     base: number;
+    baseUrl: string;
     slots: Record<ArtifactSlots, number>;
   };
   weapon: {
     base: number;
+    baseUrl: string;
     types: Record<WeaponTypes, number>;
   };
 };
 
-export const getMapperApi = () => get<Mapper>('/mapper');
+export const requestConfig = () => get<ConfigMapper>('/config');
 
 export const UploadImg = (formData: FormData) =>
   post<{ url: string }>('/upload/img', {

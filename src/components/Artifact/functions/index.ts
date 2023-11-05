@@ -23,11 +23,7 @@ const AttributesMapper = {
   GeoDMGBonus: '岩元素伤加成'
 } as const;
 
-export const AttributesTransform = Transformer<typeof AttributesMapper>(AttributesMapper, [
-  'ATK',
-  'DEF',
-  'HP'
-]);
+export const AttributesTransform = Transformer<typeof AttributesMapper>(AttributesMapper);
 
 const ArtifactSlotMainAttributes = {
   FlowerOfLife: ['HP'],

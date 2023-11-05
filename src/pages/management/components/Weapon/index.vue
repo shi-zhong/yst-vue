@@ -5,8 +5,10 @@ import { ref } from 'vue';
 import Editor from './editor.vue';
 import { EventDispatch } from '@/utils';
 import { useWeaponStore } from '@/stores/Weapon';
+import { useConfig } from '@/stores/config';
 
 const store = useWeaponStore();
+const config = useConfig()
 
 const activeData = ref(-1);
 
