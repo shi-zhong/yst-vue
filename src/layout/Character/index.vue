@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ClassNameFactor } from '@/utils/className';
-import { computed, watch, watchEffect } from 'vue';
+import { computed, watchEffect } from 'vue';
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 import { Button } from '@/components';
 import type { Menu } from './interface';
@@ -17,6 +17,7 @@ import Back from '@/assets/icons/back.png';
 import Close from '@/assets/icons/close.png';
 import { Sound } from '@/utils/sound';
 
+
 const S = ClassNameFactor('character-page-');
 
 const store = useCharacterLayoutStore();
@@ -25,11 +26,18 @@ const props = withDefaults(
   defineProps<{
     title?: string;
     menu: Menu[];
-    right?: Record<string, any>;
+    right?: Record<
+      string,
+      {
+        fc: any;
+        binding?: Record<string, any>;
+      }
+    >;
     content?: {
       left?: string[];
       right?: string[];
       fc: any;
+      binding?: Record<string, any>;
     }[];
   }>(),
   {
@@ -48,25 +56,36 @@ const builtInLeft: Record<string, any> = {
   lives: LivesLeft
 };
 
-const builtInRight: Record<string, any> = {
-  talents: TalentsRight,
-  lives: LivesRight
+const builtInRight: Record<
+  string,
+  {
+    fc: any;
+    binding?: Record<string, any>;
+  }
+> = {
+  talents: {
+    fc: TalentsRight,
+    binding: {}
+  },
+  lives: {
+    fc: LivesRight,
+    binding: {}
+  }
 };
 
 watchEffect(() => {
   document.title = props.title;
 });
 
-const cContent = computed(() => {
-  const find = props.content.find((f) => {
+const cContent = computed(() =>
+  props.content.find((f) => {
     return (
       (!f.left || !f.left.length || f.left.includes(store.sidebar)) &&
       (!f.right || !f.right.length || f.right.includes(store.cRight))
     );
-  });
+  })
+);
 
-  return find?.fc;
-});
 const cLeft = computed(() => builtInLeft[store.sidebar] || TeamChoose);
 const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cRight]);
 </script>
@@ -107,7 +126,8 @@ const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cR
           <Transition name="switchD">
             <KeepAlive>
               <component
-                :is="cContent"
+                :is="cContent?.fc"
+                v-bind="cContent?.binding"
                 @click.stop="() => {}"
               />
             </KeepAlive>
@@ -117,7 +137,8 @@ const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cR
           <Transition name="switchR">
             <KeepAlive>
               <component
-                :is="cRight"
+                :is="cRight?.fc"
+                v-bind="cRight?.binding"
                 @click.stop="() => {}"
               />
             </KeepAlive>

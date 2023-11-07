@@ -21,21 +21,29 @@ export interface CharacterModel {
   id: number;
   uuid: number;
   basic: CharacterBasicModel;
-  attribute: CharacterAttributeModel;
-  talents: CharacterTalentsModel;
-  lives: CharacterConstellationModel;
+  break_through_levels: [number, number, number][];
+  material: {
+    boss: string;
+    specialty: string;
+    drops: string;
+  };
+  talents: CharacterTalentsModel[];
+  lives: CharacterConstellationModel[];
 }
 
 // 角色基础信息
 export interface CharacterBasicModel {
   name: string;
-  element: ElementsChinese;
   star: 1 | 2 | 3 | 4 | 5;
+  eName: string;
+  element: ElementsChinese;
+  weapon: number;
   birth: string;
   belong: string;
-  weapon: number;
   life: string;
   honor: string;
+  break_through: string;
+  intro: string;
 }
 
 type Levels =
@@ -53,12 +61,6 @@ type Levels =
   | '80'
   | '80+'
   | '90';
-// 角色属性信息(基础属性)
-export interface CharacterAttributeModel {
-  data: { [key in Levels]: [number, number, number] };
-  breakthrouth: string;
-  specialty: string;
-}
 
 // 命之座信息
 export interface CharacterConstellationModel {

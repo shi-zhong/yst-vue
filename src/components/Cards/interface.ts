@@ -1,24 +1,35 @@
-interface BasicCardProps {
+export interface CardProps {
+  type: 'artifact' | 'character' | 'weapon';
   star: 1 | 2 | 3 | 4 | 5;
   imgUrl: string;
-  lvl: number;
-
+  desc?: string;
+  foucsing?: boolean;
 }
 
-interface CardProps extends BasicCardProps {
-  type: 'artifact' | 'character' | 'weapon';
-  class?: string;
-  selected?: boolean;
+export interface BasicDetailCardProps {
+  title: string;
+  type: string;
+  main: {
+    key: string;
+    value: string;
+    [key: string]: any;
+  };
+  sub?: {
+    key: string;
+    value: string;
+    [key: string]: any;
+  };
+  rarity: 1 | 2 | 3 | 4 | 5;
+  imgUrl: string;
 }
 
-interface CharacterCardProps {
+export interface CharacterCardProps {
   // 风 雷 水 火 冰 草
   element: '风' | '雷' | '水' | '火' | '冰' | '草' | '岩';
   inTeam?: boolean;
   star: 1 | 2 | 3 | 4 | 5;
-  selected?: boolean;
+  foucsing?: boolean;
   eName: string;
+  name?: string;
   lvl: number;
 }
-
-export type { CardProps, CharacterCardProps, BasicCardProps };

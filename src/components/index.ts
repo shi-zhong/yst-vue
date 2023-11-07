@@ -15,7 +15,6 @@ export { Button, DropFile, DropImage, Icon, Modal, ScrollView, Select };
 import ArrowCount from './ArrowCount/index.vue';
 export * from './Artifact';
 export * from './Cards';
-export * from './DetailCard';
 import HighLight from './HighLight/index.vue';
 export * from './Tags';
 export * from './Weapon';

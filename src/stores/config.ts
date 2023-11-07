@@ -1,18 +1,17 @@
 import { defineStore } from 'pinia';
-import type { ArtifactSlots } from '@/components/Artifact';
 import { Cookie, requestConfig } from '@/api';
-import { Message, type WeaponTypes } from '@/components';
+import { Message } from '@/components';
 import { Transformer } from '@/utils';
 
 export const useConfig = defineStore('config', {
   state: () => ({
     character: {
       base: -1,
-      baseUrl: ''
+      baseUrl: 'characters'
     },
     artifact: {
       base: -1,
-      baseUrl: '',
+      baseUrl: 'artifacts',
       slots: {
         FlowerOfLife: -1,
         PlumnOfDeath: -1,
@@ -23,7 +22,7 @@ export const useConfig = defineStore('config', {
     },
     weapon: {
       base: -1,
-      baseUrl: '',
+      baseUrl: 'weapons',
       types: {
         Sword: -1,
         Catalyst: -1,
@@ -54,6 +53,9 @@ export const useConfig = defineStore('config', {
     },
     weaponImage(state) {
       return (url: string) => `${state.weapon.baseUrl}/${url}`;
+    },
+    CharacterImage(state) {
+      return (url: string) => `${state.character.baseUrl}/${url}`
     }
   },
   actions: {

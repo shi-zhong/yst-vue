@@ -6,11 +6,12 @@ import NotFound from '@/pages/NotFound.vue';
 import Character from '@/pages/Character/index.vue';
 import Test from '@/pages/test/test.vue';
 import Test2 from '@/pages/test/test2.vue';
-import Layout from '@/pages/test/layout.vue';
+import ManageCharacterPreview from '@/pages/management/components/Character/preview.vue';
 
 import { useArtifactStore } from '@/stores/Artifact';
 import { useWeaponStore } from '@/stores/Weapon';
 import { useConfig } from '@/stores/config';
+import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 
 const Manage = () => import(/* webpackChunkName: "manage" */ '@/pages/management/index.vue');
 const ManageArtifact = () =>
@@ -46,13 +47,6 @@ const router = createRouter({
           component: Test2
         },
         {
-          path: '/layout',
-          meta: {
-            title: 'layout'
-          },
-          component: Layout
-        },
-        {
           path: '/character',
           meta: {
             title: '角色管理'
@@ -68,8 +62,13 @@ const router = createRouter({
           children: [
             {
               path: 'character',
-              component: ManageCharacter
+              component: ManageCharacter,
+              beforeEnter: () => {
+                const store = useCharacterLayoutStore();
+                store.getAllCharacterStatic()
+              }
             },
+
             {
               path: 'artifact',
               component: ManageArtifact,
@@ -95,6 +94,10 @@ const router = createRouter({
               redirect: '/manage/character'
             }
           ]
+        },
+        {
+          path: '/manage/character/preview',
+          component: ManageCharacterPreview
         },
         {
           path: '',

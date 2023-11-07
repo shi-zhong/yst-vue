@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { ScrollView } from '@/components';
-import { StarToMaxLevel, WeaponCard } from '@/components/Weapon';
+
 import { ref } from 'vue';
 import Editor from './editor.vue';
 import { EventDispatch } from '@/utils';
-import { useWeaponStore } from '@/stores/Weapon';
-
-const store = useWeaponStore();
 
 const activeData = ref(-1);
 
@@ -28,16 +25,6 @@ const handleActive = (e: Event) => {
       data-type="top"
       @click="handleActive"
     >
-      <!-- <WeaponCard
-        v-for="weapon of store.weaponTypes.values()"
-        :key="weapon.id"
-        data-type="weapon-card"
-        :data-key="weapon.id"
-        :imgUrl="weapon.basic.imgUrl"
-        :lvl="StarToMaxLevel(weapon.basic.star)"
-        :locked="true"
-        :rarity="weapon.basic.star"
-      /> -->
     </ScrollView>
     <Editor
       class="weapon-right"

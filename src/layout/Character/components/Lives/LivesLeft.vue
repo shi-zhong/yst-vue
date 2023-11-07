@@ -37,12 +37,15 @@ const live = computed(() => store.characterStatic?.lives[store.lives] || { name:
         </div>
       </div>
     </ScrollView>
-    <Line />
+
+    <Line v-show="store.canModifyLives" />
     <div :class="S('button-box')">
       <Button
+        v-if="store.canModifyLives"
         type="shrink"
         icon="round"
-        >激活</Button
+        @click="store.setActiveLives()"
+        >{{ store.character.lives <= store.lives ? '激活' : '关闭' }}</Button
       >
     </div>
   </div>

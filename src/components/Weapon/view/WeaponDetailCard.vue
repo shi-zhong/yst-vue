@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Lock, RankBar, Refine } from '@/components/Tags';
-import { BasicDetailCard } from '@/components/DetailCard';
+import BasicDetailCard from '@/components/Cards/DetailCard.vue';
 import { ClassNameFactor, DataDecoder } from '@/utils';
 import {
   WeaponTypesTransform,

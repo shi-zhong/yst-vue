@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Lock } from '@/components/Tags';
-import BasicDetailCard from '@/components/DetailCard/index.vue';
+import BasicDetailCard from '@/components/Cards/DetailCard.vue';
 import type { ArtifactSlots, ArtifactSuitModel } from '../interface';
 import Describe from './ArtifactDescribe.vue';
 import { ArtifactSlotsNameTransform } from '../functions';

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { Lock } from '@/components/Tags';
-import { type BasicCardProps } from '@/components/Cards/interface';
 import { BasicCard } from '@/components/Cards';
 
-interface ArtifactCardProps extends BasicCardProps {
+interface ArtifactCardProps {
   locked: boolean;
 }
 

@@ -53,7 +53,7 @@ watch(
   () => {
     let initText = '';
     if (store.cRight === 'lives' && store.lives !== -1) {
-      initText = store.characterStatic?.life[store.lives].desc || '';
+      initText = store.characterStatic?.lives[store.lives].desc || '';
     } else if (store.cRight === 'talents' && store.talent !== -1) {
       initText = store.characterStatic?.talents[store.talent].intro || '';
     }

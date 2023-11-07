@@ -36,7 +36,7 @@ const elementMap: Record<string, string> = {
     <img
       :draggable="false"
       :class="S('life')"
-      :src="ImageSrc(`${config.character.baseUrl}/${eName}/live${life}.png`)"
+      :src="life === 0 ? '' : ImageSrc(`${config.character.baseUrl}/${eName}/live${life}.png`)"
       alt=""
     />
     <div

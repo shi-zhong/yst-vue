@@ -15,7 +15,7 @@ import { useConfig } from '@/stores/config';
 const S = ClassNameFactor('skills-');
 
 const store = useCharacterLayoutStore();
-const config = useConfig()
+const config = useConfig();
 
 const talent = computed(
   () =>
@@ -35,12 +35,19 @@ const handleRealImage = (index: number) => {
       Polearm: Polearm,
       Sword: Sword
     } as const;
-    return mapper[config.weaponTypeCode(store.characterStatic?.basic.weapon ?? 1)]
+    return mapper[config.weaponTypeCode(store.characterStatic?.basic.weapon ?? 1)];
+  } else if (index === -1) {
+    return '';
   }
   return ImageSrc(
     `${config.character.baseUrl}/${store.characterStatic?.basic.eName}/talent${index + 1}.png`
   );
 };
+
+const realLevel = computed(() => {
+  const extra = store.livesExtraTalent[store.talent] ?? 0;
+  return extra + (store.character?.talents[store.talent] ?? 1);
+});
 
 const active = ref('intro');
 </script>
@@ -60,7 +67,7 @@ const active = ref('intro');
       <div :class="S('talent-name')">
         {{ talent.name }}
       </div>
-      <div :class="S('talent-lvl')">Lv.{{ store.character?.talents[store.talent] ?? 1 }}</div>
+      <div :class="S('talent-lvl')">Lv.{{ realLevel }}</div>
     </div>
     <Tabs
       :class="S('tabs-con')"
@@ -97,12 +104,17 @@ const active = ref('intro');
       </TabPane>
     </Tabs>
     <Line :style="{ margin: '0 25px' }" />
-    <div :class="S('button-con')">
+    <div
+      v-if="store.talent <= 2"
+      :class="S('button-con')"
+    >
       <Button
         type="shrink"
         icon="fork"
         sound="dong"
+        :disable="store.character?.talents[store.talent] === 1"
         balance
+        @click="() => store.setTalentLevel(false)"
         >降级
       </Button>
       <div :class="S('gap')"></div>
@@ -110,10 +122,17 @@ const active = ref('intro');
         type="shrink"
         icon="round"
         sound="dong"
+        :disable="store.character?.talents[store.talent] === 10"
         balance
+        @click="() => store.setTalentLevel(true)"
         >升级
       </Button>
-      <!-- 已达到最大等级 -->
+    </div>
+    <div
+      v-else
+      :class="S('button-max')"
+    >
+      已达到最大等级
     </div>
   </div>
 </template>
@@ -194,7 +213,6 @@ const active = ref('intro');
   }
 
   &-button-con {
-    // margin: 20px 0;
     padding: 20px;
     display: flex;
     flex-shrink: 0;
@@ -202,6 +220,17 @@ const active = ref('intro');
 
   &-gap {
     width: 20px;
+  }
+
+  &-button-max {
+    background: rgb(146, 45, 45);
+    margin: 20px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 20px;
+    color: orange;
+    opacity: 0.6;
   }
 }
 

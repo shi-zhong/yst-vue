@@ -1,29 +1,37 @@
 <script setup lang="ts">
-import { Lock } from '@/components/Tags';
-import { type BasicCardProps } from '@/components/Cards/interface';
-import { BasicCard } from '@/components/Cards';
+import { Lock, Refine } from '@/components/Tags';
+import BasicCard from '@/components/Cards/Card.vue';
 import { useConfig } from '@/stores/config';
 
-interface WeaponCardProps extends BasicCardProps {
+interface WeaponCardProps {
   locked: boolean;
   imgUrl: string;
+  star: 1 | 2 | 3 | 4 | 5;
+  lvl: number;
+  name?: string;
+  refine?: number;
+  refineEnd?: boolean;
 }
 
 const props = defineProps<WeaponCardProps>();
-const config = useConfig()
+const config = useConfig();
 </script>
 
 <template>
   <BasicCard
     type="weapon"
-    v-bind="props"
+    :star="star"
     :imgUrl="config.weaponImage(props.imgUrl)"
+    :desc="lvl ? `Lv.${lvl}` : name ?? ''"
   >
+    <Refine
+      v-if="refine"
+      :refine="refine"
+      :refineEnd="refineEnd ?? false"
+    />
     <Lock
       v-if="locked"
       lock
     />
   </BasicCard>
 </template>
-
-<style scoped lang="less"></style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CharacterLayout from '@/layout/Character/index.vue';
-import Basic from './components/BasicData/BasicData.vue';
+
 import Artifact from './components/Artifact.vue';
 import Weapon from './components/Weapon.vue';
 
@@ -13,14 +13,15 @@ const options = [
   { txt: '资料', url: 'data' }
 ];
 
-const cRight = { attr: Basic, weapon: Weapon, artifact: Artifact };
+const cRight = {  weapon: Weapon, artifact: Artifact };
 </script>
 
 <template>
-  <CharacterLayout
+  <!-- <CharacterLayout
     :menu="options"
     :right="cRight"
-  />
+  /> -->
+  hh
 </template>
 
 <style scoped lang="less"></style>

@@ -2,6 +2,13 @@ export const Round = (x: number, precision: number): number => {
   return Math.floor(x * Math.pow(10, precision) + 0.5) / Math.pow(10, precision);
 };
 
+export const Between = (x: number, min: number, max: number) => {
+  if (min > max) {
+    [min, max] = [max, min];
+  }
+  return x < min ? min : x > max ? max : x;
+};
+
 /**
  * 增幅 2.78x/(1400+x)
  * 聚变 16x/(2000+x)

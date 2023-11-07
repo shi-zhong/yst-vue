@@ -5,7 +5,6 @@ import { Icon, ScrollView, DropFile } from '@/components';
 
 import type {
   CharacterBasicModel,
-  CharacterAttributeModel,
   CharacterTalentsModel,
   CharacterConstellationModel
 } from '@/interface/characters';
@@ -18,8 +17,6 @@ import {
 } from '@/utils';
 import { Message } from '@/components/commons/Message';
 
-import Miyoushe from './miyoushe.json';
-import { useCharacterDataStore } from '@/stores/Character';
 import { useConfig } from '@/stores/config';
 
 const { vDrop } = Drop();
@@ -27,7 +24,6 @@ const { vDrop } = Drop();
 const props = defineProps<{ active: number }>();
 const emits = defineEmits<{ (e: 'change', id: number): void }>();
 
-const store = useCharacterDataStore();
 const config = useConfig()
 
 const id = ref(0);
