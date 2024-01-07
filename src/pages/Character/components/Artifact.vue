@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Icon } from '@/components';
+import { Button, Icon } from '@shi-zhong/genshin-ui';
 // import { useCharacterStateStore } from '@/stores/Character';
 import { watch, ref } from 'vue';
 import LifeMax from '@/assets/icons/lifeMax.png';

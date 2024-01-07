@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Lock, RankBar, Refine } from '@/components/Tags';
-import BasicDetailCard from '@/components/Cards/DetailCard.vue';
+import { DetailCard as BasicDetailCard, Lock, RankBar, Refine } from '@shi-zhong/genshin-ui';
 import { ClassNameFactor, DataDecoder } from '@/utils';
 import {
   WeaponTypesTransform,
@@ -85,7 +84,7 @@ watch(
       key: AttributesTransform(data.data.sub.key),
       value: DataDecoder((lvl - 1) * data.data.sub.growth + data.data.sub.start, 1)
     }"
-    :imgUrl="data.basic.imgUrl"
+    :imgUrl="config.weaponImage(data.basic.imgUrl)"
     :type="WeaponTypesTransform(config.weaponTypeCode(data.basic.type)) ?? '单手剑'"
     :size="size"
   >

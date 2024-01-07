@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useArtifactStore } from '@/stores/Artifact';
 import { LazyImage } from '@/utils/directive/lazyImage';
-import { Image, Rarity, RarityToColor, ScrollView } from '@/components';
+import { Image } from '@/components';
+import { Rarity, ScrollView } from '@shi-zhong/genshin-ui';
 import { onUnmounted, ref } from 'vue';
 import Editor from './editor.vue';
 import { EventDispatch } from '@/utils';
@@ -49,7 +50,7 @@ const handleActive = (e: Event) => {
       >
         <div
           class="artifact-title"
-          :class="`bar-${RarityToColor(art.rarity)}`"
+          :class="`bar-${art.rarity}`"
         >
           <div>{{ art.name }}</div>
           <Rarity :rarity="art.rarity" />
@@ -129,19 +130,19 @@ const handleActive = (e: Event) => {
 }
 
 .bar {
-  &-golden {
+  &-5 {
     background: @rank-golden-bar;
   }
-  &-purple {
+  &-4 {
     background: @rank-purple-bar;
   }
-  &-blue {
+  &-3 {
     background: @rank-blue-bar;
   }
-  &-green {
+  &-2 {
     background: @rank-green-bar;
   }
-  &-gray {
+  &-1 {
     background: @rank-gray-bar;
   }
 }

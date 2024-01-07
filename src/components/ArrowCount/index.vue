@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ArrowImage from '@/assets/icons/arrow.png';
-import Icon from '../commons/Icon/index.vue';
+import { Icon } from '@shi-zhong/genshin-ui';
 import { ref, watchEffect } from 'vue';
 
 const props = defineProps<{

@@ -26,10 +26,10 @@ export interface BasicDetailCardProps {
 export interface CharacterCardProps {
   // 风 雷 水 火 冰 草
   element: '风' | '雷' | '水' | '火' | '冰' | '草' | '岩';
-  inTeam?: boolean;
   star: 1 | 2 | 3 | 4 | 5;
-  foucsing?: boolean;
   eName: string;
+  inTeam?: boolean;
+  foucsing?: boolean;
   name?: string;
-  lvl: number;
+  lvl?: number;
 }

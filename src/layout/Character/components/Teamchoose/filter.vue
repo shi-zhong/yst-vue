@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ScrollView, Button as FButton, Line } from '@/components';
+import { ScrollView, Button as FButton, Line } from '@shi-zhong/genshin-ui';
 import { ClassNameFactor, EventDispatch } from '@/utils';
 import { elements, weapons } from './static';
 

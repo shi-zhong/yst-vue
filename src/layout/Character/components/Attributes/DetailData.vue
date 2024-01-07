@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { ref } from 'vue';
-import { ScrollView, Icon } from '@/components';
+
 import { EventDispatch, ElementMastery } from '@/utils';
 import DropMask from './DropMask.vue';
 
@@ -10,14 +10,10 @@ import Defence from '@/assets/icons/defence.png';
 import EMaster from '@/assets/icons/elementMaster.png';
 import Power from '@/assets/icons/power.png';
 
-import Anemo from '@/assets/element/png/anemo.png';
-import Cryo from '@/assets/element/png/cryo.png';
-import Dendro from '@/assets/element/png/dendro.png';
-import Electro from '@/assets/element/png/electro.png';
-import Geo from '@/assets/element/png/geo.png';
-import Hydro from '@/assets/element/png/hydro.png';
-import Pyro from '@/assets/element/png/pyro.png';
+import { ScrollView, Icon, Element } from '@shi-zhong/genshin-ui';
 import { Sound } from '@/utils/sound';
+
+const { Anemo, Cryo, Dendro, Electro, Geo, Hydro, Pyro } = Element.ElementPng;
 
 const basicAttri = [
   { icon: LifeMax, txt: '生命值上限' },

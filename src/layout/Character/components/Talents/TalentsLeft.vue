@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { Button, Line, Tabs, TabPane, HighLight, ImageSrc } from '@/components';
+import { ImageSrc } from '@/components';
 
-import Bow from '@/assets/skills/bow.png';
-import Catalyst from '@/assets/skills/catalyst.webp';
-import Claymore from '@/assets/skills/caymore.png';
-import Polearm from '@/assets/skills/polearm.webp';
-import Sword from '@/assets/skills/sword.webp';
+import { Weapon, Button, Line, Tabs, TabPane, HighLight } from '@shi-zhong/genshin-ui';
 
 import { ClassNameFactor } from '@/utils/className';
 import { computed, ref } from 'vue';
@@ -13,6 +9,8 @@ import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 import { useConfig } from '@/stores/config';
 
 const S = ClassNameFactor('skills-');
+
+const { Bow, Catalyst, Claymore, Polearm, Sword } = Weapon.WeaponPicture;
 
 const store = useCharacterLayoutStore();
 const config = useConfig();
@@ -108,20 +106,20 @@ const active = ref('intro');
       v-if="store.talent <= 2"
       :class="S('button-con')"
     >
+    <!-- sound="dong" -->
       <Button
         type="shrink"
         icon="fork"
-        sound="dong"
         :disable="store.character?.talents[store.talent] === 1"
         balance
         @click="() => store.setTalentLevel(false)"
         >降级
       </Button>
       <div :class="S('gap')"></div>
+      <!-- sound="dong" -->
       <Button
         type="shrink"
         icon="round"
-        sound="dong"
         :disable="store.character?.talents[store.talent] === 10"
         balance
         @click="() => store.setTalentLevel(true)"
@@ -138,8 +136,6 @@ const active = ref('intro');
 </template>
 
 <style scoped lang="less">
-@import '@@/HighLight/index.less';
-
 .skills {
   &- {
     width: 500px;
@@ -197,14 +193,14 @@ const active = ref('intro');
 
   &-talent {
     &-type {
-      color: @highlight-spe;
+      color: var(--highlight-spe);
     }
     &-icon {
       width: 80px;
     }
 
     &-name {
-      color: @highlight-spe;
+      color: var(--highlight-spe);
       font-size: 18px;
     }
     &-lvl {

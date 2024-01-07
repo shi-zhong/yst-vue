@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import Bow from '@/assets/skills/bow.png';
-import Catalyst from '@/assets/skills/catalyst.webp';
-import Claymore from '@/assets/skills/caymore.png';
-import Polearm from '@/assets/skills/polearm.webp';
-import Sword from '@/assets/skills/sword.webp';
+import { Weapon } from '@shi-zhong/genshin-ui';
+
 import { ImageSrc } from '@/components';
 
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
@@ -11,7 +8,7 @@ import { useConfig } from '@/stores/config';
 
 import { ClassNameFactor, EventDispatch } from '@/utils';
 
-
+const { Bow, Catalyst, Claymore, Polearm, Sword } = Weapon.WeaponPicture;
 const S = ClassNameFactor('talents-');
 
 const store = useCharacterLayoutStore();
@@ -47,7 +44,7 @@ const handleRealImage = (index: number) => {
       Polearm: Polearm,
       Sword: Sword
     } as const;
-    return mapper[config.weaponTypeCode(store.characterStatic?.basic.weapon ?? 1)]
+    return mapper[config.weaponTypeCode(store.characterStatic?.basic.weapon ?? 1)];
   }
   return ImageSrc(
     `${config.character.baseUrl}/${store.characterStatic?.basic.eName}/talent${index + 1}.png`

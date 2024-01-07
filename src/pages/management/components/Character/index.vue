@@ -1,34 +1,58 @@
 <script setup lang="ts">
-import { ScrollView } from '@/components';
+import CharacterCard from '@/components/Cards/CharacterCard.vue';
 
-import { ref } from 'vue';
+import { ScrollView } from '@shi-zhong/genshin-ui/base';
+
+import { computed, ref } from 'vue';
 import Editor from './editor.vue';
 import { EventDispatch } from '@/utils';
+import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 
 const activeData = ref(-1);
 
 const handleActive = (e: Event) => {
   EventDispatch(e, {
-    'weapon-card': (dataset) => {
+    ch: (dataset) => {
       activeData.value = +dataset.key;
     }
   });
 };
+
+const store = useCharacterLayoutStore();
+
+const cards = computed(() =>
+  store.clist.map((c) => ({
+    element: c.basic.element,
+    name: c.basic.name,
+    eName: c.basic.eName,
+    star: c.basic.star,
+    id: c.id
+  }))
+);
+
+const select = computed(() => store.clist.find((c) => c.id === activeData.value));
 </script>
 
 <template>
   <div class="title">角色</div>
   <div class="content">
     <ScrollView
-      class="weapon-list"
+      class="character-list"
       scroll-behavior="scroll"
       data-type="top"
       @click="handleActive"
     >
+      <CharacterCard
+        v-for="card of cards"
+        data-type="ch"
+        :data-key="card.id"
+        :key="card.eName"
+        v-bind="card"
+      />
     </ScrollView>
     <Editor
-      class="weapon-right"
-      :active="activeData"
+      class="character-right"
+      :select="select"
       @change="(id: number) => activeData = id"
     />
   </div>
@@ -50,12 +74,12 @@ const handleActive = (e: Event) => {
   height: calc(100vh - 100px);
 }
 
-.weapon-right {
+.character-right {
   flex-grow: 1;
   flex-shrink: 1;
 }
 
-.weapon {
+.character {
   &-list {
     margin: 0 30px;
     min-width: 530px;

@@ -13,15 +13,14 @@ const options = [
   { txt: '资料', url: 'data' }
 ];
 
-const cRight = {  weapon: Weapon, artifact: Artifact };
+const cRight = { weapon: Weapon, artifact: Artifact };
 </script>
 
 <template>
-  <!-- <CharacterLayout
+  <CharacterLayout
     :menu="options"
     :right="cRight"
-  /> -->
-  hh
+  />
 </template>
 
 <style scoped lang="less"></style>

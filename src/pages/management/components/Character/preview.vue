@@ -3,7 +3,7 @@ import CharacterLayout from '@/layout/Character/index.vue';
 import Stainer from './stainer.vue';
 import Data from '@/layout/Character/components/data.vue';
 
-import Modal from '@/components/commons/Modal/Modal.vue';
+import { Modal } from '@shi-zhong/genshin-ui'
 
 import { computed, ref } from 'vue';
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
@@ -17,7 +17,7 @@ const options = [
   { txt: '资料', url: 'data' }
 ];
 
-const visible = ref(0);
+const visible = ref(false);
 
 const names = {
   元素: 'element',
@@ -67,7 +67,7 @@ const cRight = computed(() => ({
         fc: Stainer
       }
     ]"
-    @quit="() => (visible = 1)"
+    @quit="() => (visible = false)"
   />
   <Modal
     :visible="visible"
@@ -78,14 +78,14 @@ const cRight = computed(() => ({
     okText="保存"
     @ok="
       () => {
-        visible = 0;
+        visible = false;
         store.uploadCharacterStatic();
       }
     "
     @cancel="
       () => {
         store.rollbackCurrentStatic();
-        visible = 0;
+        visible = false;
       }
     "
     ><div class="dialog"><span>直接退出将导致修改丢失，是否保存？</span></div></Modal

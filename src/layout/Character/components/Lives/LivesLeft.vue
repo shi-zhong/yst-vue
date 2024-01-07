@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ClassNameFactor } from '@/utils/className';
-import { Button, HighLight, Line } from '@/components';
-import { ScrollView } from '@/components';
+import { Button, HighLight, Line, ScrollView } from '@shi-zhong/genshin-ui';
 import ConstellaionIcon from './ConstellaionIcon.vue';
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 import { computed } from 'vue';
@@ -52,8 +51,6 @@ const live = computed(() => store.characterStatic?.lives[store.lives] || { name:
 </template>
 
 <style scoped lang="less">
-@import '@@/HighLight/index.less';
-
 .constellation {
   &- {
     background: linear-gradient(180deg, @fontdarkgray, rgba(72, 85, 103, 0.7));
@@ -91,7 +88,7 @@ const live = computed(() => store.characterStatic?.lives[store.lives] || { name:
   }
 
   &-title {
-    color: @highlight-spe;
+    color: var(--highlight-spe);
     font-size: 26px;
     padding-bottom: 15px;
   }

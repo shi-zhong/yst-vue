@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { Icon } from '@/components/';
+import { Icon } from '@shi-zhong/genshin-ui';
 import { EventDispatch } from '@/utils';
 import { ref } from 'vue';
 

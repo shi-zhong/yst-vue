@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ScrollView, Select, Button, CharacterCard } from '@/components';
+import CharacterCard from '@/components/Cards/CharacterCard.vue';
+
+import { ScrollView, Select, Button } from '@shi-zhong/genshin-ui';
 import { ClassNameFactor } from '@/utils';
 import type { CharacterInstanceExpandModel } from '@/interface';
 
 import Character from '@/assets/icons/characters.webp';
-import Filter from '@/assets/icons/filter.svg';
-import Sort from '@/assets/icons/sort-line.svg';
 
 defineProps<{
   team: CharacterInstanceExpandModel[];
@@ -67,17 +67,17 @@ const S = ClassNameFactor('expand-character-');
         type="shrink"
         shape="round"
         @click="() => emits('toFilter')"
-        :icon="Filter"
+        icon="filter"
       ></Button>
       <Select
-        :class="S('select')"
+        style="width: 250px"
         :options="options"
       ></Select>
       <Button
         type="shrink"
         shape="round"
         @click="() => {}"
-        :icon="Sort"
+        icon="sort"
       ></Button>
     </div>
   </div>
@@ -147,10 +147,6 @@ const S = ClassNameFactor('expand-character-');
     margin: 0 35px;
     flex-grow: 1;
     flex-shrink: 1;
-  }
-
-  &-select {
-    width: 300px;
   }
 
   &-options {

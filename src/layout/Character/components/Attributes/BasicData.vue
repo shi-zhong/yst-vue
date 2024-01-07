@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, RankBar, Icon } from '@/components';
+import { Button, RankBar, Icon } from '@shi-zhong/genshin-ui';
 import { useCharacterStateStore } from '@/stores/Character';
 import { LongPress } from '@/utils/directive/longPress';
 import { watch, ref } from 'vue';
@@ -182,9 +182,9 @@ const data = {
       <div class="c-intro">深居净善宫的笼中之鸟，只能在梦中将世界尽收眼底。</div>
     </div>
     <div class="button">
+      <!-- //sound="dong" -->
       <Button
         type="shrink"
-        sound="dong"
         :disable="lvl === 1"
         :class="!buttonSelect ? 'button-round' : 'button-line'"
         @click="
@@ -214,9 +214,9 @@ const data = {
       >
         {{ !buttonSelect ? 'D' : decideMinTxt() }}
       </Button>
+      <!-- sound="dong" -->
       <Button
         type="shrink"
-        sound="dong"
         :disable="lvl === 90"
         :class="buttonSelect ? 'button-round' : 'button-line'"
         @click="

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BasicCard from './Card.vue';
+import { Card as BasicCard } from '@shi-zhong/genshin-ui';
 
 import type { CharacterCardProps } from './interface';
 import { GetElementPicture, ClassNameFactor } from '@/utils';

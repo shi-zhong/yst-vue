@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import type { CharacterInstanceBasicModel, CharacterModel } from '@/interface/characters';
 import { Between, merge } from '@/utils';
 import { CharacterTypeQuery, CharacterTypeUpdate } from '@/api/CharacterStatic';
-import { Message } from '@/components';
+import { Message } from '@shi-zhong/genshin-ui';
 
 export const useCharacterLayoutStore = defineStore('character-layout', {
   state: () => ({

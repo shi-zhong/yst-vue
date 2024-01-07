@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { Icon } from '@/components';
+import { Icon } from '@shi-zhong/genshin-ui';
 import Close from '@/assets/icons/close.png';
 import { ref } from 'vue';
 import { Sound } from '@/utils/sound';

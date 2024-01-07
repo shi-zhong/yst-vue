@@ -176,3 +176,44 @@ export function GetParentInstance(
   }
   return cur;
 }
+
+/**
+ * 深度克隆，同时克隆引用关系
+ * @param target
+ * @param parent
+ * @param map
+ * @returns
+ */
+export function DeepClone<T extends object | Array<any>>(
+  target: T,
+  map: Map<any, any> = new Map()
+): T {
+  if (target instanceof Array) {
+    const copy: any = [...target];
+    map.set(target, copy);
+    target.map((t: any, i) => {
+      if (t instanceof Object) {
+        if (map.has(t)) {
+          copy[i] = map.get(t);
+        } else {
+          copy[i] = DeepClone(t, map);
+        }
+      }
+    });
+    return copy;
+  } else {
+    const copy: any = { ...target };
+    map.set(target, copy);
+    Object.keys(copy).forEach((k) => {
+      if (copy[k] instanceof Object) {
+        if (map.has(copy[k])) {
+          copy[k] = map.get(copy[k]);
+          return;
+        }
+        copy[k] = DeepClone(copy[k], map);
+      }
+    });
+
+    return copy;
+  }
+}

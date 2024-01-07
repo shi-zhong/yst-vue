@@ -1,58 +1,12 @@
 <script setup lang="ts">
-import Modal from '@@/commons/Modal/Modal.vue';
-import { ScrollView } from '@/components';
-import { ref } from 'vue';
+import { Loading } from '@shi-zhong/genshin-ui';
 
 import { DropFile, DropImage } from '@/components';
 import { Login } from '@/api';
 
-import Loading from '@@/Loading/index.vue';
-
-const visible = ref(0);
-const visible1 = ref(0);
-const visible2 = ref(0);
 </script>
 
 <template>
-  <Modal
-    :visible="visible"
-    mask
-    @close="
-      () => {
-        visible = 0;
-      }
-    "
-  >
-    <ScrollView root-class="root">
-      <div style="height: 500px; width: 800px">456</div>
-    </ScrollView>
-  </Modal>
-  <Modal
-    :visible="visible1"
-    mask
-    @close="
-      () => {
-        visible1 = 0;
-      }
-    "
-  >
-  </Modal>
-  <Modal
-    :visible="visible2"
-    mask
-    @close="
-      () => {
-        visible2 = 0;
-      }
-    "
-  >
-    <ScrollView root-class="root">
-      <div style="height: 500px; width: 800px">123</div>
-    </ScrollView>
-  </Modal>
-  <button @click="visible++">uniqueinfobase</button>
-  <button @click="visible1++">open</button>
-  <button @click="visible2++">open</button>
   <DropFile style="background-color: red; width: 100px; height: 100px; display: inline-block">
     <div></div>
     <template #dropover> dropover </template>
@@ -60,12 +14,26 @@ const visible2 = ref(0);
 
   <button @click="Login">Get Token</button>
 
-  <div style="display: flex; justify-content: center;">
-    <Loading :progress="93" />
+  <div style="display: flex; justify-content: center">
+    <Loading :stage="10" :parts="1"  />
+  </div>
+
+  <div class="ys-nywys">
+    <div>原来</div>
+    <div>你也玩原神</div>
   </div>
 </template>
 
 <style scoped lang="less">
+.ys-nywys {
+  position: fixed;
+  left: 0;
+  width: 100vw;
+  height: 50vh;
+  font-size: 100px;
+  text-align: center;
+}
+
 .root {
   height: 500px;
 }

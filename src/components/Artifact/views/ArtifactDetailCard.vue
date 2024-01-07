@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Lock } from '@/components/Tags';
-import BasicDetailCard from '@/components/Cards/DetailCard.vue';
+import { DetailCard as BasicDetailCard, Lock } from '@shi-zhong/genshin-ui';
+
 import type { ArtifactSlots, ArtifactSuitModel } from '../interface';
 import Describe from './ArtifactDescribe.vue';
 import { ArtifactSlotsNameTransform } from '../functions';
@@ -62,7 +62,7 @@ watch(
     :title="data.slots[type]!.name"
     :rarity="data.rarity"
     :main="main"
-    :imgUrl="data.slots[type]!.imgUrl"
+    :imgUrl="'http://localhost:8000/static/artifacts/' + data.slots[type]!.imgUrl"
     :type="ArtifactSlotsNameTransform(type)"
     :size="size"
   >

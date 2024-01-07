@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia';
 import { Cookie, requestConfig } from '@/api';
-import { Message } from '@/components';
+import { Message } from '@shi-zhong/genshin-ui';
 import { Transformer } from '@/utils';
+
+const base = '/static'
 
 export const useConfig = defineStore('config', {
   state: () => ({
@@ -49,13 +51,13 @@ export const useConfig = defineStore('config', {
       return Transformer(state.weapon.types);
     },
     artifactImage(state) {
-      return (url: string) => `${state.artifact.baseUrl}/${url}`;
+      return (url: string) => `${base}/${state.artifact.baseUrl}/${url}`;
     },
     weaponImage(state) {
-      return (url: string) => `${state.weapon.baseUrl}/${url}`;
+      return (url: string) => `${base}/${state.weapon.baseUrl}/${url}`;
     },
     CharacterImage(state) {
-      return (url: string) => `${state.character.baseUrl}/${url}`
+      return (url: string) => `${base}/${state.character.baseUrl}/${url}`
     }
   },
   actions: {

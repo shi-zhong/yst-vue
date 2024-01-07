@@ -2,7 +2,9 @@
 import { ClassNameFactor } from '@/utils/className';
 import { computed, watchEffect } from 'vue';
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
-import { Button } from '@/components';
+
+import { Button } from '@shi-zhong/genshin-ui';
+
 import type { Menu } from './interface';
 
 import TalentsLeft from './components/Talents/TalentsLeft.vue';
@@ -13,10 +15,7 @@ import LivesRight from './components/Lives/LivesRight.vue';
 
 import TeamChoose from './components/Teamchoose/index.vue';
 
-import Back from '@/assets/icons/back.png';
-import Close from '@/assets/icons/close.png';
 import { Sound } from '@/utils/sound';
-
 
 const S = ClassNameFactor('character-page-');
 
@@ -107,7 +106,7 @@ const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cR
           <Button
             v-if="!['talents', 'lives'].includes(store.sidebar)"
             type="spread"
-            :icon="store.sidebar === '' ? Close : Back"
+            :icon="store.sidebar === '' ? 'close' : 'back'"
             @click="
               () => {
                 Sound.winClose.replay();

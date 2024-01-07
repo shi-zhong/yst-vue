@@ -1,7 +1,7 @@
 import type { WeaponTypes } from '@/components/Weapon';
 import { get, post, Cookie, tokenName } from './Request';
 import { type ArtifactSlots } from '@/components/Artifact';
-import { Message } from '@/components';
+import { Message } from '@shi-zhong/genshin-ui';
 
 type ConfigMapper = {
   character: {

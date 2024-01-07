@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ScrollView } from '@/components';
+import { ScrollView } from '@shi-zhong/genshin-ui'
 import { StarToMaxLevel, WeaponCard } from '@/components/Weapon';
 import { ref } from 'vue';
 import Editor from './editor.vue';
@@ -38,7 +38,7 @@ const handleActive = (e: Event) => {
         :imgUrl="weapon.basic.imgUrl"
         :lvl="StarToMaxLevel(weapon.basic.star)"
         :locked="true"
-        :rarity="weapon.basic.star"
+        :star="weapon.basic.star"
       />
     </ScrollView>
     <Editor

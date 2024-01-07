@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ClassNameFactor } from '@/utils';
-import { ScrollView } from '@/components';
+import { ScrollView } from '@shi-zhong/genshin-ui';
 
 import { elements, weapons } from './static';
 import Trash from '@/assets/icons/trash.png';

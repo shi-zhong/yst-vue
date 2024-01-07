@@ -12,7 +12,7 @@ export const ImageSrc = (src?: string) => {
   } else if (src.startsWith('data:image') || src.startsWith('/src/assets')) {
     return src;
   } else {
-    return 'http://localhost:8000/static/' + src;
+    return 'http://localhost:8000' + src;
   }
 };
 

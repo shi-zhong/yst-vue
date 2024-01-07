@@ -1,0 +1,175 @@
+{
+  "type": "object",
+  "items": [
+    {
+      "name": "id",
+      "type": "number"
+    },
+    {
+      "name": "uuid",
+      "type": "number"
+    },
+    {
+      "name": "basic",
+      "type": "object",
+      "items": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "star",
+          "type": "number"
+        },
+        {
+          "name": "birth",
+          "type": "string"
+        },
+        {
+          "name": "belong",
+          "type": "string"
+        },
+        {
+          "name": "weapon",
+          "type": "string"
+        },
+        {
+          "name": "life",
+          "type": "string"
+        },
+        {
+          "name": "honor",
+          "type": "string"
+        },
+        {
+          "name": "element",
+          "type": "string"
+        },
+        {
+          "name": "break_through",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "break_through_levels",
+      "type": "array",
+      "each": [
+        {
+          "type": "array",
+          "each": [
+            {
+              "type": "number"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "material",
+      "type": "object",
+      "items": [
+        {
+          "name": "boss",
+          "type": "string"
+        },
+        {
+          "name": "specialty",
+          "type": "string"
+        },
+        {
+          "name": "drops",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "talents",
+      "type": "array",
+      "each": [
+        {
+          "type": "object",
+          "items": [
+            {
+              "name": "detail",
+              "type": "array",
+              "each": [
+                {
+                  "type": "object",
+                  "items": [
+                    {
+                      "name": "name",
+                      "type": "string"
+                    },
+                    {
+                      "name": "data",
+                      "type": "array",
+                      "each": [
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "type",
+              "type": "string"
+            },
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "intro",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "items": [
+            {
+              "name": "detail",
+              "type": "array",
+              "each": []
+            },
+            {
+              "name": "type",
+              "type": "string"
+            },
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "intro",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "lives",
+      "type": "array",
+      "each": [
+        {
+          "type": "object",
+          "items": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "desc",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

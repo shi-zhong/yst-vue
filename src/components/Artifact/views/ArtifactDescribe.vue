@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /** @todo 使用网络获取数据  */
 /** 抽离成组件是由于卡片模式和角色详情中都有用到圣遗物套装效果描述 */
-import { Enable } from '@/components/Tags';
 import { useArtifactStore } from '@/stores/Artifact';
+import { Enable } from '@shi-zhong/genshin-ui';
 import { reactive, watch } from 'vue';
 import { merge } from '@/utils';
 import type { ArtifactSuitModel } from '..';

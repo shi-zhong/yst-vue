@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Lock } from '@/components/Tags';
-import { BasicCard } from '@/components/Cards';
+import { Card as BasicCard, Lock} from '@shi-zhong/genshin-ui'
 
 interface ArtifactCardProps {
   locked: boolean;

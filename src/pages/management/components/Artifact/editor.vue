@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { reactive, ref, toRaw, watchEffect } from 'vue';
 import { Drop } from '@/utils/directive';
-import { Icon, ScrollView, DropFile } from '@/components';
+import { DropFile } from '@/components';
+
+import { Icon, ScrollView } from '@shi-zhong/genshin-ui';
+
 import {
   type ArtifactSuitModel,
   ArtifactSlotsNameTransform,

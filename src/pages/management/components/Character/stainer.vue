@@ -123,7 +123,6 @@ watch(
 </template>
 
 <style lang="less">
-@import '@@/HighLight/index.less';
 
 .stainer {
   width: 80%;

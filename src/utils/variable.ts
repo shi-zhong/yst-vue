@@ -1,14 +1,3 @@
-export const RemoveRepeat = (arr: any[]) => {
-  const newarr: any[] = [];
-
-  arr.forEach((item) => {
-    if (newarr.findIndex((newitem) => ToEqual(item, newitem)) === -1) {
-      newarr.push(item);
-    }
-  });
-  return newarr;
-};
-
 /**
  * 校验两个变量是否相等
  * @param a

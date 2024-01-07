@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
 import { Drop } from '@/utils/directive';
-import { Icon, ScrollView, DropFile, Refine, Lock } from '@/components';
+import { DropFile } from '@/components';
+
+import { Icon, ScrollView, Refine, Lock } from '@shi-zhong/genshin-ui';
+
 import {
   WeaponTypesTransform,
   WeaponCard,
@@ -25,7 +28,7 @@ import {
   ReadTypeFrom,
   TypeTransfer
 } from '@/utils';
-import { Message } from '@/components/commons/Message';
+import { Message } from '@shi-zhong/genshin-ui';
 import { AttributesTransform } from '@@/Artifact';
 import ArrowCount from '@@/ArrowCount/index.vue';
 import { useWeaponStore, emptyWeaponTypes as template } from '@/stores/Weapon';
@@ -505,7 +508,7 @@ watch(
                   :imgUrl="basic.imgUrl"
                   :lvl="level"
                   :locked="lock"
-                  :rarity="basic.star"
+                  :star="basic.star"
                 />
               </td>
             </tr>

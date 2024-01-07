@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Lock, Refine } from '@/components/Tags';
-import BasicCard from '@/components/Cards/Card.vue';
+import { Card as BasicCard, Lock, Refine } from '@shi-zhong/genshin-ui';
 import { useConfig } from '@/stores/config';
 
 interface WeaponCardProps {

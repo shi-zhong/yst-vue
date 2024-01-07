@@ -1,14 +1,15 @@
 <script setup lang="tsx">
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 import { ClassNameFactor, EventDispatch, GetElementPicture } from '@/utils';
-import { Button, ScrollView, ImageSrc } from '@/components';
-import CRightMenu from './cRightMenu.vue';
+import { ImageSrc } from '@/components';
+import { Button, ScrollView, Menu } from '@shi-zhong/genshin-ui';
 import AvatarSideNone from '@/assets/icons/Side_None.png';
-import Menu from '@/assets/icons/menu.png';
+
 import RankPicture from './rank_star.png';
 import type { ElementsChinese, CharacterInstanceExpandModel } from '@/interface';
 import type { Menu as TMenu } from '../../interface';
 import { useConfig } from '@/stores/config';
+import { ref, watchEffect } from 'vue';
 
 withDefaults(
   defineProps<{
@@ -36,7 +37,7 @@ interface CharacterBoxProps {
 }
 
 const store = useCharacterLayoutStore();
-const config = useConfig()
+const config = useConfig();
 
 const S = ClassNameFactor('folding-character-drawer-');
 
@@ -67,6 +68,12 @@ const handleClickDispatch = (e: Event) => {
 const handleAvatarUrl = (eName: string) => {
   return ImageSrc(`${config.character.baseUrl}/${eName}/side_avatar.png`);
 };
+
+const selectMenu = ref('')
+
+watchEffect(() => {
+  store.setRight(selectMenu.value)
+})
 </script>
 
 <template>
@@ -124,7 +131,7 @@ const handleAvatarUrl = (eName: string) => {
           v-if="canExpand"
           type="spread"
           @click="() => emits('toExpand')"
-          :icon="Menu"
+          icon="menu"
         />
         <div
           v-else
@@ -134,7 +141,7 @@ const handleAvatarUrl = (eName: string) => {
     </div>
     <div :class="S('options')">
       <div :class="S('element-and-name')">{{ current.element }}元素 / {{ current.name }}</div>
-      <CRightMenu :options="menu" />
+      <Menu v-model="selectMenu" :options="menu" />
     </div>
   </div>
 </template>

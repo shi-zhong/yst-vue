@@ -1,4 +1,4 @@
-import { Message } from '@/components/commons/Message';
+import { Message } from '@shi-zhong/genshin-ui';
 
 const publicUrl = '/api/v1';
 

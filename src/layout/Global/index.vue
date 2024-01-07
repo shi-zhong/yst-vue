@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGlobal } from '@/stores/global';
-import Loading from '@@/Loading/index.vue';
+import { Loading } from '@shi-zhong/genshin-ui';
 
 const global = useGlobal();
 </script>
