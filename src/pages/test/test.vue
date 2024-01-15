@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { Loading } from '@shi-zhong/genshin-ui';
+import { Loading, Button } from '@shi-zhong/genshin-ui';
 
 import { DropFile, DropImage } from '@/components';
+import { SearchPath } from '@/utils/types';
 import { Login } from '@/api';
 
+console.log(SearchPath([1, 2, {a: 'a'}], '2.a'));
 </script>
 
 <template>
@@ -12,10 +14,14 @@ import { Login } from '@/api';
     <template #dropover> dropover </template>
   </DropFile>
 
-  <button @click="Login">Get Token</button>
+  <Button @click="Login" type="spread" icon="menu">Get Token</Button>
+  <Button type="spread" icon="menu">Get Token</Button>
 
   <div style="display: flex; justify-content: center">
-    <Loading :stage="10" :parts="1"  />
+    <Loading
+      :stage="10"
+      :parts="1"
+    />
   </div>
 
   <div class="ys-nywys">

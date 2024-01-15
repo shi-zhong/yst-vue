@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Card as BasicCard } from '@shi-zhong/genshin-ui';
+import { Card as BasicCard, Element } from '@shi-zhong/genshin-ui';
 
 import type { CharacterCardProps } from './interface';
 import { GetElementPicture, ClassNameFactor } from '@/utils';

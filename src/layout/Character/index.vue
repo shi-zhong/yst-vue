@@ -15,7 +15,8 @@ import LivesRight from './components/Lives/LivesRight.vue';
 
 import TeamChoose from './components/Teamchoose/index.vue';
 
-import { Sound } from '@/utils/sound';
+import Sound from '@/assets/sound';
+
 
 const S = ClassNameFactor('character-page-');
 
@@ -38,11 +39,13 @@ const props = withDefaults(
       fc: any;
       binding?: Record<string, any>;
     }[];
+    canExpand?: boolean;
   }>(),
   {
     title: '角色配置',
     right: () => ({}),
-    content: () => []
+    content: () => [],
+    canExpand: true
   }
 );
 
@@ -97,6 +100,7 @@ const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cR
           :is="cLeft"
           @click.stop="() => {}"
           :menu="menu"
+          :canExpand="canExpand"
         />
       </KeepAlive>
     </Transition>

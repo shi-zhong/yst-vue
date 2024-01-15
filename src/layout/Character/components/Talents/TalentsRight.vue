@@ -47,7 +47,7 @@ const handleRealImage = (index: number) => {
     return mapper[config.weaponTypeCode(store.characterStatic?.basic.weapon ?? 1)];
   }
   return ImageSrc(
-    `${config.character.baseUrl}/${store.characterStatic?.basic.eName}/talent${index + 1}.png`
+    `/static/${config.character.baseUrl}/${store.characterStatic?.basic.eName}/talent${index + 1}.png`
   );
 };
 </script>

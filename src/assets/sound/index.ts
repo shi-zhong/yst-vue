@@ -1,8 +1,8 @@
-import WindowOpenMp3 from '@/assets/mp3/open_win.mp3';
-import WindowCloseMp3 from '@/assets/mp3/close_win.mp3';
-import Dong from '@/assets/mp3/effect_btn.dong.mp3';
-import Ding from '@/assets/mp3/effect_drop.ding.mp3';
-import DDing from '@/assets/mp3/switch_task.mp3';
+import WindowOpenMp3 from './open_win.mp3';
+import WindowCloseMp3 from './close_win.mp3';
+import Dong from './effect_btn.dong.mp3';
+import Ding from './effect_drop.ding.mp3';
+import DDing from './switch_task.mp3';
 
 const handlePlayMp3Resource = (resource: string, volume: number = 1) => {
   const mp3 = new Audio(resource);
@@ -25,7 +25,7 @@ const handlePlayMp3Resource = (resource: string, volume: number = 1) => {
   };
 };
 
-export const Sound = {
+export default {
   winOpen: handlePlayMp3Resource(WindowOpenMp3),
   winClose: handlePlayMp3Resource(WindowCloseMp3),
   Dong: handlePlayMp3Resource(Dong, 0.4),

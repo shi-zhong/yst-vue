@@ -2,11 +2,11 @@
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 import { ClassNameFactor, EventDispatch, GetElementPicture } from '@/utils';
 import { ImageSrc } from '@/components';
-import { Button, ScrollView, Menu } from '@shi-zhong/genshin-ui';
+import { Button, ScrollView, Menu, Element } from '@shi-zhong/genshin-ui';
 import AvatarSideNone from '@/assets/icons/Side_None.png';
 
 import RankPicture from './rank_star.png';
-import type { ElementsChinese, CharacterInstanceExpandModel } from '@/interface';
+import type { CharacterInstanceExpandModel } from '@/interface';
 import type { Menu as TMenu } from '../../interface';
 import { useConfig } from '@/stores/config';
 import { ref, watchEffect } from 'vue';
@@ -14,7 +14,7 @@ import { ref, watchEffect } from 'vue';
 withDefaults(
   defineProps<{
     menu: TMenu[];
-    current: { element: ElementsChinese; name: string };
+    current: { element: Element.ElementsChinese; name: string };
     team: CharacterInstanceExpandModel[];
     list: CharacterInstanceExpandModel[];
     canExpand?: boolean;
@@ -66,12 +66,12 @@ const handleClickDispatch = (e: Event) => {
 };
 
 const handleAvatarUrl = (eName: string) => {
-  return ImageSrc(`${config.character.baseUrl}/${eName}/side_avatar.png`);
+  return ImageSrc(`/static/${config.character.baseUrl}/${eName}/side_avatar.png`);
 };
 
-const selectMenu = ref('')
+const selectMenu = ref(store.cRight)
 
-watchEffect(() => {
+watchEffect(() => { 
   store.setRight(selectMenu.value)
 })
 </script>

@@ -32,7 +32,6 @@ const store = useCharacterLayoutStore();
 const config = useConfig();
 
 const cRight = computed(() => ({
-
   data: {
     fc: Data,
     binding: {
@@ -67,7 +66,8 @@ const cRight = computed(() => ({
         fc: Stainer
       }
     ]"
-    @quit="() => (visible = false)"
+    :canExpand="false"
+    @quit="() => (visible = true)"
   />
   <Modal
     :visible="visible"
@@ -85,6 +85,7 @@ const cRight = computed(() => ({
     @cancel="
       () => {
         store.rollbackCurrentStatic();
+        $router.back()
         visible = false;
       }
     "

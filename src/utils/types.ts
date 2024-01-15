@@ -1,4 +1,4 @@
-import { RemoveRepeat } from './array';
+import { RemoveRepeat } from './variable';
 /**
  * VerifyType
  */

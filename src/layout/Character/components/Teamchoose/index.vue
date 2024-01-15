@@ -15,6 +15,7 @@ const { select, list, team, clist } = storeToRefs(store);
 
 defineProps<{
   menu: Menu[];
+  canExpand?: boolean
 }>();
 
 onMounted(() => {
@@ -100,6 +101,7 @@ const updateFilter = (
         :active="active"
         :team="inTeam"
         :list="otTeam"
+        :canExpand="canExpand"
         @toExpand="() => {store.pushSidebar('expand'); store.setRight('attr')}"
       />
     </Transition>

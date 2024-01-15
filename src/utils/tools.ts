@@ -1,5 +1,4 @@
-import type { ComponentInternalInstance } from 'vue';
-import type { DoubleSideMap, ReverseObj, StringOnly, ToString } from './typesHelper';
+import type { DoubleSideMap, ReverseObj, StringOnly, ToString } from '@/interface/types';
 
 /**
  * 合并 data 到 reactive 对象
@@ -23,34 +22,34 @@ export const EventDispatch = <T = { [key: string]: string }>(
   e: Event,
   events: {
     [key: string]: (dataset: T) => void | boolean | undefined;
+  },
+  option?: {
+    maxLoop?: number;
+    type?: string;
   }
 ): boolean => {
-  const topElement = (e.currentTarget as unknown as HTMLElement).dataset.type;
+  const type = option?.type || 'type';
+  const maxLoop = option?.maxLoop || 10;
+  const topElement = e.currentTarget as unknown as HTMLElement;
 
   if (!topElement) {
-    console.error('Unknown top element type.');
+    console.error('Unknown top element.');
     return false;
   }
 
   let i = 0;
-  let target = e.target as unknown as HTMLElement;
+  let target = e.target as unknown as HTMLElement | null;
   const eventNames = Object.keys(events);
 
-  while (i < 10) {
-    if (target.dataset.type && eventNames.includes(target.dataset.type)) {
-      const next = events[target.dataset.type](target.dataset as T);
+  while (i < maxLoop && target !== null && target !== topElement) {
+    if (target.dataset[type] && eventNames.includes(target.dataset[type]!)) {
+      const next = events[target.dataset[type]!](target.dataset as T);
       if (!next) {
         return true;
       }
-    } else if (target.dataset.type === topElement) {
-      return false;
     }
 
-    if (target.parentElement && target.parentElement !== null) {
-      target = target.parentElement;
-    } else {
-      return false;
-    }
+    target = target.parentElement;
     i++;
   }
   return false;
@@ -155,27 +154,6 @@ export const DownLoadJson = (origin: object, file_name: string) => {
   tmpLink.click();
   URL.revokeObjectURL(objectUrl);
 };
-
-/**
- * 获取最近的父组件实例, 为了避免重名，需要在父组件中暴露类型为 symbol 的 type 属性
- * @param current getCurrentInstance
- * @param parentSymbol parentSymbol
- * @returns
- */
-export function GetParentInstance(
-  current: ComponentInternalInstance | null,
-  parentSymbol: symbol
-): ComponentInternalInstance | null {
-  let cur = current;
-
-  while (cur !== null) {
-    if (cur.exposed && cur.exposed.type === parentSymbol) {
-      return cur;
-    }
-    cur = cur.parent;
-  }
-  return cur;
-}
 
 /**
  * 深度克隆，同时克隆引用关系

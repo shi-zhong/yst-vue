@@ -2,7 +2,8 @@
 import { Icon } from '@shi-zhong/genshin-ui';
 import Close from '@/assets/icons/close.png';
 import { ref } from 'vue';
-import { Sound } from '@/utils/sound';
+import Sound from '@/assets/sound';
+
 
 const props = withDefaults(defineProps<{ autoClose?: boolean; visible: boolean }>(), {
   autoClose: false

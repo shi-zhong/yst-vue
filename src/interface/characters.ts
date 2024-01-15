@@ -1,19 +1,19 @@
-import { type ElementsChinese } from './elements';
+import { Element } from '@shi-zhong/genshin-ui';
 
 // 每个角色实例的基本信息
 export interface CharacterInstanceBasicModel {
   id: number;
   character_id: number;
   lvl: number;
-  talents: number[];
-  lives: number;
+  talents: [number, number, number];
+  lives: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 export interface CharacterInstanceExpandModel extends CharacterInstanceBasicModel {
   name: string;
   star: 1 | 2 | 3 | 4 | 5;
   eName: string;
-  element: '风' | '雷' | '水' | '火' | '冰' | '草' | '岩';
+  element: Element.ElementsChinese;
 }
 
 // 角色(共性)信息
@@ -36,7 +36,7 @@ export interface CharacterBasicModel {
   name: string;
   star: 1 | 2 | 3 | 4 | 5;
   eName: string;
-  element: ElementsChinese;
+  element: Element.ElementsChinese;
   weapon: number;
   birth: string;
   belong: string;

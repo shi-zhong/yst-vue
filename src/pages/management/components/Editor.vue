@@ -7,11 +7,12 @@ const { vDrop } = Drop();
 
 const emits = defineEmits<{
   (e: 'drop', text: string, file: File): void;
+  (e: 'preview'): void;
   (e: 'close'): void;
   (e: 'save'): void;
 }>();
 
-defineProps<{ isNew: boolean; title?: string; using: boolean; icon: string }>();
+defineProps<{ isNew: boolean; title?: string; using: boolean; icon: string; preview?: boolean }>();
 </script>
 
 <template>
@@ -24,6 +25,12 @@ defineProps<{ isNew: boolean; title?: string; using: boolean; icon: string }>();
         <span>编辑器·{{ isNew ? '修改' : '新建' }}{{ willdrop.willdrop ? '·释放新建' : '' }}</span>
         {{ title ?? '' }}
         <div>
+          <button
+            v-if="preview && using"
+            @click="() => emits('preview')"
+          >
+            预览
+          </button>
           <button @click="() => emits('close')">关闭</button>
           <button @click="() => emits('save')">保存</button>
         </div>

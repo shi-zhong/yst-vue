@@ -11,7 +11,7 @@ import EMaster from '@/assets/icons/elementMaster.png';
 import Power from '@/assets/icons/power.png';
 
 import { ScrollView, Icon, Element } from '@shi-zhong/genshin-ui';
-import { Sound } from '@/utils/sound';
+import Sound from '@/assets/sound';
 
 const { Anemo, Cryo, Dendro, Electro, Geo, Hydro, Pyro } = Element.ElementPng;
 

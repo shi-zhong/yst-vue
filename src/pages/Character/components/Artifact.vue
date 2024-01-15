@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button, Icon } from '@shi-zhong/genshin-ui';
-// import { useCharacterStateStore } from '@/stores/Character';
+import { useCharacterStateStore } from '@/stores/Character';
 import { watch, ref } from 'vue';
 import LifeMax from '@/assets/icons/lifeMax.png';
 import Attack from '@/assets/icons/attack.png';
@@ -8,12 +8,13 @@ import Defence from '@/assets/icons/defence.png';
 import EMaster from '@/assets/icons/elementMaster.png';
 import { ArtifactDescribe } from '@/components/Artifact';
 
-import { Sound } from '@/utils/sound';
+import Sound from '@/assets/sound';
+
 
 const buttonSelect = ref(false);
 
 const detailVisible = ref(false);
-// const store = useCharacterStateStore();
+const store = useCharacterStateStore();
 
 watch(
   () => store.sidebar.state,
@@ -133,7 +134,7 @@ const data = {
     <Button
       type="shrink"
       class="button-line"
-      sound="dong"
+      :sound="Sound.Dong"
     >
       替换
     </Button>
@@ -141,7 +142,6 @@ const data = {
 </template>
 
 <style scoped lang="less">
-@import '@@@/index.less';
 .basic-data-container {
   height: 100%;
   padding: 40px 0;

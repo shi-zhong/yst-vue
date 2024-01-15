@@ -69,6 +69,9 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
         this.select = this.list.length ? this.list[0].id : -1;
       }
     },
+    setList(list: CharacterInstanceBasicModel[]) {
+      this.list = list;
+    },
     setTalent(talent: number) {
       this.talent = talent;
     },
@@ -126,6 +129,14 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
         ch.lives = this.lives;
       }
     },
+    pushCharacterStatic(staticState: CharacterModel){
+      const existStaticState = this.clist.find(l => l.id === staticState.id)
+      if (existStaticState) {
+        merge(existStaticState, staticState)
+      } else {
+        this.clist.push(staticState);
+      }
+    },
     async uploadCharacterStatic() {
       const find = this.clist.find((f) => f.id === 0);
       if (find === undefined) return;
@@ -134,18 +145,8 @@ export const useCharacterLayoutStore = defineStore('character-layout', {
       find.id = data.id;
       this.character.character_id = data.id;
     },
-    async rollbackCurrentStatic() {
-      const ch = this.characterStatic;
-      if (ch === undefined || ch.id === 0) return;
-      const { msg, data } = await CharacterTypeQuery(ch.id);
-
-      if (msg === 'OK') {
-        const find = this.clist.find((f) => f.id === ch.id);
-
-        if (find !== undefined && data.character_static[0]) {
-          merge(find, data.character_static[0]);
-        }
-      }
+    rollbackCurrentStatic() {
+      this.clist = this.clist.filter((f) => f.id !== 0);
     },
     async getAllCharacterStatic() {
       const { msg, data } = await CharacterTypeQuery();

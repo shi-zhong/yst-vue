@@ -10,7 +10,7 @@ import EMaster from '@/assets/icons/elementMaster.png';
 import Power from '@/assets/icons/power.png';
 
 import DetailData from './DetailData.vue';
-import { Sound } from '@/utils/sound';
+import Sound from '@/assets/sound';
 
 const buttonSelect = ref(false);
 
