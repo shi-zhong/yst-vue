@@ -1,4 +1,4 @@
-import { Element } from '@shi-zhong/genshin-ui';
+import type { ElementsChinese } from '@shi-zhong/genshin-ui';
 
 // 每个角色实例的基本信息
 export interface CharacterInstanceBasicModel {
@@ -13,7 +13,7 @@ export interface CharacterInstanceExpandModel extends CharacterInstanceBasicMode
   name: string;
   star: 1 | 2 | 3 | 4 | 5;
   eName: string;
-  element: Element.ElementsChinese;
+  element: ElementsChinese;
 }
 
 // 角色(共性)信息
@@ -36,7 +36,7 @@ export interface CharacterBasicModel {
   name: string;
   star: 1 | 2 | 3 | 4 | 5;
   eName: string;
-  element: Element.ElementsChinese;
+  element: ElementsChinese;
   weapon: number;
   birth: string;
   belong: string;

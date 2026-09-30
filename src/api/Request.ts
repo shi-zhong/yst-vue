@@ -9,6 +9,7 @@ interface Options {
   headers?: Record<string, string>;
   token?: boolean;
   data?: object;
+  query?: object;
 }
 
 export const Cookie = {
@@ -42,6 +43,13 @@ const Fetch = (url: string, options?: Options) => {
         : options?.data && JSON.stringify(options.data),
     token: options?.token && Cookie.get(tokenName)
   };
+
+  if (options?.query) {
+    const query = Object.entries(options.query).map(([k, v]: any) => {
+      return `${k}=${encodeURIComponent(v)}`
+    }).join('&')
+    url = `${url}?${query}`;
+  }
 
   return fetch(url, opt)
     .then(

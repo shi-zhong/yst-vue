@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Weapon } from '@shi-zhong/genshin-ui';
+import { WeaponPicture } from '@shi-zhong/genshin-ui';
 
 import { ImageSrc } from '@/components';
 
@@ -8,7 +8,7 @@ import { useConfig } from '@/stores/config';
 
 import { ClassNameFactor, EventDispatch } from '@/utils';
 
-const { Bow, Catalyst, Claymore, Polearm, Sword } = Weapon.WeaponPicture;
+const { Bow, Catalyst, Claymore, Polearm, Sword } = WeaponPicture;
 const S = ClassNameFactor('talents-');
 
 const store = useCharacterLayoutStore();

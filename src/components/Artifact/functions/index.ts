@@ -1,5 +1,6 @@
-import { Transformer } from '@/utils';
-import type { ArtifactMainArrtibutes, ArtifactSlots, ArtifactSlotsChinese } from '../interface';
+import { Transformer, Between } from '@/utils';
+import type { ArtifactSlotsCode, ArtifactSlotsChinese } from '@shi-zhong/genshin-ui';
+import type { ArtifactMainArrtibutes } from '../interface';
 
 const AttributesMapper = {
   ATK: '攻击力',
@@ -67,16 +68,55 @@ const ArtifactSlotMainAttributes = {
  * @returns
  */
 export const ArtifactSlotMainAttributesCheck = (
-  slot: ArtifactSlots,
+  slot: ArtifactSlotsCode,
   main: ArtifactMainArrtibutes
 ) => {
   return ArtifactSlotMainAttributes[slot].includes(main);
 };
 
-export const ArtifactSlotsNameTransform = Transformer<Record<ArtifactSlots, ArtifactSlotsChinese>>({
+export const ArtifactSlotsNameTransform = Transformer<
+  Record<ArtifactSlotsCode, ArtifactSlotsChinese>
+>({
   FlowerOfLife: '生之花',
   PlumnOfDeath: '死之羽',
   SandsOfEon: '时之沙',
   GobletOfEonothem: '空之杯',
   CircletOfLogos: '理之冠'
 } as const);
+
+const artifactList = [
+  'FlowerOfLife',
+  'PlumnOfDeath',
+  'SandsOfEon',
+  'GobletOfEonothem',
+  'CircletOfLogos'
+];
+
+const artifactChineseList = ['生之花', '死之羽', '时之沙', '空之杯', '理之冠'];
+
+export const ArtifactSlotsToUniformNumber = (
+  type: number | ArtifactSlotsCode | ArtifactSlotsChinese
+) => {
+  let i = 0;
+  if (typeof type === 'number') {
+    i = Between(type, 0, 5);
+  } else if (artifactList.includes(type)) {
+    i = artifactList.indexOf(type);
+  } else {
+    i = artifactChineseList.indexOf(type);
+  }
+
+  return i;
+};
+
+export const ArtifactSlotsToCode = (type: number | ArtifactSlotsCode | ArtifactSlotsChinese) => {
+  artifactList[ArtifactSlotsToUniformNumber(type)];
+};
+
+export const ArtifactSlotsToChinese = (type: number | ArtifactSlotsCode | ArtifactSlotsChinese) => {
+  return artifactChineseList[ArtifactSlotsToUniformNumber(type)];
+};
+
+export const ArtifactImgFileName = (id: number, type: number | ArtifactSlotsCode | ArtifactSlotsChinese) => {
+  return `${id.toString().padStart(3, '0')}_${ArtifactSlotsToUniformNumber(type)}.png`
+}

@@ -4,16 +4,22 @@ import { ref } from 'vue';
 import { EventDispatch, ElementMastery } from '@/utils';
 import DropMask from './DropMask.vue';
 
-import LifeMax from '@/assets/icons/lifeMax.png';
-import Attack from '@/assets/icons/attack.png';
-import Defence from '@/assets/icons/defence.png';
-import EMaster from '@/assets/icons/elementMaster.png';
-import Power from '@/assets/icons/power.png';
+import LifeMax from '@/assets/attrs/lifeMax.png';
+import Attack from '@/assets/attrs/attack.png';
+import Defence from '@/assets/attrs/defence.png';
+import EMaster from '@/assets/attrs/elementMaster.png';
+import Power from '@/assets/attrs/power.png';
+import CodeDown from '@/assets/attrs/codeDown.png';
+import Physical from '@/assets/attrs/physical.png';
+import Charge from '@/assets/attrs/chargeEffect.png';
+import CURD from '@/assets/attrs/CURD.png';
+import Heal from '@/assets/attrs/heal.png';
+import Shield from '@/assets/attrs/shield.png';
 
-import { ScrollView, Icon, Element } from '@shi-zhong/genshin-ui';
+import { ScrollView, Icon, ElementPng } from '@shi-zhong/genshin-ui';
 import Sound from '@/assets/sound';
 
-const { Anemo, Cryo, Dendro, Electro, Geo, Hydro, Pyro } = Element.ElementPng;
+const { Anemo, Cryo, Dendro, Electro, Geo, Hydro, Pyro } = ElementPng;
 
 const basicAttri = [
   { icon: LifeMax, txt: '生命值上限' },
@@ -23,13 +29,13 @@ const basicAttri = [
   { icon: Power, txt: '体力上限' }
 ];
 const moreAttri = [
-  { icon: '', txt: '暴击率' },
+  { icon: CURD, txt: '暴击率' },
   { icon: '', txt: '暴击伤害' },
-  { icon: '', txt: '治疗加成' },
+  { icon: Heal, txt: '治疗加成' },
   { icon: '', txt: '受治疗加成' },
-  { icon: '', txt: '元素充能效率' },
-  { icon: '', txt: '冷却缩减' },
-  { icon: '', txt: '护盾强效' }
+  { icon: Charge, txt: '元素充能效率' },
+  { icon: CodeDown, txt: '冷却缩减' },
+  { icon: Shield, txt: '护盾强效' }
 ];
 const element = [
   { icon: Pyro, txt: '火' },
@@ -39,7 +45,7 @@ const element = [
   { icon: Anemo, txt: '风' },
   { icon: Cryo, txt: '冰' },
   { icon: Geo, txt: '岩' },
-  { icon: '', txt: '物理' }
+  { icon: Physical, txt: '物理' }
 ];
 const query = ['元素精通', '元素充能效率', '冷却缩减', '护盾强效'];
 

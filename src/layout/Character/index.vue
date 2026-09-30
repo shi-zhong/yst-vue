@@ -110,7 +110,7 @@ const cRight = computed(() => props.right[store.cRight] || builtInRight[store.cR
           <Button
             v-if="!['talents', 'lives'].includes(store.sidebar)"
             type="spread"
-            :icon="store.sidebar === '' ? 'close' : 'back'"
+            :icon="store.sidebar === '' ? '$close' : '$back'"
             @click="
               () => {
                 Sound.winClose.replay();

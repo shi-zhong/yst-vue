@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Card as BasicCard, Element } from '@shi-zhong/genshin-ui';
+import { Card as BasicCard, ElementWebp, ElementsCTE  } from '@shi-zhong/genshin-ui';
 
 import type { CharacterCardProps } from './interface';
-import { GetElementPicture, ClassNameFactor } from '@/utils';
+import { ClassNameFactor } from '@/utils';
 
 import { useConfig } from '@/stores/config';
 
@@ -30,7 +30,7 @@ const config = useConfig();
     <img
       :class="S('element')"
       draggable="false"
-      :src="GetElementPicture(element)"
+      :src="ElementWebp[ElementsCTE[element]]"
       alt="element"
     />
   </BasicCard>

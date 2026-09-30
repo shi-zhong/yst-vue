@@ -1,6 +1,7 @@
-import type { WeaponTypes } from '@/components/Weapon';
+import type { WeaponsCode, ArtifactSlotsCode } from '@shi-zhong/genshin-ui';
+
 import { get, post, Cookie, tokenName } from './Request';
-import { type ArtifactSlots } from '@/components/Artifact';
+
 import { Message } from '@shi-zhong/genshin-ui';
 
 type ConfigMapper = {
@@ -11,21 +12,22 @@ type ConfigMapper = {
   artifact: {
     base: number;
     baseUrl: string;
-    slots: Record<ArtifactSlots, number>;
+    slots: Record<ArtifactSlotsCode, number>;
   };
   weapon: {
     base: number;
     baseUrl: string;
-    types: Record<WeaponTypes, number>;
+    types: Record<WeaponsCode, number>;
   };
 };
 
 export const requestConfig = () => get<ConfigMapper>('/config');
 
-export const UploadImg = (formData: FormData) =>
+export const UploadImg = (formData: FormData, opt?: { dir?: string; hash?: string }) =>
   post<{ url: string }>('/upload/img', {
     data: formData,
-    headers: {}
+    headers: {},
+    query: opt
   });
 
 export const Login = () =>
@@ -36,7 +38,7 @@ export const Login = () =>
     }
   }).then((data) => {
     if (data.code === 20000) {
-      Message.success('获取成功')
+      Message.success('获取成功');
       Cookie.set(tokenName, data.data.token);
     }
   });

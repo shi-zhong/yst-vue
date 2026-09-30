@@ -18,3 +18,7 @@ export const CharacterTypeImage = (name: string) => {
 export const CharacterTypeClean = (name: string) => {
   return post(`/character/type/image/clean/${name}`);
 };
+
+export const CharacterEName = () => {
+  return get<{ names: string[] }>('/character/type/names');
+};

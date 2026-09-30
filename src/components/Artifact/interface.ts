@@ -1,11 +1,4 @@
-export type ArtifactSlots =
-  | 'FlowerOfLife'
-  | 'PlumnOfDeath'
-  | 'SandsOfEon'
-  | 'GobletOfEonothem'
-  | 'CircletOfLogos';
-
-export type ArtifactSlotsChinese = '生之花' | '死之羽' | '时之沙' | '空之杯' | '理之冠';
+import type { ArtifactSlots, ArtifactSlotsChinese } from '@shi-zhong/genshin-ui';
 
 export type ArtifactMainAttributes = {
   [key in ArtifactSlots]: ArtifactMainArrtibutes[];
@@ -61,18 +54,19 @@ export interface ArtifactInstanceModel {
   lock: boolean;
 }
 
+export interface ArtifactSlotModel {
+  name: string;
+  type: ArtifactSlotsChinese;
+  story: string;
+  describe: string;
+}
+
 export interface ArtifactSuitModel {
   id: number;
   uuid: number;
   name: string;
   rarity: 1 | 2 | 3 | 4 | 5;
-  slots: {
-    [key in ArtifactSlots]: {
-      name: string;
-      imgUrl: string;
-      describe: string;
-    };
-  };
+  slots: ArtifactSlotModel[];
   effects: {
     limit: number;
     describe: string;

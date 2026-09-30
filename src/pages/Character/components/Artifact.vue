@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button, Icon } from '@shi-zhong/genshin-ui';
-import { useCharacterStateStore } from '@/stores/Character';
+import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
 import { watch, ref } from 'vue';
 import LifeMax from '@/assets/icons/lifeMax.png';
 import Attack from '@/assets/icons/attack.png';
@@ -14,12 +14,12 @@ import Sound from '@/assets/sound';
 const buttonSelect = ref(false);
 
 const detailVisible = ref(false);
-const store = useCharacterStateStore();
+const store = useCharacterLayoutStore();
 
 watch(
-  () => store.sidebar.state,
+  () => store.sidebar,
   () => {
-    if (store.sidebar.state !== 'folding') {
+    if (store.sidebar !== 'folding') {
       buttonSelect.value = false;
     }
   }

@@ -1,8 +1,8 @@
 <script setup lang="tsx">
 import { useCharacterLayoutStore } from '@/stores/CharacterLayout';
-import { ClassNameFactor, EventDispatch, GetElementPicture } from '@/utils';
+import { ClassNameFactor, EventDispatch } from '@/utils';
 import { ImageSrc } from '@/components';
-import { Button, ScrollView, Menu, Element } from '@shi-zhong/genshin-ui';
+import { Button, ScrollView, Menu, ElementWebp, ElementsCTE, type ElementsChinese } from '@shi-zhong/genshin-ui';
 import AvatarSideNone from '@/assets/icons/Side_None.png';
 
 import RankPicture from './rank_star.png';
@@ -14,7 +14,7 @@ import { ref, watchEffect } from 'vue';
 withDefaults(
   defineProps<{
     menu: TMenu[];
-    current: { element: Element.ElementsChinese; name: string };
+    current: { element: ElementsChinese; name: string };
     team: CharacterInstanceExpandModel[];
     list: CharacterInstanceExpandModel[];
     canExpand?: boolean;
@@ -83,7 +83,7 @@ watchEffect(() => {
         <img
           :class="S('element-image')"
           :draggable="false"
-          :src="GetElementPicture(current?.element || '火')"
+          :src="ElementWebp[ElementsCTE[current?.element || '火']]"
           alt="element"
         />
       </div>

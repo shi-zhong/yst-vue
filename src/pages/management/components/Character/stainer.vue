@@ -9,7 +9,7 @@ const rich = new RichNodeAction(() => updater.value++);
 
 const store = useCharacterLayoutStore();
 
-const S = ClassNameFactor('highlight-');
+const S = ClassNameFactor('stainer-highlight-');
 
 const codeStyle = [
   S('spe'),
@@ -123,7 +123,6 @@ watch(
 </template>
 
 <style lang="less">
-
 .stainer {
   width: 80%;
   margin: 20px;
@@ -151,6 +150,36 @@ watch(
     white-space: pre-line;
 
     user-select: text;
+  }
+
+  &-highlight {
+    &-spe {
+      color: var(--highlight-spe);
+    }
+    &-fire {
+      color: var(--highlight-fire);
+    }
+    &-water {
+      color: var(--highlight-water);
+    }
+    &-elec {
+      color: var(--highlight-elec);
+    }
+    &-ice {
+      color: var(--highlight-ice);
+    }
+    &-grass {
+      color: var(--highlight-grass);
+    }
+    &-wind {
+      color: var(--highlight-wind);
+    }
+    &-stone {
+      color: var(--highlight-stone);
+    }
+    &-italic {
+      color: var(--highlight-italic);
+    }
   }
 }
 </style>

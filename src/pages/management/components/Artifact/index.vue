@@ -8,14 +8,16 @@ import Editor from './editor.vue';
 import { EventDispatch } from '@/utils';
 import { useConfig } from '@/stores/config';
 
+import { ArtifactImgFileName } from '@/components/Artifact';
+
 const view = ref();
 
 const { close, vLazy } = LazyImage(view.value);
 
 const store = useArtifactStore();
-const config = useConfig()
+const config = useConfig();
 
-const activeData = ref(-1);
+const activeData = ref(0);
 
 onUnmounted(() => {
   close();
@@ -28,6 +30,7 @@ const handleActive = (e: Event) => {
     }
   });
 };
+
 </script>
 
 <template>
@@ -56,13 +59,16 @@ const handleActive = (e: Event) => {
           <Rarity :rarity="art.rarity" />
         </div>
         <div>
-          <Image
-            v-for="(value, key) in art.slots"
+          <template
+            v-for="(value, key) of art.slots"
             :key="key"
-            v-show="value.imgUrl"
-            v-lazy="config.artifactImage(value.imgUrl)"
-            :draggable="false"
-          />
+          >
+            <Image
+              v-show="value.name"
+              v-lazy="config.artifactImage(ArtifactImgFileName(art.id, value.type))"
+              :draggable="false"
+            />
+          </template>
         </div>
       </div>
     </ScrollView>

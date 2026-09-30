@@ -1,27 +1,23 @@
 <script setup lang="ts">
 import { reactive, ref, toRaw, watchEffect } from 'vue';
-import { Drop } from '@/utils/directive';
-import { DropFile } from '@/components';
 
-import { Icon, ScrollView } from '@shi-zhong/genshin-ui';
+import Editor from '../Editor.vue';
+
+import { ScrollView, type ArtifactSlotsChinese, Message } from '@shi-zhong/genshin-ui';
 
 import {
-  type ArtifactSuitModel,
-  ArtifactSlotsNameTransform,
-  type ArtifactSlotsChinese,
-  type ArtifactSlots,
-  ArtifactDetailCard
+  type ArtifactSlotModel,
+  ArtifactDetailCard,
+  ArtifactSlotsToUniformNumber,
+  ArtifactImgFileName
 } from '@/components/Artifact';
 import { useArtifactStore } from '@/stores/Artifact';
 import { UploadImg } from '@/api/common';
 import ArtifactPng from '@/assets/icons/artifact.png';
 
-import { merge, fileExt, DownLoadJson } from '@/utils';
+import { merge } from '@/utils';
 import { ArtifactSuitAdd, ArtifactSuitModify } from '@/api/ArtifactSuit';
-import { template } from './template';
 import { useConfig } from '@/stores/config';
-
-const { vDrop } = Drop();
 
 const props = defineProps<{ active: number }>();
 const emits = defineEmits<{ (e: 'change', id: number): void }>();
@@ -30,422 +26,266 @@ const config = useConfig();
 
 const basic = reactive({
   name: '',
-  id: 0,
+  id: -1,
   uuid: 0,
-  rarity: 1 as 1 | 2 | 3 | 4 | 5
+  rarity: 1 as 1 | 2 | 3 | 4 | 5,
+  effects: [] as { limit: number; describe: string }[]
 });
 
-const slots = reactive<{
-  [key in ArtifactSlots]: { imgUrl: string; name: string; describe: string };
-}>({
-  FlowerOfLife: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  PlumnOfDeath: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  SandsOfEon: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  GobletOfEonothem: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  },
-  CircletOfLogos: {
-    imgUrl: '',
-    name: '',
-    describe: ''
-  }
-});
-const slotImageFile = reactive<{ [key in ArtifactSlots]: File | undefined }>({
-  FlowerOfLife: undefined,
-  PlumnOfDeath: undefined,
-  SandsOfEon: undefined,
-  GobletOfEonothem: undefined,
-  CircletOfLogos: undefined
-});
-const effects = reactive(['', '', '', '']);
+const slots = ref<ArtifactSlotModel[]>([]);
+const slotImageFile = ref<(File | undefined)[]>([]);
+const slotImageFileBase64 = ref<(string | undefined)[]>([]);
 
 /** 生成预览卡片参数 */
+const mains = [
+  {
+    key: '生命值',
+    value: '4780'
+  },
+  {
+    key: '攻击力',
+    value: '311'
+  },
+  {
+    key: '攻击力',
+    value: '46.6'
+  },
+  {
+    key: '冰元素伤害加成',
+    value: '46.6%'
+  },
+  {
+    key: '暴击率',
+    value: '31.1%'
+  }
+];
+
+const subs = [
+  {
+    key: '攻击力',
+    value: '9.3%'
+  },
+  {
+    key: '暴击率',
+    value: '5.8%'
+  },
+  {
+    key: '暴击率',
+    value: '19.4%'
+  },
+  {
+    key: '生命值',
+    value: '299'
+  }
+];
+
 const previewArtifactCard = (): any[] => {
-  const { uuid, name, rarity } = toRaw(basic);
+  const { id, name, rarity, effects } = toRaw(basic);
   const preview = {
-    id: uuid,
+    id,
     name,
-    rarity: rarity,
-    slots: toRaw(slots),
-    effects: effects
-      .map((t, i) => ({
-        limit: i + 1,
-        describe: t
-      }))
-      .filter((i) => i.describe !== '')
+    rarity,
+    slots: slots.value,
+    effects
   };
 
-  const mains = {
-    FlowerOfLife: {
-      key: '生命值',
-      value: '4780'
-    },
-    PlumnOfDeath: {
-      key: '攻击力',
-      value: '311'
-    },
-    SandsOfEon: {
-      key: '攻击力',
-      value: '46.6'
-    },
-    GobletOfEonothem: {
-      key: '冰元素伤害加成',
-      value: '46.6%'
-    },
-    CircletOfLogos: {
-      key: '暴击率',
-      value: '31.1%'
-    }
-  };
-
-  const subs = [
-    {
-      key: '攻击力',
-      value: '9.3%'
-    },
-    {
-      key: '暴击率',
-      value: '5.8%'
-    },
-    {
-      key: '暴击率',
-      value: '19.4%'
-    },
-    {
-      key: '生命值',
-      value: '299'
-    }
-  ];
-
-  return Object.keys(slots)
-    .map((slot) => ({
-      id: 0,
-      suit: preview,
-      type: slot,
-      lock: true,
-      suitCount: 5,
-      lvl: 4 * preview.rarity,
-      main: mains[slot as ArtifactSlots],
-      subs
-    }))
-    .filter((s) => {
-      const { describe, imgUrl, name } = preview.slots[s.type as ArtifactSlots];
-      if (describe === '' || imgUrl === '' || name === '') {
-        return false;
-      }
-      return true;
-    });
+  return slots.value.map((slot, i) => ({
+    id: 0,
+    suitId: preview.id,
+    suit: preview,
+    type: slot.type,
+    lock: true,
+    suitCount: 5,
+    lvl: 4 * preview.rarity,
+    main: mains[i],
+    subs,
+    visible: slot.name
+  }));
 };
 
-const syncArtifact = (artifact: ArtifactSuitModel) => {
-  merge(basic, {
-    id: artifact.id,
-    uuid: artifact.uuid,
-    name: artifact.name,
-    rarity: artifact.rarity
-  });
-  merge(slots, artifact.slots);
-  merge(slotImageFile, {
-    FlowerOfLife: undefined,
-    PlumnOfDeath: undefined,
-    SandsOfEon: undefined,
-    GobletOfEonothem: undefined,
-    CircletOfLogos: undefined
-  });
-  artifact.effects.forEach((i) => (effects[i.limit - 1] = i.describe));
-};
+const handleSave = async () => {
+  const { id, uuid, name, rarity, effects } = toRaw(basic);
 
-const buildSave = async (): Promise<ArtifactSuitModel> => {
-  const { id, uuid, name, rarity } = toRaw(basic);
-
-  const filePath = await Promise.all(
-    Object.entries(slotImageFile).map(([k, f]) => {
-      if (f === undefined) return Promise.resolve('');
-      else {
-        const formData = new FormData();
-        formData.append(
-          'imgfile',
-          f,
-          `${uuid}` +
-            config.artifactCode +
-            config.artifactTypeCode(k as ArtifactSlots) +
-            '_' +
-            fileExt(f.name)
-        );
-
-        return UploadImg(formData).then((data) => {
-          if (data.msg === 'OK') {
-            return data.data.url;
-          }
-          return '';
-        });
-      }
-    })
-  );
-
-  Object.values(slots).forEach((slot, index) => {
-    if (filePath[index] !== '') {
-      slot.imgUrl = filePath[index];
-    }
-  });
-
-  return {
+  const data = {
     id: id,
     uuid: uuid,
     name,
     rarity: rarity,
-    slots: toRaw(slots),
+    slots: slots.value,
     effects: effects
-      .map((t, i) => ({
-        limit: i + 1,
-        describe: t
-      }))
-      .filter((i) => i.describe !== '')
   };
+
+  let res: any;
+
+  if (id === -1) {
+    data.id = 0;
+    res = await ArtifactSuitAdd(data);
+    if (res.msg === 'OK') {
+      basic.id = res.data.id;
+    }
+  } else {
+    res = await ArtifactSuitModify(basic.id, data);
+  }
+
+  if (res.msg === 'OK' && slotImageFile.value.length) {
+    await Promise.all(
+      slotImageFile.value.map((f, i) => {
+        if (f === undefined) return Promise.resolve('');
+        else {
+          const formData = new FormData();
+          formData.append('imgfile', f, ArtifactImgFileName(basic.id, i));
+
+          return UploadImg(formData, { dir: config.artifact.baseUrl }).then((data) => {
+            if (data.msg === 'OK') {
+              return data.data.url;
+            }
+            return '';
+          });
+        }
+      })
+    );
+    Message.info('图片上传完成！');
+  }
+
+  if (res.msg === 'OK') store.GenerateArtifactSuits();
+  else console.error('error');
 };
 
 const previewCardGroup = ref(previewArtifactCard());
 
-/**清空当前数据 */
-const clear = () => {
-  merge(basic, {
-    id: -1,
-    uuid: 0,
-    name: ''
-  });
-  merge(slots, {
-    FlowerOfLife: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    PlumnOfDeath: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    SandsOfEon: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    GobletOfEonothem: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    CircletOfLogos: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    }
-  });
-  merge(slotImageFile, {
-    FlowerOfLife: undefined,
-    PlumnOfDeath: undefined,
-    SandsOfEon: undefined,
-    GobletOfEonothem: undefined,
-    CircletOfLogos: undefined
-  });
-  [...Array(4)].forEach((_i, index) => (effects[index] = ''));
-};
-
-const handleDrop = (text: string, file: File) => {
+const handleDropJsonFile = (text: string, file: File) => {
   if (file.type !== 'application/json') return;
+
   const data = JSON.parse(text);
+
+  // search same to change
+  const old = store.ArtifactSuitByUUId(Number(data.id));
+
+  if (old.id !== 0) {
+    basic.id = old.id;
+  } else {
+    basic.id = -1;
+  }
+
   emits('change', -1);
-  clear();
+
+  slotImageFile.value = [];
+  slotImageFileBase64.value = [];
 
   basic.name = data.name;
   basic.uuid = Number(data.id);
   basic.rarity = data.rarity;
+  basic.effects = data.effects;
 
-  data.effects.map((m: { limit: number; describe: string }) => {
-    effects[m.limit - 1] = m.describe;
-  });
-
-  const islots = {
-    FlowerOfLife: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    PlumnOfDeath: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    SandsOfEon: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    GobletOfEonothem: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    },
-    CircletOfLogos: {
-      imgUrl: '',
-      name: '',
-      describe: ''
-    }
-  };
-
-  type key = keyof typeof islots;
+  const islots: any = [
+    { type: '', name: '', describe: '', story: '' },
+    { type: '', name: '', describe: '', story: '' },
+    { type: '', name: '', describe: '', story: '' },
+    { type: '', name: '', describe: '', story: '' },
+    { type: '', name: '', describe: '', story: '' }
+  ];
 
   data.slot.map((i: { type: ArtifactSlotsChinese; name: string; desc: string; story: string }) => {
-    const p = {
-      name: i.name,
-      imgUrl: '',
-      describe: i.desc
-    };
-    if (i.type) islots[ArtifactSlotsNameTransform(i.type) as key] = p;
+    if (i.type)
+      islots[ArtifactSlotsToUniformNumber(i.type)] = {
+        type: i.type,
+        name: i.name,
+        describe: i.desc,
+        story: i.story
+      };
   });
 
-  merge(slots, islots);
+  slots.value = islots;
+
+  previewCardGroup.value = previewArtifactCard();
 };
 
-const handleDropFiles = (files: { file: any; origin: File }[]) => {
-  const mapper: { [key: string]: ArtifactSlots } = {
-    _circlet: 'CircletOfLogos',
-    _flower: 'FlowerOfLife',
-    _goblet: 'GobletOfEonothem',
-    _plume: 'PlumnOfDeath',
-    _sands: 'SandsOfEon'
+// 单文件也会触发
+const handleDropFiles = (files: { file: string; origin: File }[]) => {
+  const mapper: { [key: string]: number } = {
+    _1: 3,
+    _2: 1,
+    _3: 4,
+    _4: 0,
+    _5: 2
   };
 
   files.map((file) => {
     if (file.origin.type.startsWith('image')) {
-      Object.keys(mapper).some((key) => {
-        if (file.origin.name.toUpperCase().includes(key.toUpperCase())) {
-          slots[mapper[key]].imgUrl = file.file;
-          slotImageFile[mapper[key]] = file.origin;
-          return true;
-        }
-        return false;
-      });
+      const reg = /.*(_\d)\.png$/.exec(file.origin.name);
+      if (reg) {
+        slotImageFile.value[mapper[reg[1]]] = file.origin;
+        slotImageFileBase64.value[mapper[reg[1]]] = file.file;
+      }
+    } else {
+      handleDropJsonFile(file.file, file.origin);
     }
   });
 };
 
+const handleClose = () => {
+  emits('change', 0);
+  basic.uuid = 0;
+  basic.id = -1;
+};
+
 watchEffect(() => {
   if (store.artifactSuits.has(props.active)) {
-    syncArtifact(store.ArtifactSuitById(props.active)!);
-    previewCardGroup.value = previewArtifactCard();
-  }
-});
+    // 同步store
+    const artifact = store.ArtifactSuitById(props.active)!;
 
-const download = () => {
-  if (props.active !== -1 || basic.uuid !== 0) {
-    const preDownload = {
-      id: basic.id,
-      uuid: basic.uuid,
-      name: basic.name,
-      rarity: basic.rarity,
-      slots: toRaw(slots),
-      effects: effects
-        .map((t, i) => ({
-          limit: i + 1,
-          describe: t
-        }))
-        .filter((i) => i.describe !== '')
-    };
-    DownLoadJson(preDownload, `${basic.name ?? 'artifact'}.json`);
-  } else DownLoadJson(template, 'artifact_template.json');
-};
+    merge(basic, {
+      id: artifact.id,
+      uuid: artifact.uuid,
+      name: artifact.name,
+      rarity: artifact.rarity,
+      effects: artifact.effects
+    });
+
+    slots.value = artifact.slots;
+    slotImageFile.value = [];
+    slotImageFileBase64.value = [];
+  }
+  previewCardGroup.value = previewArtifactCard();
+});
 </script>
 
 <template>
-  <DropFile
+  <Editor
     class="artifact-edit"
-    v-drop="handleDrop"
-    v-drop.files="handleDropFiles"
+    :isNew="basic.id === -1"
+    :title="basic.uuid ? `${basic.id}-${basic.uuid}` : ''"
+    :using="props.active !== 0"
+    :icon="ArtifactPng"
+    @drop="handleDropFiles"
+    @close="handleClose"
+    @save="handleSave"
   >
-    <template v-slot:default="willdrop">
-      <div class="artifact-tool">
-        <span
-          >编辑器·{{ props.active !== -1 ? '修改' : '新建'
-          }}{{ willdrop.willdrop ? '·释放新建' : '' }}</span
-        >
-        {{ basic.uuid ? `${basic.id}-${basic.uuid}` : '' }}
-        <div>
-          <button @click="() => emits('change', -1)">关闭</button>
-          <button @click="download">
-            下载{{ props.active !== -1 || basic.uuid !== 0 ? '数据' : '模板' }}
-          </button>
-          <button
-            @click="
-              async () => {
-                const data = await buildSave();
-                let res: any;
-                if (props.active === -1) {
-                  res = await ArtifactSuitAdd(data);
-                  if (res.msg === 'OK') {
-                    basic.id = res.data.id;
-                  }
-                } else {
-                  res = await ArtifactSuitModify(basic.id, data);
-                }
-                if (res.msg === 'OK') store.GenerateArtifactSuits();
-                else console.error('error');
-              }
-            "
-          >
-            保存
-          </button>
-        </div>
-      </div>
+    <ScrollView
+      direction="x"
+      scroll-behavior="scroll"
+      transform-box-class="tsbox"
+      style="height: 100%"
+    >
       <ScrollView
-        direction="x"
-        scroll-behavior="scroll"
-        transform-box-class="tsbox"
-        style="height: 100%"
-        v-if="props.active !== -1 || basic.uuid !== 0"
+        v-for="(artifact, i) of previewCardGroup"
+        :key="artifact.type"
+        :border="{ top: 100, bottom: 100 }"
+        scroll-behavior="hidden"
       >
-        <ScrollView
-          v-for="artifact of previewCardGroup"
-          :key="artifact.type"
-          :border="{ top: 100, bottom: 100 }"
-          scroll-behavior="hidden"
-        >
-          <ArtifactDetailCard
-            :size="40"
-            v-bind="artifact"
-          />
-        </ScrollView>
-      </ScrollView>
-      <div
-        class="artifact-blank"
-        v-else
-      >
-        <Icon
-          :src="ArtifactPng"
-          :size="120"
-          type="projection"
-          color="rgba(72, 85, 103,0.5)"
+        <ArtifactDetailCard
+          v-if="artifact.visible"
+          :size="40"
+          v-bind="artifact"
+          :img-url="slotImageFileBase64[i]"
         />
-      </div>
-    </template>
-  </DropFile>
+      </ScrollView>
+    </ScrollView>
+  </Editor>
 </template>
 
 <style scoped lang="less">
-@shadow2: 0 0 5px @fontlightgray;
+@shadow2: 0 0 5px var(--font-light-gray);
 .inputtext {
   width: 300px;
   height: 40px;
@@ -453,12 +293,12 @@ const download = () => {
   line-height: 40px;
   border-radius: 20px;
 
-  box-shadow: 0 0 5px @fontlightgray;
+  box-shadow: @shadow2;
   border: none;
 
   text-align: center;
   font-size: 20px;
-  color: @fontdarkgray;
+  color: var(--font-dark-gray);
   font-weight: bold;
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
@@ -482,7 +322,7 @@ const download = () => {
     min-width: 1008px;
     padding: 30px;
     border-radius: 5px;
-    box-shadow: 0 0 10px @fontlightgray;
+    box-shadow: 0 0 10px var(--font-light-gray);
     display: flex;
     flex-flow: column;
   }
@@ -497,7 +337,7 @@ const download = () => {
       border: 0;
       font-size: 20px;
       &:hover {
-        color: @fontlightgray;
+        color: var(--font-light-gray);
       }
       &:active {
         opacity: 0.8;
@@ -538,7 +378,7 @@ const download = () => {
         line-height: 42px;
         font-size: 25px;
         text-align: center;
-        color: @fontdarkgray;
+        color: var(--font-dark-gray);
         margin-bottom: 20px;
       }
     }
@@ -557,7 +397,7 @@ const download = () => {
       border: 0;
       font-size: 20px;
       &:hover {
-        color: @fontlightgray;
+        color: var(--font-light-gray);
       }
       &:active {
         opacity: 0.8;
@@ -571,11 +411,11 @@ const download = () => {
   }
 }
 
-.effects {
+.effects.value {
   width: 300px;
   height: 200px;
   font-size: 20px;
-  color: @fontdarkgray;
+  color: var(--font-dark-gray);
   resize: none;
   border: none;
   box-shadow: @shadow2;

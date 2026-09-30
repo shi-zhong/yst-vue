@@ -1,18 +1,26 @@
 <script setup lang="ts">
-import { DetailCard as BasicDetailCard, Lock } from '@shi-zhong/genshin-ui';
+import {
+  DetailCard as BasicDetailCard,
+  Lock,
+  type ArtifactSlotsCode,
+  type ArtifactSlotsChinese
+} from '@shi-zhong/genshin-ui';
 
-import type { ArtifactSlots, ArtifactSuitModel } from '../interface';
+import type { ArtifactSuitModel } from '../interface';
 import Describe from './ArtifactDescribe.vue';
-import { ArtifactSlotsNameTransform } from '../functions';
+import {
+  ArtifactSlotsToChinese,
+  ArtifactSlotsToUniformNumber,
+  ArtifactImgFileName
+} from '../functions';
 import { reactive, toRefs, watch } from 'vue';
 import { merge, ClassNameFactor } from '@/utils';
 import { useArtifactStore } from '@/stores/Artifact';
 
 interface ArtifactDetailCardProps {
-  id: number;
-  suit?: ArtifactSuitModel;
-  size?: number;
-  type: ArtifactSlots;
+  id: number; // 圣遗物实例 id
+  suitId: number; // 圣遗物套装 id
+  type: ArtifactSlotsCode | number | ArtifactSlotsChinese;
   lock: boolean;
   suitCount: 0 | 1 | 2 | 3 | 4 | 5;
   lvl: number;
@@ -26,6 +34,10 @@ interface ArtifactDetailCardProps {
     value: string;
     [key: string]: any;
   }[];
+
+  suit?: ArtifactSuitModel;
+  size?: number;
+  imgUrl?: string;
 }
 
 const props = withDefaults(defineProps<ArtifactDetailCardProps>(), {
@@ -45,12 +57,12 @@ const data = reactive<ArtifactSuitModel>(store.ArtifactSuitById(props.id));
  * 当id不存在时，优先执行props.suit模型
  **/
 watch(
-  [() => props.id, () => props.suit],
+  [() => props.suitId, () => props.suit],
   () => {
-    if (props.id === 0 && props.suit) {
+    if (props.suitId <= 0 && props.suit) {
       merge(data, props.suit);
     } else {
-      merge(data, store.ArtifactSuitById(props.id));
+      merge(data, store.ArtifactSuitById(props.suitId));
     }
   },
   { immediate: true }
@@ -59,11 +71,13 @@ watch(
 
 <template>
   <BasicDetailCard
-    :title="data.slots[type]!.name"
+    :title="data.slots[ArtifactSlotsToUniformNumber(type)]!.name"
     :rarity="data.rarity"
     :main="main"
-    :imgUrl="'http://localhost:8000/static/artifacts/' + data.slots[type]!.imgUrl"
-    :type="ArtifactSlotsNameTransform(type)"
+    :imgUrl="
+      imgUrl ?? `http://localhost:8000/static/artifacts/${ArtifactImgFileName(suit?.id || 0, type)}`
+    "
+    :type="ArtifactSlotsToChinese(type)"
     :size="size"
   >
     <div :class="S('lvl-container')">
@@ -88,7 +102,9 @@ watch(
       :suit="suit"
       :active="suitCount"
     />
-    <div :class="S('txt-describe')">{{ data.slots[type]!.describe }}</div>
+    <div :class="S('txt-describe')">
+      {{ data.slots[ArtifactSlotsToUniformNumber(type)]!.describe }}
+    </div>
   </BasicDetailCard>
 </template>
 

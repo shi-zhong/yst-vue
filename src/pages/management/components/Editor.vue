@@ -6,23 +6,28 @@ import { Icon } from '@shi-zhong/genshin-ui';
 const { vDrop } = Drop();
 
 const emits = defineEmits<{
-  (e: 'drop', text: string, file: File): void;
+  (e: 'drop', files: { file: string; origin: File }[]): void;
   (e: 'preview'): void;
   (e: 'close'): void;
   (e: 'save'): void;
 }>();
 
 defineProps<{ isNew: boolean; title?: string; using: boolean; icon: string; preview?: boolean }>();
+
+const handleFiles = (files: { file: string; origin: File }[]) => emits('drop', files);
 </script>
 
 <template>
   <DropFile
     class="editor"
-    v-drop="(text: string, file: File) => emits('drop', text, file)"
+    v-drop.files="handleFiles"
   >
     <template v-slot:default="willdrop">
       <div class="tool">
-        <span>编辑器·{{ isNew ? '修改' : '新建' }}{{ willdrop.willdrop ? '·释放新建' : '' }}</span>
+        <span
+          >编辑器{{ using ? (isNew ? '·新建' : '·修改') : ''
+          }}{{ willdrop.willdrop ? '·释放新建' : '' }}</span
+        >
         {{ title ?? '' }}
         <div>
           <button

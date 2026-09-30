@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ImageSrc } from '@/components';
 
-import { Weapon, Button, Line, Tabs, TabPane, HighLight } from '@shi-zhong/genshin-ui';
+import {  Button, Line, Tabs, TabPane, HighLight, WeaponPicture } from '@shi-zhong/genshin-ui';
 
 import { ClassNameFactor } from '@/utils/className';
 import { computed, ref } from 'vue';
@@ -10,7 +10,7 @@ import { useConfig } from '@/stores/config';
 
 const S = ClassNameFactor('skills-');
 
-const { Bow, Catalyst, Claymore, Polearm, Sword } = Weapon.WeaponPicture;
+const { Bow, Catalyst, Claymore, Polearm, Sword } = WeaponPicture;
 
 const store = useCharacterLayoutStore();
 const config = useConfig();
